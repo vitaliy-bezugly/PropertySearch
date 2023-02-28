@@ -14,7 +14,7 @@ public class IdentityController : Controller
     {
         return View();
     }
-    [HttpGet]
+    [HttpPost]
     public IActionResult Logout()
     {
         throw new NotImplementedException();

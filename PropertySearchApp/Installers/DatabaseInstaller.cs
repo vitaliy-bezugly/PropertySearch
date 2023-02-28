@@ -15,8 +15,16 @@ public class DatabaseInstaller : IInstaller
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
 
-        services.AddDefaultIdentity<UserEntity>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+        services.AddDefaultIdentity<UserEntity>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedPhoneNumber = false;
+
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+        }).AddEntityFrameworkStores<ApplicationDbContext>();
         
         logger.LogInformation("Database has been successfully installed");
     }
