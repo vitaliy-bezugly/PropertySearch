@@ -7,5 +7,8 @@
     <WebStackScaffolding_DbContextDialogWidth>650.4</WebStackScaffolding_DbContextDialogWidth>
     <WebStackScaffolding_LayoutPageFile>~/Views/Shared/_Layout.cshtml</WebStackScaffolding_LayoutPageFile>
     <WebStackScaffolding_IdentityDialogWidth>650.4</WebStackScaffolding_IdentityDialogWidth>
+    <View_SelectedScaffolderID>MvcLayoutScaffolder</View_SelectedScaffolderID>
+    <View_SelectedScaffolderCategoryPath>root/Layouts</View_SelectedScaffolderCategoryPath>
+    <WebStackScaffolding_EnablerDialogWidth>650.4</WebStackScaffolding_EnablerDialogWidth>
   </PropertyGroup>
 </Project>

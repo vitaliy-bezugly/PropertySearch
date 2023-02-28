@@ -15,4 +15,52 @@ html {
 
 body {
   margin-bottom: 60px;
+  font-family: 'Roboto', sans-serif;
+}
+
+form *{
+    padding-top: 2px;
+}
+
+form button {
+    min-width: 120px;
+}
+
+i {
+    font-size: 24px;
+}
+.d-flex i {
+    font-size: 28px;
+    position: relative;
+    top: 2px;
+
+    margin-right: 3px;
+}
+
+/* Fot tab control */
+div.login-logout-tab div.card-header {
+    padding: 0px 0px 12px 0px;
+}
+
+div.login-logout-tab ul.nav-tabs {
+    margin: 0px 0px -12px 0px;
+}
+
+div.login-logout-tab li.nav-item {
+    width: 50%;
+}
+
+ul.card-header-tabs a.nav-link {
+    font-size: 22px;
+    color: #495057;
+    text-align: center;
+}
+
+div.card-content {
+    padding: 10px 20px;
+}
+
+/* login form */
+div.login-form-icon {
+    text-align: center;
 }

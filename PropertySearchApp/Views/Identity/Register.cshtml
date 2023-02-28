@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Register Page";
+    Layout = "~/Views/Identity/_IdentityLayout.cshtml";
+}
+
+<form>
+  <div class="form-group">
+    <label for="inputUsername">Username</label>
+    <div class="d-flex">
+        <i class='bx bx-user-plus' ></i>
+        <input type="text" class="form-control" id="inputUsername" placeholder="Enter Username">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="inputEmail">Email address</label>
+    <div class="d-flex">
+        <i class='bx bx-envelope' ></i>
+        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+    </div>
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+
+  <div class="form-group">
+    <label for="inputPassword">Password</label>
+    <div class="d-flex">
+        <i class='bx bx-key' ></i>
+        <input type="password" class="form-control" id="inputPassword" placeholder="Enter Password">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="repeatPassword">Repeat Password</label>
+    <div class="d-flex">
+        <i class='bx bx-lock-open-alt' ></i>
+        <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat Password">
+    </div>
+  </div>
+
+  <div class="form-check d-flex">
+    <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
+    <label class="form-check-label" for="form2Example3">
+        I agree all statements in Terms of service
+    </label>
+  </div>
+
+  <button type="submit" class="btn btn-primary float-end">Register</button>
+</form>
