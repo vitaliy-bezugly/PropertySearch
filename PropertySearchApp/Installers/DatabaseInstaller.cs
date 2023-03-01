@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using PropertySearchApp.Areas.Identity.Data;
-using PropertySearchApp.Data;
+using PropertySearchApp.Entities;
 using PropertySearchApp.Installers.Abstract;
+using PropertySearchApp.Persistence;
 
 namespace PropertySearchApp.Installers;
 

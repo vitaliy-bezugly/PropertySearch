@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -50,10 +52,12 @@
                     {
                         <ul class="nav navbar-nav navbar-right">
                             <li class="nav-item">
-                                <h4>@User?.Claims.Select(x => x.Properties["Username"])</h4>
+                                <h4>@User.FindFirst(ClaimTypes.Name).Value</h4>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Logout">Logout</a>
+                                <form method="post" asp-controller="Identity" asp-action="Logout">
+                                    <button type="submit" class="nav-link text-dark">Logout</button>
+                                </form>
                             </li>
                         </ul>
                     }

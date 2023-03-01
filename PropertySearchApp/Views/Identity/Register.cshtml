@@ -1,23 +1,28 @@
+@model RegistrationFormViewModel
 @{
     ViewData["Title"] = "Register Page";
     Layout = "~/Views/Identity/_IdentityLayout.cshtml";
 }
 
-<form>
+<form method="post" asp-controller="Identity" asp-action="Register">
+    <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
+    
     <div class="form-group">
         <label for="inputUsername">Username</label>
         <div class="d-flex">
             <i class='bx bx-user-plus'></i>
-            <input type="text" required class="form-control" id="inputUsername" placeholder="Enter Username">
+            <input type="text" required class="form-control" id="inputUsername" placeholder="Enter Username" asp-for="Username">
         </div>
+        <span asp-validation-for="Username" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="inputEmail">Email address</label>
         <div class="d-flex">
             <i class='bx bx-envelope'></i>
-            <input type="email" required class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+            <input type="email" required class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" asp-for="Email">
         </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
     </div>
 
@@ -27,9 +32,10 @@
                 <label for="inputPassword">Password</label>
                 <div class="d-flex">
                     <i class='bx bx-key'></i>
-                    <input type="password" required class="form-control" id="inputPassword" 
-                        placeholder="Enter Password">
+                    <input type="password" required class="form-control" id="inputPassword"
+                           placeholder="Enter Password" asp-for="Password">
                 </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-6">
@@ -37,16 +43,17 @@
                 <label for="repeatPassword">Repeat Password</label>
                 <div class="d-flex">
                     <i class='bx bx-lock-open-alt'></i>
-                    <input type="password" required class="form-control" id="repeatPassword" 
-                        placeholder="Repeat Password">
+                    <input type="password" required class="form-control" id="repeatPassword"
+                           placeholder="Repeat Password" asp-for="ConfirmPassword">
                 </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
         </div>
     </div>
 
     <div class="form-check d-flex">
-        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
-        <label class="form-check-label" for="form2Example3">
+        <input class="form-check-input me-2" type="checkbox" value="" id="termsCheckInput" required/>
+        <label class="form-check-label" for="termsCheckInput">
             I agree all statements in Terms of service
         </label>
     </div>

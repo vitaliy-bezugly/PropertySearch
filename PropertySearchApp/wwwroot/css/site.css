@@ -65,3 +65,8 @@ div.card-content {
 div.login-form-icon {
     text-align: center;
 }
+
+.asp-errors *{
+    padding-left: 0px;
+    list-style: none;
+}
