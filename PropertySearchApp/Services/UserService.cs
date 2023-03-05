@@ -44,12 +44,19 @@ public class UserService : IUserService
             return new Result<bool>(new RegistrationOperationException(result.Errors.Select(x => x.Description)));
         }
     }
-
-    public Task<Result<bool>> LoginAsync(string email, string password)
+    public async Task<Result<bool>> LoginAsync(string email, string password)
     {
-        throw new NotImplementedException();
-    }
+        var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
 
+        if (result.Succeeded == true)
+        {
+            return new Result<bool>(true);
+        }
+        else
+        {
+            return new Result<bool>(new LoginOperationException(new[] { "User with this email address and password does not exist" }));
+        }
+    }
     public async Task SignOutAsync()
     {
         await _signInManager.SignOutAsync();

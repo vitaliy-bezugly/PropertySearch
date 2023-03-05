@@ -1,25 +1,29 @@
+@model LoginViewModel
 @{
     ViewData["Title"] = "Login page";
     Layout = "~/Views/Identity/_IdentityLayout.cshtml";
 }
 
-<form>
+<form method="post" asp-action="Login" asp-controller="Identity">
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
     <div class="d-flex">
         <i class='bx bx-envelope' ></i>
-        <input type="email" required class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+        <input type="email" required class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" asp-for="Email">
     </div>
     <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-  </div>
+    <span asp-validation-for="Email" class="text-danger"></span>
+</div>
   <div class="form-group">
     <label for="exampleInputPassword1">Password</label>
     <div class="d-flex">
         <i class='bx bx-lock-open-alt' ></i>
         <input type="password" class="form-control" id="inputPassword" placeholder="Enter Password"
-            required>
+            required asp-for=Password>
     </div>
+    <span asp-validation-for="Password" class="text-danger"></span>
   </div>
+  <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
 
   <button type="submit" class="btn btn-primary float-end">Submit</button>
 </form>

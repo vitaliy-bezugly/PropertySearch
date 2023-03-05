@@ -70,3 +70,24 @@ div.login-form-icon {
     padding-left: 0px;
     list-style: none;
 }
+
+ul li.logout form button {
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+    margin: 3px;
+    font-size: var(--bs-body-font-size);
+}
+
+ul li p.username {
+    padding: 0px;
+    margin: 3px;
+    font-size: var(--bs-body-font-size);
+}
+
+ul.nav li.d-flex i {
+    position: relative;
+    top: 1px;
+
+    margin-right: 0px;
+}

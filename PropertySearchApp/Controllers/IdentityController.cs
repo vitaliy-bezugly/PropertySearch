@@ -20,6 +20,33 @@ public class IdentityController : Controller
     {
         return View();
     }
+    [ValidateAntiForgeryToken, HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel loginModel)
+    {
+        if (ModelState.IsValid == false)
+            return View(loginModel);
+
+        var result = await _userService.LoginAsync(loginModel.Email, loginModel.Password);
+
+        return result.Match<IActionResult>(success =>
+        {
+            return RedirectToAction("Index", "Home");
+        }, exception =>
+        {
+            if (exception is LoginOperationException loginException)
+            {
+                foreach (var item in loginException.Errors)
+                {
+                    ModelState.AddModelError("", item);
+                }
+                return View(loginModel);
+            }
+            else
+            {
+                throw exception;
+            }
+        });
+    }
     [HttpGet]
     public IActionResult Register()
     {
@@ -34,8 +61,10 @@ public class IdentityController : Controller
 
         Result<bool> result = await _userService.RegisterAsync(registrationModel.Username, registrationModel.Email, registrationModel.Password);
 
-        return result.Match<IActionResult>(success => RedirectToAction("Index", "Home"), 
-            exception =>
+        return result.Match<IActionResult>(success =>
+        {
+            return RedirectToAction("Index", "Home");
+        }, exception =>
         {
             if (exception is RegistrationOperationException registrationException)
             {
