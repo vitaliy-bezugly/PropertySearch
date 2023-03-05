@@ -4,9 +4,7 @@
     Layout = "~/Views/Identity/_IdentityLayout.cshtml";
 }
 
-<form method="post" asp-controller="Identity" asp-action="Register">
-    <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
-    
+<form method="post" asp-controller="Identity" asp-action="Register">    
     <div class="form-group">
         <label for="inputUsername">Username</label>
         <div class="d-flex">
@@ -33,7 +31,7 @@
                 <div class="d-flex">
                     <i class='bx bx-key'></i>
                     <input type="password" required class="form-control" id="inputPassword"
-                           placeholder="Enter Password" asp-for="Password">
+                           placeholder="Enter Password" asp-for="Password" pattern=".{6,}" title="6 characters minimum">
                 </div>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
@@ -44,7 +42,7 @@
                 <div class="d-flex">
                     <i class='bx bx-lock-open-alt'></i>
                     <input type="password" required class="form-control" id="repeatPassword"
-                           placeholder="Repeat Password" asp-for="ConfirmPassword">
+                           placeholder="Repeat Password" asp-for="ConfirmPassword" pattern=".{6,}" title="6 characters minimum">
                 </div>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
@@ -57,6 +55,7 @@
             I agree all statements in Terms of service
         </label>
     </div>
+    <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
 
     <button type="submit" class="btn btn-primary float-end">Register</button>
 </form>

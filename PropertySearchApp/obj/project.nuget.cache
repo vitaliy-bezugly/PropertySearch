@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "GBOdC8r0Ik+/rvVEErfQJR/1XDUruKtM+6l8AkYIAR5KWItu/im2J9i23xJ6TsEFNYZ9VbT3PSwf1B7w879d4w==",
+  "dgSpecHash": "PhBrSe32DqDOIrE1rbau0BAJ6o+z3IcXfGDgjIcmmJACLxKk/xEa0WaUiSB2F97l7M1L+xolGxaEnP+4MrEOyQ==",
   "success": true,
   "projectFilePath": "D:\\Asp .Net Core\\Projects\\PropertySearch\\PropertySearchApp\\PropertySearchApp.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Lenovo IdeaPad L340\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
+    "C:\\Users\\Lenovo IdeaPad L340\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\Lenovo IdeaPad L340\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Lenovo IdeaPad L340\\.nuget\\packages\\languageext.core\\4.4.2\\languageext.core.4.4.2.nupkg.sha512",
     "C:\\Users\\Lenovo IdeaPad L340\\.nuget\\packages\\messagepack\\2.1.152\\messagepack.2.1.152.nupkg.sha512",

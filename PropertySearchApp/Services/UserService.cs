@@ -41,7 +41,7 @@ public class UserService : IUserService
         }
         else
         {
-            return new Result<bool>(new RegistrationOperationException(result.Errors.Select(x => x.Description)));
+            return new Result<bool>(new RegistrationOperationException(result.Errors.Select(x => x.Description).ToArray()));
         }
     }
     public async Task<Result<bool>> LoginAsync(string email, string password)

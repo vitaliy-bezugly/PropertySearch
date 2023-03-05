@@ -1,16 +1,9 @@
+using PropertySearchApp.Common.Exceptions.Abstract;
+
 namespace PropertySearchApp.Common.Exceptions;
 
-public class RegistrationOperationException : Exception
+public class RegistrationOperationException : AuthorizationOperationException
 {
-    private IEnumerable<string> _errors;
-
-    public RegistrationOperationException(IEnumerable<string> errors) : base()
-    {
-        _errors = errors;
-    }
-
-    public IEnumerable<string> GetErrors()
-    {
-        return _errors;
-    }
+    public RegistrationOperationException(string[] errors) : base(errors)
+    { }
 }

@@ -299,3 +299,5 @@ D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp\bin\Debug\net6.0\runt
 D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp\obj\Debug\net6.0\PropertySearchApp.MvcApplicationPartsAssemblyInfo.cs
 D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp\obj\Debug\net6.0\scopedcss\Views\Identity\_IdentityLayout.cshtml.rz.scp.css
 D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp\bin\Debug\net6.0\LanguageExt.Core.dll
+D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp\bin\Debug\net6.0\AutoMapper.dll
+D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

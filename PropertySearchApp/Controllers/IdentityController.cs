@@ -1,7 +1,9 @@
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PropertySearchApp.Common.Exceptions;
+using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
 
@@ -33,18 +35,10 @@ public class IdentityController : Controller
             return RedirectToAction("Index", "Home");
         }, exception =>
         {
-            if (exception is LoginOperationException loginException)
-            {
-                foreach (var item in loginException.Errors)
-                {
-                    ModelState.AddModelError("", item);
-                }
+            if (AddErrorsToModelState(ModelState, exception))
                 return View(loginModel);
-            }
             else
-            {
                 throw exception;
-            }
         });
     }
     [HttpGet]
@@ -52,7 +46,6 @@ public class IdentityController : Controller
     {
         return View();
     }
-
     [ValidateAntiForgeryToken, HttpPost]
     public async Task<IActionResult> Register(RegistrationFormViewModel registrationModel)
     {
@@ -66,25 +59,32 @@ public class IdentityController : Controller
             return RedirectToAction("Index", "Home");
         }, exception =>
         {
-            if (exception is RegistrationOperationException registrationException)
-            {
-                foreach (var error in registrationException.GetErrors())
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
+            if (AddErrorsToModelState(ModelState, exception))
                 return View(registrationModel);
-            }
             else
-            {
                 throw exception;
-            }
         });
     }
-
     [HttpPost, Authorize]
     public async Task<IActionResult> Logout()
     {
         await _userService.SignOutAsync();
         return RedirectToAction("Index", "Home");
+    }
+
+    private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
+    {
+        if (exception is AuthorizationOperationException registrationException)
+        {
+            foreach (var error in registrationException.GetErrors())
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

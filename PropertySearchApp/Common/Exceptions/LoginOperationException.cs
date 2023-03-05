@@ -1,11 +1,9 @@
-﻿namespace PropertySearchApp.Common.Exceptions;
+﻿using PropertySearchApp.Common.Exceptions.Abstract;
 
-public class LoginOperationException : Exception
+namespace PropertySearchApp.Common.Exceptions;
+
+public class LoginOperationException : AuthorizationOperationException
 {
-    public string[] Errors { get; set; }
-
-    public LoginOperationException(string[] errors) : base()
-    {
-        Errors = errors;
-    }
+    public LoginOperationException(string[] errors) : base(errors)
+    { }
 }

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging.Console;
 
 namespace PropertySearchApp.Extensions;
 
-public static class ApplicationConfigurationHelper
+public static class ApplicationConfigurationExtension
 {
     public static ILogger<T> CreateLogger<T>(this WebApplicationBuilder builder)
     {
