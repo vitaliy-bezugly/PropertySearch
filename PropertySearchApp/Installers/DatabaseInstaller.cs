@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Installers.Abstract;
@@ -24,7 +25,9 @@ public class DatabaseInstaller : IInstaller
             options.Password.RequireLowercase = false;
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
-        }).AddEntityFrameworkStores<ApplicationDbContext>();
+        })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
         
         logger.LogInformation("Database has been successfully installed");
     }

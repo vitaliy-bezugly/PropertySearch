@@ -1,10 +1,12 @@
 using PropertySearchApp.Installers.Extensions;
+using PropertySearchApp.Persistence.Extensions;
 
 namespace PropertySearchApp;
 
 public class Startup
 {
     private readonly ILogger<Startup> _logger;
+    private readonly List<string> _requiredRoles;
     public IConfiguration Configuration
     {
         get;
@@ -13,13 +15,15 @@ public class Startup
     {
         this.Configuration = configuration;
         _logger = logger;
+
+        _requiredRoles = new List<string> { "user", "admin", "landlord" };
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
         services.InstallServicesInAssembly(Configuration, _logger);
     }
-    public void Configure(WebApplication app, IWebHostEnvironment env)
+    public async Task ConfigureAsync(WebApplication app, IWebHostEnvironment env)
     {
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -40,6 +44,8 @@ public class Startup
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        await app.AddRolesInDatabaseAsync(app.Logger, _requiredRoles);
 
         app.Run();
     }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Common.Exceptions.Abstract;
+using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
 
@@ -52,7 +53,7 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(registrationModel);
 
-        Result<bool> result = await _userService.RegisterAsync(registrationModel.Username, registrationModel.Email, registrationModel.Password);
+        Result<bool> result = await _userService.RegisterAsync(new UserDomain(registrationModel.Username, registrationModel.Email, registrationModel.Password, registrationModel.IsLandlord));
 
         return result.Match<IActionResult>(success =>
         {

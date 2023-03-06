@@ -13,4 +13,5 @@ public class RegistrationFormViewModel
     public string Password { get; set; }
     [Required, Compare(nameof(Password), ErrorMessage = "Password and confirmation password do not match"), Display(Name = "Confirm password")]
     public string ConfirmPassword { get; set; }
+    public bool IsLandlord { get; set; }
 }
