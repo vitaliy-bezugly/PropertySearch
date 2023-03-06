@@ -11,6 +11,8 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity>
     {
     }
 
+    public DbSet<AccommodationEntity> Accommodations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

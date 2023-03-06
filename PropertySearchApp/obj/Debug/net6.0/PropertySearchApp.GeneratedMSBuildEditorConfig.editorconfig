@@ -15,6 +15,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = D:\Asp .Net Core\Projects\PropertySearch\PropertySearchApp
 build_property._RazorSourceGeneratorDebug = 
 
+[D:/Asp .Net Core/Projects/PropertySearch/PropertySearchApp/Views/Accommodation/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb21tb2RhdGlvblxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Asp .Net Core/Projects/PropertySearch/PropertySearchApp/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -29,10 +33,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/Asp .Net Core/Projects/PropertySearch/PropertySearchApp/Views/Identity/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSWRlbnRpdHlcUmVnaXN0ZXIuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[D:/Asp .Net Core/Projects/PropertySearch/PropertySearchApp/Views/Property/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvcGVydHlcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/Asp .Net Core/Projects/PropertySearch/PropertySearchApp/Views/Shared/Error.cshtml]

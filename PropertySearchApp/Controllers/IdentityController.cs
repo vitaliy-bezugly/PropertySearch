@@ -78,7 +78,7 @@ public class IdentityController : Controller
         {
             foreach (var error in registrationException.GetErrors())
             {
-                ModelState.AddModelError(string.Empty, error);
+                modelState.AddModelError(string.Empty, error);
             }
             return true;
         }
