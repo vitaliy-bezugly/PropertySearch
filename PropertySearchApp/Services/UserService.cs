@@ -1,3 +1,4 @@
+using AutoMapper;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Identity;
 using PropertySearchApp.Common.Exceptions;
@@ -14,21 +15,19 @@ public class UserService : IUserService
     private readonly SignInManager<UserEntity> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ILogger<UserService> _logger;
-    public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager, ILogger<UserService> logger)
+    private readonly IMapper _mapper;
+    public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager, ILogger<UserService> logger, IMapper mapper)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public async Task<Result<bool>> RegisterAsync(UserDomain user)
     {
-        var userEntity = new UserEntity
-        {
-            UserName = user.Username,
-            Email = user.Email
-        };
+        var userEntity = _mapper.Map<UserEntity>(user);
         
         var exists = await _userManager.FindByEmailAsync(user.Email);
         if (exists != null)
@@ -42,12 +41,10 @@ public class UserService : IUserService
         if (result.Succeeded)
         {
             // Set roles 
-            if(user.IsLandlord == true)
+            await SetRoleToUserAsync("user", userEntity);
+            if (user.IsLandlord == true)
             {
-                Result<bool> roleAddingResult = await SetRoleToUserAsync("landlord", userEntity);
-
-                if (roleAddingResult.IsSuccess == false)
-                    return roleAddingResult;
+                await SetRoleToUserAsync("landlord", userEntity);
             }
 
             // Set cookies
@@ -76,8 +73,7 @@ public class UserService : IUserService
     {
         await _signInManager.SignOutAsync();
     }
-
-    private async Task<Result<bool>> SetRoleToUserAsync(string roleName, UserEntity user)
+    private async Task SetRoleToUserAsync(string roleName, UserEntity user)
     {
         var role = await _roleManager.FindByNameAsync(roleName);
 
@@ -85,20 +81,15 @@ public class UserService : IUserService
         {
             var exception = new NotFoundRoleException($"Can not find role: {roleName}");
             _logger.LogCritical(exception, "Can not find role");
-
-            return new Result<bool>(new NotFoundRoleException($"Can not find role: {roleName}"));
+            throw exception;
         }
 
         IdentityResult roleAddingResult = await _userManager.AddToRoleAsync(user, role.Name);
-        if(roleAddingResult.Succeeded)
-        {
-            return new Result<bool>(true);
-        }
-        else
+        if(roleAddingResult.Succeeded == false)
         {
             var exception = new RegistrationOperationException(roleAddingResult.Errors.Select(x => x.Description).ToArray());
             _logger.LogCritical(exception, "Can not add role to user");
-            return new Result<bool>(exception);
+            throw exception;
         }
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,11 @@ namespace PropertySearchApp.Controllers;
 public class IdentityController : Controller
 {
     private readonly IUserService _userService;
-    public IdentityController(IUserService userService)
+    private readonly IMapper _mapper;
+    public IdentityController(IUserService userService, IMapper mapper)
     {
         _userService = userService;
+        _mapper = mapper;
     }
     
     [HttpGet]
@@ -52,7 +55,7 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(registrationModel);
 
-        Result<bool> result = await _userService.RegisterAsync(new UserDomain(registrationModel.Username, registrationModel.Email, registrationModel.Password, registrationModel.IsLandlord));
+        Result<bool> result = await _userService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
 
         return result.Match<IActionResult>(success =>
         {
