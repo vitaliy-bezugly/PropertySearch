@@ -1,9 +1,4 @@
-﻿using LanguageExt.Common;
-using Microsoft.AspNetCore.Identity;
-using PropertySearchApp.Common.Exceptions;
-using PropertySearchApp.Entities;
-
-namespace PropertySearchApp.Domain;
+﻿namespace PropertySearchApp.Domain;
 
 public class UserDomain
 {

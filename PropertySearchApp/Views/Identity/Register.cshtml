@@ -50,9 +50,9 @@
     </div>
 
     <div class="form-check d-flex">
-        <input class="form-check-input me-2" type="checkbox" value="" id="termsCheckInput" required/>
-        <label class="form-check-label" for="termsCheckInput">
-            I agree all statements in Terms of service
+        <input class="form-check-input me-2" type="checkbox" id="termsCheckInput" asp-for="IsLandlord"/>
+        <label class="form-check-label" for="termsCheckInput" asp-for="IsLandlord">
+            I am a landlord
         </label>
     </div>
     <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>

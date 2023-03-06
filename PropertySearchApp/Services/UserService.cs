@@ -13,16 +13,18 @@ public class UserService : IUserService
     private readonly UserManager<UserEntity> _userManager;
     private readonly SignInManager<UserEntity> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager)
+    private readonly ILogger<UserService> _logger;
+    public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager, ILogger<UserService> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
+        _logger = logger;
     }
 
     public async Task<Result<bool>> RegisterAsync(UserDomain user)
     {
-        var userToRegister = new UserEntity
+        var userEntity = new UserEntity
         {
             UserName = user.Username,
             Email = user.Email
@@ -36,30 +38,20 @@ public class UserService : IUserService
         }
         
         // Add user
-        var result = await _userManager.CreateAsync(userToRegister, user.Password);
+        var result = await _userManager.CreateAsync(userEntity, user.Password);
         if (result.Succeeded)
         {
             // Set roles 
-            /*
-            string roleName = "landlord";
-            var response = await SetRoleToUserAsync(roleName, userToRegister);
-            response.Match<bool>(success =>
+            if(user.IsLandlord == true)
             {
-                return true;
-            }, exception =>
-            {
-                if (exception is NotFoundRoleException registrationException)
-                {
-                    var creationRoleResult = await CreateRoleAsync(roleName);
-                    return true;
-                }
+                Result<bool> roleAddingResult = await SetRoleToUserAsync("landlord", userEntity);
 
-                return false;
-            });
-             */
+                if (roleAddingResult.IsSuccess == false)
+                    return roleAddingResult;
+            }
 
             // Set cookies
-            await _signInManager.SignInAsync(userToRegister, false);
+            await _signInManager.SignInAsync(userEntity, false);
             return new Result<bool>(true);
         }
         else
@@ -91,15 +83,22 @@ public class UserService : IUserService
 
         if (role == null)
         {
-            return new Result<bool>(new NotFoundRoleException("Can not find role with this name"));
+            var exception = new NotFoundRoleException($"Can not find role: {roleName}");
+            _logger.LogCritical(exception, "Can not find role");
+
+            return new Result<bool>(new NotFoundRoleException($"Can not find role: {roleName}"));
         }
 
-        IdentityResult roleresult = await _userManager.AddToRoleAsync(user, role.Name);
-        return new Result<bool>(true);
-    }
-
-    private async Task<IdentityResult> CreateRoleAsync(string roleName)
-    {
-        return await _roleManager.CreateAsync(new IdentityRole { Name = roleName });
+        IdentityResult roleAddingResult = await _userManager.AddToRoleAsync(user, role.Name);
+        if(roleAddingResult.Succeeded)
+        {
+            return new Result<bool>(true);
+        }
+        else
+        {
+            var exception = new RegistrationOperationException(roleAddingResult.Errors.Select(x => x.Description).ToArray());
+            _logger.LogCritical(exception, "Can not add role to user");
+            return new Result<bool>(exception);
+        }
     }
 }
