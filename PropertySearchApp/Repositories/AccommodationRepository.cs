@@ -6,22 +6,22 @@ namespace PropertySearchApp.Repositories;
 
 public class AccommodationRepository : IAccommodationRepository
 {
-    public Result<IEnumerable<AccommodationEntity>> GetAll()
+    public Task<Result<bool>> DeleteAsync(string accommodationId)
     {
         throw new NotImplementedException();
     }
 
-    public Result<AccommodationEntity?> Get(string accommodationId)
+    public Task<IEnumerable<AccommodationEntity>> GetAllAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Result<bool> Update(AccommodationEntity accommodation)
+    public Task<Result<AccommodationEntity>> GetAsync(string accommodationId)
     {
         throw new NotImplementedException();
     }
 
-    public Result<bool> Delete(string accommodationId)
+    public Task<Result<bool>> UpdateAsync(AccommodationEntity accommodation)
     {
         throw new NotImplementedException();
     }

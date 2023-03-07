@@ -14,22 +14,22 @@ public class AccommodationService : IAccommodationService
         _repository = repository;
     }
 
-    public Result<IEnumerable<AccommodationDomain>> GetAccommodations()
+    public Task<Result<bool>> DeleteAccommodationAsync(string accommodationId)
     {
         throw new NotImplementedException();
     }
 
-    public Result<AccommodationDomain?> GetAccommodationById(string accommodationId)
+    public Task<Result<AccommodationDomain>> GetAccommodationByIdAsync(string accommodationId)
     {
         throw new NotImplementedException();
     }
 
-    public Result<bool> UpdateAccommodation(AccommodationDomain accommodation)
+    public Task<IEnumerable<AccommodationDomain>> GetAccommodationsAsync()
     {
         throw new NotImplementedException();
     }
 
-    public Result<bool> DeleteAccommodation(string accommodationId)
+    public Task<Result<bool>> UpdateAccommodationAsync(AccommodationDomain accommodation)
     {
         throw new NotImplementedException();
     }

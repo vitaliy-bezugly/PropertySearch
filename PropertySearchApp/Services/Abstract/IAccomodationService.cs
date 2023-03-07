@@ -5,8 +5,8 @@ namespace PropertySearchApp.Services.Abstract;
 
 public interface IAccommodationService
 {
-    Result<IEnumerable<AccommodationDomain>> GetAccommodations();
-    Result<AccommodationDomain?> GetAccommodationById(string accommodationId);
-    Result<bool> UpdateAccommodation(AccommodationDomain accommodation);
-    Result<bool> DeleteAccommodation(string accommodationId);
+    Task<IEnumerable<AccommodationDomain>> GetAccommodationsAsync();
+    Task<Result<AccommodationDomain>> GetAccommodationByIdAsync(string accommodationId);
+    Task<Result<bool>> UpdateAccommodationAsync(AccommodationDomain accommodation);
+    Task<Result<bool>> DeleteAccommodationAsync(string accommodationId);
 }

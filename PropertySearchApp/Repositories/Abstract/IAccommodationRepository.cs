@@ -5,8 +5,8 @@ namespace PropertySearchApp.Repositories.Abstract;
 
 public interface IAccommodationRepository
 {
-    Result<IEnumerable<AccommodationEntity>> GetAll();
-    Result<AccommodationEntity?> Get(string accommodationId);
-    Result<bool> Update(AccommodationEntity accommodation);
-    Result<bool> Delete(string accommodationId);
+    Task<IEnumerable<AccommodationEntity>> GetAllAsync();
+    Task<Result<AccommodationEntity>> GetAsync(string accommodationId);
+    Task<Result<bool>> UpdateAsync(AccommodationEntity accommodation);
+    Task<Result<bool>> DeleteAsync(string accommodationId);
 }
