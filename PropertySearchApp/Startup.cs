@@ -7,7 +7,7 @@ public class Startup
 {
     private readonly ILogger<Startup> _logger;
     private readonly List<string> _requiredRoles;
-    private const bool isUpToDate = true;
+    private const bool isUpToDate = false;
     public IConfiguration Configuration
     {
         get;
