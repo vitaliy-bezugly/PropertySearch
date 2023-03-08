@@ -8,18 +8,17 @@ namespace PropertySearchApp.Services;
 public class AccommodationService : IAccommodationService
 {
     private readonly IAccommodationRepository _repository;
-
     public AccommodationService(IAccommodationRepository repository)
     {
         _repository = repository;
     }
 
-    public Task<Result<bool>> DeleteAccommodationAsync(string accommodationId)
+    public Task<Result<bool>> DeleteAccommodationAsync(Guid userId, Guid accommodationId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<AccommodationDomain>> GetAccommodationByIdAsync(string accommodationId)
+    public Task<Result<AccommodationDomain>> GetAccommodationByIdAsync(Guid accommodationId)
     {
         throw new NotImplementedException();
     }
@@ -29,7 +28,7 @@ public class AccommodationService : IAccommodationService
         throw new NotImplementedException();
     }
 
-    public Task<Result<bool>> UpdateAccommodationAsync(AccommodationDomain accommodation)
+    public Task<Result<bool>> UpdateAccommodationAsync(Guid userId, AccommodationDomain accommodation)
     {
         throw new NotImplementedException();
     }

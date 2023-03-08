@@ -12,11 +12,11 @@ namespace PropertySearchApp.Controllers;
 
 public class IdentityController : Controller
 {
-    private readonly IIdentityService _userService;
+    private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
-    public IdentityController(IIdentityService userService, IMapper mapper)
+    public IdentityController(IIdentityService identityService, IMapper mapper)
     {
-        _userService = userService;
+        _identityService = identityService;
         _mapper = mapper;
     }
     
@@ -31,7 +31,7 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(loginModel);
 
-        var result = await _userService.LoginAsync(loginModel.Email, loginModel.Password);
+        var result = await _identityService.LoginAsync(loginModel.Email, loginModel.Password);
 
         return result.Match<IActionResult>(success =>
         {
@@ -55,7 +55,7 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(registrationModel);
 
-        Result<bool> result = await _userService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
+        Result<bool> result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
 
         return result.Match<IActionResult>(success =>
         {
@@ -71,7 +71,7 @@ public class IdentityController : Controller
     [HttpPost, Authorize]
     public async Task<IActionResult> Logout()
     {
-        await _userService.SignOutAsync();
+        await _identityService.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
 
