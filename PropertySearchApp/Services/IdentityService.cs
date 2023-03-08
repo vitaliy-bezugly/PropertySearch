@@ -9,14 +9,14 @@ using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;
 
-public class UserService : IUserService
+public class IdentityService : IIdentityService
 {
     private readonly UserManager<UserEntity> _userManager;
     private readonly SignInManager<UserEntity> _signInManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly ILogger<UserService> _logger;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly ILogger<IdentityService> _logger;
     private readonly IMapper _mapper;
-    public UserService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole> roleManager, ILogger<UserService> logger, IMapper mapper)
+    public IdentityService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole<Guid>> roleManager, ILogger<IdentityService> logger, IMapper mapper)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -76,7 +76,7 @@ public class UserService : IUserService
     private async Task SetRoleToUserAsync(string roleName, UserEntity user)
     {
         var role = await _roleManager.FindByNameAsync(roleName);
-
+        
         if (role == null)
         {
             var exception = new NotFoundRoleException($"Can not find role: {roleName}");

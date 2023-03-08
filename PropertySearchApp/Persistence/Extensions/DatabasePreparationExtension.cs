@@ -10,11 +10,11 @@ public static class DatabasePreparationExtension
         using (var scope = application.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
             foreach (var item in requiredRoles)
             {
-                var role = await roleManager.FindByNameAsync(item);
+                IdentityRole<Guid> role = await roleManager.FindByNameAsync(item);
 
                 if (role == null)
                 {
@@ -36,8 +36,8 @@ public static class DatabasePreparationExtension
         }
     }
 
-    private static async Task<IdentityResult> AddRoleToDatabaseAsync(string roleName, RoleManager<IdentityRole> roleManager)
+    private static async Task<IdentityResult> AddRoleToDatabaseAsync(string roleName, RoleManager<IdentityRole<Guid>> roleManager)
     {
-        return await roleManager.CreateAsync(new IdentityRole { Name = roleName });
+        return await roleManager.CreateAsync(new IdentityRole<Guid> { Id = Guid.NewGuid(), Name = roleName });
     }
 }

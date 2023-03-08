@@ -1,8 +1,8 @@
-using PropertySearchApp.Entities.Abstract;
+using PropertySearchApp.Domain.Abstract;
 
 namespace PropertySearchApp.Domain;
 
-public class AccommodationDomain : BaseEntity
+public class AccommodationDomain : BaseDomain
 {
     public string Title { get; set; }
     public string? Description { get; set; }

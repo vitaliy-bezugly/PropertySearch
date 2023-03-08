@@ -8,7 +8,7 @@ public class ServicesInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IAccommodationService, AccommodationService>();
         logger.LogInformation("Services are successfully installed");
     }

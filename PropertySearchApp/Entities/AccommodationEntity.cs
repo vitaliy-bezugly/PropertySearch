@@ -5,14 +5,17 @@ using PropertySearchApp.Entities.Abstract;
 namespace PropertySearchApp.Entities;
 
 [Table("Accommodation")]
-public class AccommodationEntity : BaseEntity
+public class AccommodationEntity : IEntity
 {
+    [Required, Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
     [Required]
     public string Title { get; set; }
     [DataType(DataType.Text)]
     public string? Description { get; set; }
     public int Price { get; set; }
     [ForeignKey(nameof(User))] 
-    public string UserId { get; set; }
+    public Guid UserId { get; set; }
     public UserEntity? User { get; set; }
+    public DateTime CreationTime { get; set; } = DateTime.Now;
 }

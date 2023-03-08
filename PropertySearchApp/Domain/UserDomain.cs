@@ -1,6 +1,8 @@
-﻿namespace PropertySearchApp.Domain;
+﻿using PropertySearchApp.Domain.Abstract;
 
-public class UserDomain
+namespace PropertySearchApp.Domain;
+
+public class UserDomain : BaseDomain
 {
     public string Username { get; set; }
     public string Email { get; set; }

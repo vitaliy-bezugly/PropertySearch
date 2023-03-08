@@ -12,9 +12,9 @@ namespace PropertySearchApp.Controllers;
 
 public class IdentityController : Controller
 {
-    private readonly IUserService _userService;
+    private readonly IIdentityService _userService;
     private readonly IMapper _mapper;
-    public IdentityController(IUserService userService, IMapper mapper)
+    public IdentityController(IIdentityService userService, IMapper mapper)
     {
         _userService = userService;
         _mapper = mapper;

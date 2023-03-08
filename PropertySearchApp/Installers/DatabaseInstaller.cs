@@ -10,7 +10,7 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-        var connectionString = configuration.GetConnectionString("LocalDatabaseConnection") 
+        var connectionString = configuration.GetConnectionString("LocalDatabaseConnection")
                                ?? throw new InvalidOperationException("Connection string 'LocalDatabaseConnection' not found.");
 
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -26,9 +26,9 @@ public class DatabaseInstaller : IInstaller
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
         })
-            .AddRoles<IdentityRole>()
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
-        
+
         logger.LogInformation("Database has been successfully installed");
     }
 }

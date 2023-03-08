@@ -6,7 +6,7 @@ namespace PropertySearchApp.Repositories;
 
 public class AccommodationRepository : IAccommodationRepository
 {
-    public Task<Result<bool>> DeleteAsync(string accommodationId)
+    public Task<Result<bool>> DeleteAsync(Guid userId, Guid accommodationId)
     {
         throw new NotImplementedException();
     }
@@ -16,12 +16,12 @@ public class AccommodationRepository : IAccommodationRepository
         throw new NotImplementedException();
     }
 
-    public Task<Result<AccommodationEntity>> GetAsync(string accommodationId)
+    public Task<Result<AccommodationEntity>> GetAsync(Guid accommodationId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<bool>> UpdateAsync(AccommodationEntity accommodation)
+    public Task<Result<bool>> UpdateAsync(Guid userId, AccommodationEntity accommodation)
     {
         throw new NotImplementedException();
     }
