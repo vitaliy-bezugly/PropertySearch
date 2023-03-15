@@ -19,4 +19,37 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Accommodation\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Identity\Login.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Identity\Register.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Identity\_IdentityLayout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Services\Views\Accommodation\Index.cshtml" />
+    <AdditionalFiles Include="Services\Views\Home\Index.cshtml" />
+    <AdditionalFiles Include="Services\Views\Home\Privacy.cshtml" />
+    <AdditionalFiles Include="Services\Views\Identity\Login.cshtml" />
+    <AdditionalFiles Include="Services\Views\Identity\Register.cshtml" />
+    <AdditionalFiles Include="Services\Views\Identity\_IdentityLayout.cshtml" />
+    <AdditionalFiles Include="Services\Views\Shared\Error.cshtml" />
+    <AdditionalFiles Include="Services\Views\Shared\_Layout.cshtml" />
+    <AdditionalFiles Include="Services\Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <AdditionalFiles Include="Services\Views\_ViewImports.cshtml" />
+    <AdditionalFiles Include="Services\Views\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Services\Views\Identity\_IdentityLayout.cshtml.css" />
+    <Content Include="Services\Views\Shared\_Layout.cshtml.css" />
+  </ItemGroup>
+
 </Project>
