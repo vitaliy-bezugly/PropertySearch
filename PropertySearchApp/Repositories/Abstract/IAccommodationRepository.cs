@@ -5,8 +5,9 @@ namespace PropertySearchApp.Repositories.Abstract;
 
 public interface IAccommodationRepository
 {
-    Task<IEnumerable<AccommodationEntity>> GetAllAsync();
-    Task<Result<AccommodationEntity>> GetAsync(Guid accommodationId);
-    Task<Result<bool>> UpdateAsync(Guid userId, AccommodationEntity accommodation);
-    Task<Result<bool>> DeleteAsync(Guid userId, Guid accommodationId);
+    Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken);
+    Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken);
+    Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken);
+    Task<Result<bool>> UpdateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken);
+    Task<Result<bool>> DeleteAsync(Guid accommodationId, CancellationToken cancellationToken);
 }
