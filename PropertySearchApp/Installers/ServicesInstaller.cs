@@ -10,6 +10,7 @@ public class ServicesInstaller : IInstaller
     {
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IAccommodationService, AccommodationService>();
+        services.AddScoped<UserValidatorService>();
         logger.LogInformation("Services are successfully installed");
     }
 }
