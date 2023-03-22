@@ -47,7 +47,7 @@ public class AccommodationRepository : IAccommodationRepository
         var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodation.Id, cancellationToken);
         if (exists == null)
         {
-            var exception = new AccommodationDataSourceException(new string[] {"There is no accommodation with given parameters"});
+            var exception = new AccommodationValidationException(new string[] {"There is no accommodation with given parameters"});
             _logger.LogWarning(exception, "Can not update accommodation");
             return new Result<bool>(exception);
         }
@@ -66,7 +66,7 @@ public class AccommodationRepository : IAccommodationRepository
         var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
         if (exists == null)
         {
-            var exception = new AccommodationDataSourceException(new string[] {"There is no accommodation with given id"});
+            var exception = new AccommodationValidationException(new string[] {"There is no accommodation with given id"});
             _logger.LogWarning(exception, "Can not delete accommodation");
             return new Result<bool>(exception);
         }
