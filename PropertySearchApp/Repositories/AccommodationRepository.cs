@@ -18,11 +18,11 @@ public class AccommodationRepository : IAccommodationRepository
     }
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.ToListAsync(cancellationToken);
+        return await _context.Accommodations.AsNoTracking().ToListAsync(cancellationToken);
     }
     public async Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+        return await _context.Accommodations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
     }
 
     public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
