@@ -8,7 +8,7 @@ namespace PropertySearchApp.Entities;
 public class AccommodationEntity : IEntity
 {
     [Required, Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.Empty;
     [Required]
     public string Title { get; set; }
     [DataType(DataType.Text)]
