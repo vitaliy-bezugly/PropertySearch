@@ -1,5 +1,4 @@
 using LanguageExt.Common;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Entities;
@@ -11,13 +10,11 @@ namespace PropertySearchApp.Repositories;
 public class AccommodationRepository : IAccommodationRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly UserManager<UserEntity> _userManager;
     private readonly ILogger<AccommodationRepository> _logger;
-    public AccommodationRepository(ApplicationDbContext context, ILogger<AccommodationRepository> logger, UserManager<UserEntity> userManager)
+    public AccommodationRepository(ApplicationDbContext context, ILogger<AccommodationRepository> logger)
     {
         _context = context;
         _logger = logger;
-        _userManager = userManager;
     }
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {

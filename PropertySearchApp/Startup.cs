@@ -10,7 +10,7 @@ public class Startup
 {
     private readonly ILogger<Startup> _logger;
     private readonly List<string> _requiredRoles;
-    private const bool isUpToDate = false;
+    private const bool IsUpToDate = false;
     public IConfiguration Configuration
     {
         get;
@@ -49,7 +49,7 @@ public class Startup
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        if(isUpToDate == false)
+        if(IsUpToDate == false)
             await app.AddRolesInDatabaseAsync(app.Logger, _requiredRoles);
 
         app.Run();
