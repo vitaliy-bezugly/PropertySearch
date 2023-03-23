@@ -1,33 +1,31 @@
 using LanguageExt.Common;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using PropertySearchApp.Common.Exceptions;
-using PropertySearchApp.Domain;
-using PropertySearchApp.Entities;
+using PropertySearchApp.Repositories.Abstract;
+using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;
 
-public class UserValidatorService
+public class UserValidatorService : IUserValidatorService
 {
-    private readonly UserManager<UserEntity> _userManager;
+    private readonly IUserReceiverRepository _userReceiver;
     private readonly ILogger<UserValidatorService> _logger;
-    public UserValidatorService(UserManager<UserEntity> userManager, ILogger<UserValidatorService> logger)
+    public UserValidatorService(IUserReceiverRepository userReceiver, ILogger<UserValidatorService> logger)
     {
-        _userManager = userManager;
+        _userReceiver = userReceiver;
         _logger = logger;
     }
 
     public async Task<Result<bool>> ValidateAsync(Guid userId)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var user = await _userReceiver.GetByIdAsync(userId);
         
         if (user == null)
         {
-            var exception = new InvalidOperationException("There is no user with given id");
-            _logger.LogError(exception, "Can not validate not existing user");
-            throw exception;
+            var exception = new UserNotFoundException(new string[] { "There is no user with given id" });
+            _logger.LogWarning(exception, "Can not validate not existing user");
+            return new Result<bool>(exception);
         }
-        if (user.IsLandlord == false)
+        else if (user.IsLandlord == false)
         {
             var exception = new UserValidationException(new[] { "Regular user can not create accommodation's offers" });
             _logger.LogWarning(exception, "User is not a landlord");
@@ -39,8 +37,8 @@ public class UserValidatorService
 
     public async Task<Result<bool>> ValidateAccessToAccommodationAsync(Guid userId, Guid accommodationId)
     {
-        var user = await _userManager.Users.Include(x => x.Accommodations)
-            .FirstOrDefaultAsync(x => x.Id == userId);
+        var user = await _userReceiver.GetByIdWithAccommodationsAsync(userId);
+        
         if (user is null)
             throw new ArgumentException($"{nameof(user)} can not be null");
         

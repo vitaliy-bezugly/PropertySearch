@@ -4,7 +4,13 @@ public class BaseApplicationException : Exception
 {
     public string[] Errors { get; }
 
-    public BaseApplicationException(string[] errors)
+    public BaseApplicationException() : base()
+    { }
+    public BaseApplicationException(string message) : base(message)
+    {
+        
+    }
+    public BaseApplicationException(string[] errors) : base(errors[0])
     {
         Errors = errors;
     }

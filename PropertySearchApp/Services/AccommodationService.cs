@@ -10,9 +10,9 @@ namespace PropertySearchApp.Services;
 public class AccommodationService : IAccommodationService
 {
     private readonly IAccommodationRepository _accommodationRepository;
-    private readonly UserValidatorService _userValidator;
+    private readonly IUserValidatorService _userValidator;
     private readonly IMapper _mapper;
-    public AccommodationService(IAccommodationRepository accommodationRepository, IMapper mapper, UserValidatorService userValidator)
+    public AccommodationService(IAccommodationRepository accommodationRepository, IMapper mapper, IUserValidatorService userValidator)
     {
         _accommodationRepository = accommodationRepository;
         _mapper = mapper;
@@ -32,6 +32,10 @@ public class AccommodationService : IAccommodationService
 
     public async Task<Result<bool>> CreateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
+        var accommodationValidationResult = accommodation.Validate();
+        if (accommodationValidationResult.IsFaulted)
+            return accommodationValidationResult;
+        
         var (validationResult, validationError) = await ValidateUserFieldsAsync(accommodation.UserId);
         if (validationResult == false)
         {
