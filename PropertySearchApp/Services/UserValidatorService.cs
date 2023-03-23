@@ -15,9 +15,10 @@ public class UserValidatorService : IUserValidatorService
         _logger = logger;
     }
 
-    public async Task<Result<bool>> ValidateAsync(Guid userId)
+    public async Task<Result<bool>> ValidateAsync(Guid userId, Guid accommodationId, bool validateAccess)
     {
-        var user = await _userReceiver.GetByIdAsync(userId);
+        var user = validateAccess == true ? await _userReceiver.GetByIdWithAccommodationsAsync(userId) :
+                await _userReceiver.GetByIdAsync(userId);
         
         if (user == null)
         {
@@ -27,28 +28,19 @@ public class UserValidatorService : IUserValidatorService
         }
         else if (user.IsLandlord == false)
         {
-            var exception = new UserValidationException(new[] { "Regular user can not create accommodation's offers" });
+            var exception = new UserValidationException(new[] { "Regular user does not have access to accommodation offers" });
             _logger.LogWarning(exception, "User is not a landlord");
             return new Result<bool>(exception);
         }
-
-        return true;
-    }
-
-    public async Task<Result<bool>> ValidateAccessToAccommodationAsync(Guid userId, Guid accommodationId)
-    {
-        var user = await _userReceiver.GetByIdWithAccommodationsAsync(userId);
-        
-        if (user is null)
-            throw new ArgumentException($"{nameof(user)} can not be null");
-        
-        if (user.Accommodations.Any(x => x.Id == accommodationId) == false)
+        else if (validateAccess == true && user.Accommodations.Any(x => x.Id == accommodationId) == false)
         {
             var exception = new UserValidationException(new[] { "Given user has no access to this accommodation" });
             _logger.LogWarning(exception, "Access error");
             return new Result<bool>(exception);
         }
-
-        return new Result<bool>(true);
+        else
+        {
+            return new Result<bool>(true);
+        }
     }
 }

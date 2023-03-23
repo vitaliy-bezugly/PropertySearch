@@ -36,10 +36,10 @@ public class AccommodationService : IAccommodationService
         if (accommodationValidationResult.IsFaulted)
             return accommodationValidationResult;
         
-        var (validationResult, validationError) = await ValidateUserFieldsAsync(accommodation.UserId);
-        if (validationResult == false)
+        var validationResult = await _userValidator.ValidateAsync(accommodation.UserId, accommodation.Id, false);
+        if (validationResult.IsFaulted)
         {
-            return validationError;
+            return validationResult;
         }
         
         var creationResult = await _accommodationRepository.CreateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
@@ -48,10 +48,14 @@ public class AccommodationService : IAccommodationService
 
     public async Task<Result<bool>> UpdateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
-        var (validationResult, validationError) = await ValidateUserFieldsAndAccessAsync(accommodation.UserId, accommodation.Id);
-        if (validationResult == false)
+        var accommodationValidationResult = accommodation.Validate();
+        if (accommodationValidationResult.IsFaulted)
+            return accommodationValidationResult;
+        
+        var validationResult = await _userValidator.ValidateAsync(accommodation.UserId, accommodation.Id, true);
+        if (validationResult.IsFaulted)
         {
-            return validationError;
+            return validationResult;
         }
         
         var updateResult = await _accommodationRepository.UpdateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
@@ -60,40 +64,13 @@ public class AccommodationService : IAccommodationService
 
     public async Task<Result<bool>> DeleteAccommodationAsync(Guid userId, Guid accommodationId, CancellationToken cancellationToken)
     {
-        var (validationResult, validationError) = await ValidateUserFieldsAndAccessAsync(userId, accommodationId);
-        if (validationResult == false)
+        var validationResult = await _userValidator.ValidateAsync(userId, accommodationId, true);
+        if (validationResult.IsFaulted)
         {
-            return validationError;
+            return validationResult;
         }
         
         var deletionResult = await _accommodationRepository.DeleteAsync(accommodationId, cancellationToken);
         return deletionResult;
-    }
-
-    private async Task<(bool, Result<bool>)> ValidateUserFieldsAsync(Guid userId)
-    {
-        var validationResult = await _userValidator.ValidateAsync(userId);
-        if (validationResult.IsFaulted)
-        {
-            return (false, validationResult);
-        }
-        
-        return (true, new Result<bool>(true));
-    }
-    private async Task<(bool, Result<bool>)> ValidateUserFieldsAndAccessAsync(Guid userId, Guid accommodationId)
-    {
-        var (validationResult, validationError) = await ValidateUserFieldsAsync(userId);
-        if (validationResult == false)
-        {
-            return (false, validationError);
-        }
-        
-        var validationAccessResult = await _userValidator.ValidateAccessToAccommodationAsync(userId, accommodationId);
-        if (validationAccessResult.IsFaulted)
-        {
-            return (false, validationAccessResult);
-        }
-
-        return (true, new Result<bool>(true));
     }
 }
