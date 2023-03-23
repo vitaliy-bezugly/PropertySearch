@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertySearchApp", "PropertySearchApp\PropertySearchApp.csproj", "{C8452941-C2D4-443D-99EA-4AB6A66F81C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertySearch.UnitTests", "PropertySearch.UnitTests\PropertySearch.UnitTests.csproj", "{ADFB30B9-ABDA-4E20-831D-676F91478214}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C8452941-C2D4-443D-99EA-4AB6A66F81C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8452941-C2D4-443D-99EA-4AB6A66F81C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8452941-C2D4-443D-99EA-4AB6A66F81C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADFB30B9-ABDA-4E20-831D-676F91478214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADFB30B9-ABDA-4E20-831D-676F91478214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADFB30B9-ABDA-4E20-831D-676F91478214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADFB30B9-ABDA-4E20-831D-676F91478214}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -313,12 +313,17 @@ namespace PropertySearchApp.Migrations
             modelBuilder.Entity("PropertySearchApp.Entities.AccommodationEntity", b =>
                 {
                     b.HasOne("PropertySearchApp.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("Accommodations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PropertySearchApp.Entities.UserEntity", b =>
+                {
+                    b.Navigation("Accommodations");
                 });
 #pragma warning restore 612, 618
         }

@@ -18,11 +18,11 @@ public class AccommodationRepository : IAccommodationRepository
     }
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.ToListAsync(cancellationToken);
+        return await _context.Accommodations.AsNoTracking().ToListAsync(cancellationToken);
     }
     public async Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+        return await _context.Accommodations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
     }
 
     public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ public class AccommodationRepository : IAccommodationRepository
         var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodation.Id, cancellationToken);
         if (exists == null)
         {
-            var exception = new AccommodationDataSourceException(new string[] {"There is no accommodation with given parameters"});
+            var exception = new AccommodationValidationException(new string[] {"There is no accommodation with given parameters"});
             _logger.LogWarning(exception, "Can not update accommodation");
             return new Result<bool>(exception);
         }
@@ -66,7 +66,7 @@ public class AccommodationRepository : IAccommodationRepository
         var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
         if (exists == null)
         {
-            var exception = new AccommodationDataSourceException(new string[] {"There is no accommodation with given id"});
+            var exception = new AccommodationValidationException(new string[] {"There is no accommodation with given id"});
             _logger.LogWarning(exception, "Can not delete accommodation");
             return new Result<bool>(exception);
         }
