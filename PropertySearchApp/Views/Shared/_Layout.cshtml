@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PropertySearchApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StaticFiles/_Layout.css" asp-append-version="true" />
     
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -79,39 +80,43 @@
     </div>
 
     <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                    <h5>About Us</h5>
-                    <p>We are a leading property search website that helps you find your dream home.</p>
-                </div>
-                <div class="col-md-3">
-                    <h5>Popular Searches</h5>
-                    <ul>
-                        <li><a href="#">Apartments for Rent</a></li>
-                        <li><a href="#">Houses for Sale</a></li>
-                        <li><a href="#">Commercial Properties</a></li>
-                        <li><a href="#">Vacation Rentals</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Contact Us</h5>                    
-                    <p>14 Nauky Avenue
-                        <br>Kharkiv, Kharkiv region
-                        <br><a href="tel:+380577021013">057 702 1013</a>
-                    </p>                   
-                </div>
-                <div class="col-md-3">
-                    <h5>Subscribe to Our Newsletter</h5>
-                    <form>
-                        <div class="form-group">
-                            <input type="email" class="form-control" placeholder="Enter your email">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Subscribe</button>
-                    </form>
-                </div>
-            </div>
+        <div class="waves">
+            <div class="wave" id="wave1"></div>
+            <div class="wave" id="wave2"></div>
+            <div class="wave" id="wave3"></div>
+            <div class="wave" id="wave4"></div>
         </div>
+        <ul class="social-icon">
+            <li class="social-icon__item">
+                <a class="social-icon__link" href="#">
+                    <ion-icon name="logo-facebook"></ion-icon>
+                </a>
+            </li>
+            <li class="social-icon__item">
+                <a class="social-icon__link" href="#">
+                    <ion-icon name="logo-twitter"></ion-icon>
+                </a>
+            </li>
+            <li class="social-icon__item">
+                <a class="social-icon__link" href="#">
+                    <ion-icon name="logo-linkedin"></ion-icon>
+                </a>
+            </li>
+            <li class="social-icon__item">
+                <a class="social-icon__link" href="#">
+                    <ion-icon name="logo-instagram"></ion-icon>
+                </a>
+            </li>
+        </ul>
+        <ul class="menu">
+            <li class="menu__item"><a class="menu__link" href="#">Home</a></li>
+            <li class="menu__item"><a class="menu__link" href="#">About</a></li>
+            <li class="menu__item"><a class="menu__link" href="#">Services</a></li>
+            <li class="menu__item"><a class="menu__link" href="#">Team</a></li>
+            <li class="menu__item"><a class="menu__link" href="#">Contact</a></li>
+
+        </ul>
+        <p>&copy;2023 Property Search | All Rights Reserved</p>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
