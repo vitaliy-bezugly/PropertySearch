@@ -17,6 +17,10 @@ body {
   margin-bottom: 60px;
   font-family: 'Roboto', sans-serif;
 }
+body nav {
+    padding-left: 15px; 
+    padding-right: 15px;
+}
 
 form *{
     padding-top: 2px;
