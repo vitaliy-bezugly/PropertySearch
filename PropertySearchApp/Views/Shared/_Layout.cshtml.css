@@ -39,10 +39,65 @@ button.accept-policy {
   line-height: inherit;
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+footer {
+    background-color: #373737;
+    color: #fff;
+    padding: 60px 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+footer h5 {
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer ul li {
+    margin-bottom: 10px;
+}
+
+footer ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer form {
+    margin-top: 20px;
+}
+
+footer form input[type="email"] {
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid #fff;
+    color: #fff;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+footer form input[type="email"]::placeholder {
+    color: #fff;
+}
+
+footer form button[type="submit"] {
+    background-color: #fff;
+    border: none;
+    color: #373737;
+    padding: 10px 30px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+footer form button[type="submit"]:hover {
+    background-color: #373737;
+    color: #fff;
 }

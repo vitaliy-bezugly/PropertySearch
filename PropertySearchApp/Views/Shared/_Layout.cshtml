@@ -78,11 +78,42 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer">
         <div class="container">
-            &copy; 2023 - PropertySearchApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>About Us</h5>
+                    <p>We are a leading property search website that helps you find your dream home.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Popular Searches</h5>
+                    <ul>
+                        <li><a href="#">Apartments for Rent</a></li>
+                        <li><a href="#">Houses for Sale</a></li>
+                        <li><a href="#">Commercial Properties</a></li>
+                        <li><a href="#">Vacation Rentals</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact Us</h5>                    
+                    <p>14 Nauky Avenue
+                        <br>Kharkiv, Kharkiv region
+                        <br><a href="tel:+380577021013">057 702 1013</a>
+                    </p>                   
+                </div>
+                <div class="col-md-3">
+                    <h5>Subscribe to Our Newsletter</h5>
+                    <form>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
