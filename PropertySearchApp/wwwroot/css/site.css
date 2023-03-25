@@ -10,16 +10,27 @@ html {
 
 html {
   position: relative;
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
+  height: 100%;
   margin-bottom: 60px;
   font-family: 'Roboto', sans-serif;
 }
 body nav {
     padding-left: 15px; 
     padding-right: 15px;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1 1 auto;
 }
 
 form *{
@@ -94,4 +105,16 @@ ul.nav li.d-flex i {
     top: 1px;
 
     margin-right: 0px;
+}
+
+body .wrapper footer {
+    position: relative !important;
+    top: 60px;
+}
+
+/* Cards */
+.card:hover {
+    transform: scale(1.10);
+    transition-duration: 500ms;
+    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }

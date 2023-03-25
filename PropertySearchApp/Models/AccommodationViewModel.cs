@@ -5,7 +5,8 @@ namespace PropertySearchApp.Models;
 
 public class AccommodationViewModel
 {
-    public Image? MainPhoto { get; set; }
+    public Guid Id { get; set; }
+    public Uri? PhotoUri { get; set; }
     [Required]
     public string Title { get; set; }
     public string? Description { get; set; }

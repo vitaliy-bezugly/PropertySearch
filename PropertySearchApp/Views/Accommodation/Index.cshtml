@@ -1,1 +1,21 @@
-﻿<h2>Property view</h2>
+﻿@model IEnumerable<AccommodationViewModel>
+
+<div class="container py-2">
+    <div class="row" data-masonry='{"percentPosition": true }'>
+        @foreach (var item in @Model)
+        {
+            <div class="col-sm-4 col-md-3 py-3">
+                <div class="card border-primary">
+                    <div class="card-img">
+                        <img class="card-img-top" src="@item.PhotoUri?.ToString()" alt="Card image cap">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">@item.Title</h3>
+                        <p class="card-text">@item.Description</p>
+                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
