@@ -1,16 +1,21 @@
 ﻿@model IEnumerable<AccommodationViewModel>
 
-<h2>Property view</h2>
-@foreach (var item in @Model)
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <img src="@item.PhotoUri?.ToString()" alt="accommodation photo" width="400" height="300"/>
-                <div>
-                    <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id">@item.Title</a>
+<div class="container py-2">
+    <div class="row" data-masonry='{"percentPosition": true }'>
+        @foreach (var item in @Model)
+        {
+            <div class="col-sm-4 col-md-3 py-3">
+                <div class="card border-primary">
+                    <div class="card-img">
+                        <img class="card-img-top" src="@item.PhotoUri?.ToString()" alt="Card image cap">
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">@item.Title</h3>
+                        <p class="card-text">@item.Description</p>
+                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary">Details</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
-}
+</div>
