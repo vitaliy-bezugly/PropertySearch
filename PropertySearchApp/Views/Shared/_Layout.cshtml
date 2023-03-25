@@ -21,7 +21,7 @@
 </head>
 <body>
     <div class="wrapper" id="wrapper">
-    <header>
+        <header class="header">
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" id="nav">
                 <div class="container-fluid">
                     <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PropertySearchApp</a>
@@ -37,15 +37,15 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>
-                            @if(User?.Identity?.IsAuthenticated == true)
+                            @if (User?.Identity?.IsAuthenticated == true)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Accommodation" asp-action="Index">Offers</a>
                                 </li>
                             }
                         </ul>
-    
-                        @if(User?.Identity?.IsAuthenticated == false)
+
+                        @if (User?.Identity?.IsAuthenticated == false)
                         {
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="nav-item">
@@ -79,7 +79,6 @@
                 @RenderBody()
             </main>
         </div>
-    
         <footer class="footer" id="footer">
             <div class="waves">
                 <div class="wave" id="wave1"></div>
@@ -110,12 +109,22 @@
                 </li>
             </ul>
             <ul class="menu">
-                <li class="menu__item"><a class="menu__link" href="#">Home</a></li>
-                <li class="menu__item"><a class="menu__link" href="#">About</a></li>
-                <li class="menu__item"><a class="menu__link" href="#">Services</a></li>
-                <li class="menu__item"><a class="menu__link" href="#">Team</a></li>
-                <li class="menu__item"><a class="menu__link" href="#">Contact</a></li>
-    
+                <li class="menu__item">
+                    <a class="menu__link" href="#">Home</a>
+                </li>
+                <li class="menu__item">
+                    <a class="menu__link" href="#">About</a>
+                </li>
+                <li class="menu__item">
+                    <a class="menu__link" href="#">Services</a>
+                </li>
+                <li class="menu__item">
+                    <a class="menu__link" href="#">Team</a>
+                </li>
+                <li class="menu__item">
+                    <a class="menu__link" href="#">Contact</a>
+                </li>
+
             </ul>
             <p>&copy;2023 Property Search | All Rights Reserved</p>
         </footer>

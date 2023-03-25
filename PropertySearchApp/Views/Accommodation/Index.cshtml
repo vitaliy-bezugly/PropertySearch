@@ -7,7 +7,9 @@
         <div class="row">
             <div class="col-md-12">
                 <img src="@item.PhotoUri?.ToString()" alt="accommodation photo" width="400" height="300"/>
-                <p>@item.Title</p>
+                <div>
+                    <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id">@item.Title</a>
+                </div>
             </div>
         </div>
     </div>
