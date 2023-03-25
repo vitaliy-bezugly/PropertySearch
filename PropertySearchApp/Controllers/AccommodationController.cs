@@ -26,7 +26,7 @@ public class AccommodationController : Controller
             new AccommodationViewModel
             {
                 Id = Guid.Parse("e014e678-54c6-468c-b59c-cd1c03373bdd"),
-                Title = "The house 1",
+                Title = "A cozy mountain cabin",
                 Description = "Beautifully renovated 2-bedroom apartment in the heart of downtown. Enjoy stunning city views from your private balcony.",
                 LandlordEmail = "vitaliy.minaev@gmail.com",
                 Price = 450,
@@ -35,7 +35,7 @@ public class AccommodationController : Controller
             new AccommodationViewModel
             {
                 Id = Guid.Parse("24f61215-0095-4c21-b56d-2c122325ac31"),
-                Title = "The house 2",
+                Title = "A modern apartment with sleek furnishings",
                 Description = "Cozy 1-bedroom cottage nestled among the trees. Perfect for a romantic getaway or a peaceful retreat.",
                 LandlordEmail = "illa.ivasenko@gmail.com",
                 Price = 670,
@@ -44,7 +44,7 @@ public class AccommodationController : Controller
             new AccommodationViewModel
             {
                 Id = Guid.Parse("ef6608ba-8709-401c-975b-d5cbd7545395"),
-                Title = "The house 3",
+                Title = "A charming beach cottage",
                 Description = "Spacious 3-bedroom house with a large backyard and pool. Ideal for families or groups of friends.",
                 LandlordEmail = "vyacheslave.zal@gmail.com",
                 Price = 789,
@@ -53,7 +53,7 @@ public class AccommodationController : Controller
             new AccommodationViewModel
             {
                 Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Title = "A luxurious villa",
                 Description = "Modern studio apartment with all the amenities. Located in a vibrant neighborhood with plenty of restaurants and bars.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
@@ -61,8 +61,8 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
-                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Id = Guid.Parse("07847d4d-58a8-404c-8c5c-dd80eed41cb8"),
+                Title = "Charming 2-story townhouse",
                 Description = "Charming 2-story townhouse with a fireplace and exposed brick walls. Conveniently located near public transportation.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
@@ -70,8 +70,8 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
-                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Id = Guid.Parse("baa9c357-150d-4be3-b7be-e5ea53e16fd0"),
+                Title = "A spacious loft with high ceilings and industrial-chic decor",
                 Description = "Stylish 1-bedroom loft with high ceilings and natural light. Walking distance to shops, cafes, and galleries.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
@@ -79,8 +79,8 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
-                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Id = Guid.Parse("6c02d76d-1514-4eec-a36e-4c5b4b75a580"),
+                Title = "A secluded treehouse",
                 Description = "Luxurious 4-bedroom villa with breathtaking ocean views. The perfect place for a tropical escape.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
@@ -88,8 +88,8 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
-                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Id = Guid.Parse("bb338d82-2310-45f9-b8d7-536363bb50e6"),
+                Title = "A charming farmhouse",
                 Description = "Quaint 2-bedroom bungalow with a screened-in porch. Surrounded by lush gardens and located in a quiet neighborhood.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
@@ -97,8 +97,8 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
-                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Id = Guid.Parse("262bf977-a8bb-4444-ab6c-d73c4628cca3"),
+                Title = "A traditional Japanese ryokan",
                 Description = "Beautifully furnished 1-bedroom condo with a balcony overlooking the city. Close to parks and museums.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
@@ -106,8 +106,8 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
-                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
-                Title = "The house 4",
+                Id = Guid.Parse("cf743825-d8d8-47f5-8c1d-6c514b23012d"),
+                Title = "A boutique hotel",
                 Description = "Cozy 2-bedroom cabin in the woods with a rustic interior and a wood-burning stove. A great spot for nature lovers.",
                 LandlordEmail = "dmitriy.gera@gmail.com",
                 Price = 1200,
