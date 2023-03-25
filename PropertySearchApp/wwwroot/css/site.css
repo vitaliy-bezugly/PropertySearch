@@ -14,12 +14,23 @@ html {
 }
 
 body {
+  height: 100%;
   margin-bottom: 60px;
   font-family: 'Roboto', sans-serif;
 }
 body nav {
     padding-left: 15px; 
     padding-right: 15px;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1 1 auto;
 }
 
 form *{
@@ -94,4 +105,9 @@ ul.nav li.d-flex i {
     top: 1px;
 
     margin-right: 0px;
+}
+
+body .wrapper footer {
+    position: relative !important;
+    top: 60px;
 }

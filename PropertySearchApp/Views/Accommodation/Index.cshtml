@@ -1,1 +1,14 @@
-﻿<h2>Property view</h2>
+﻿@model IEnumerable<AccommodationViewModel>
+
+<h2>Property view</h2>
+@foreach (var item in @Model)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <img src="@item.PhotoUri?.ToString()" alt="accommodation photo" width="400" height="300"/>
+                <p>@item.Title</p>
+            </div>
+        </div>
+    </div>
+}
