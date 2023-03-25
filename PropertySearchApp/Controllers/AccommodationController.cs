@@ -26,6 +26,7 @@ public class AccommodationController : Controller
         {
             new AccommodationViewModel
             {
+                Id = Guid.Parse("e014e678-54c6-468c-b59c-cd1c03373bdd"),
                 Title = "The house 1",
                 Description = "Big house 1",
                 LandlordEmail = "vitaliy.minaev@gmail.com",
@@ -34,6 +35,7 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
+                Id = Guid.Parse("24f61215-0095-4c21-b56d-2c122325ac31"),
                 Title = "The house 2",
                 Description = "Big house 2",
                 LandlordEmail = "illa.ivasenko@gmail.com",
@@ -42,6 +44,7 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
+                Id = Guid.Parse("ef6608ba-8709-401c-975b-d5cbd7545395"),
                 Title = "The house 3",
                 Description = "Big house 3",
                 LandlordEmail = "vyacheslave.zal@gmail.com",
@@ -50,6 +53,7 @@ public class AccommodationController : Controller
             },
             new AccommodationViewModel
             {
+                Id = Guid.Parse("8fe86923-0bfa-41ad-8b1d-147b00c585cb"),
                 Title = "The house 4",
                 Description = "Big house 4",
                 LandlordEmail = "dmitriy.gera@gmail.com",
