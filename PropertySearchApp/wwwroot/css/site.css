@@ -118,3 +118,13 @@ body .wrapper footer {
     transition-duration: 500ms;
     box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }
+
+.card .card-body .price {
+    display: inline;
+    color: crimson;
+}
+
+.bx-purchase-tag {
+    position: relative;
+    top: 4px;
+}

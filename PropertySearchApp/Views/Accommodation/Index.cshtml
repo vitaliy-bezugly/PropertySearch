@@ -12,7 +12,19 @@
                     <div class="card-body">
                         <h3 class="card-title">@item.Title</h3>
                         <p class="card-text">@item.Description</p>
-                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                        <div class="container p-0">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary" style="width: 100%">Details</a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="" style="width: 100%">
+                                        <i class='bx bx-purchase-tag'></i>
+                                        <p class="price">@item.Price$</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
