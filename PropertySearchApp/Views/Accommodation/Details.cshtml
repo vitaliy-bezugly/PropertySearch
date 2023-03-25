@@ -1,3 +1,27 @@
 @model AccommodationViewModel
 
-<p>@Model.Title</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="image-wrapper">
+                <img src="@Model.PhotoUri?.ToString()" class="img-rounded" alt="Photo">
+            </div>
+            <a asp-controller="Accommodation" asp-action="Index" class="btn btn-secondary mt-2" style="min-width:150px">Go back</a>
+        </div>
+        <div class="col-md-8">
+            <h3>@Model.Title</h3>
+            <p class="text-gray">@Model.Description</p>
+            <h6>
+                <i class='bx bx-purchase-tag'></i>
+                Price:
+                @Model.Price$
+            </h6>
+            <div>
+                Landlord's email:
+                <a href="#">
+                    @Model.LandlordEmail
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
