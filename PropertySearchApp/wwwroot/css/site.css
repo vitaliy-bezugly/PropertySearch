@@ -146,3 +146,12 @@ body .wrapper footer {
 .text-gray {
     color: gray;
 }
+
+/* add-accommodation */
+.add-accommodation {
+    margin-left: 12px;
+}
+.add-accommodation i {
+    position: relative;
+    top: 5px;
+}
