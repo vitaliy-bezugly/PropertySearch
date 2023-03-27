@@ -2,7 +2,7 @@
 
 <div class="card login-logout-tab">
     <div class="card-header">
-        <h5>Create accommodation</h5>
+        <h5 class="add-accommodation-header">Create accommodation</h5>
     </div>
     <div class="card-content">
         <form method="post" asp-controller="Accommodation" asp-action="Create">
@@ -45,6 +45,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
 
             <button type="submit" class="btn btn-primary float-end">Submit</button>
+            <a class="btn btn-secondary float-end go-back" asp-controller="Accommodation" asp-action="Index">Go back</a>
         </form>
     </div>
 </div>

@@ -37,7 +37,10 @@ form *{
     padding-top: 2px;
 }
 
-form button {
+a.go-back {
+    margin-right: 5px;
+}
+form button, form a.go-back {
     margin-top: 5px;
     min-width: 120px;
 }
