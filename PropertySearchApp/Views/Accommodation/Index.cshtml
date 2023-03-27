@@ -4,7 +4,7 @@
 {
     <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
         <i class='bx bx-add-to-queue'></i>
-        Add accommodation
+        <p>Add accommodation</p>
     </a>
 }
 
@@ -13,7 +13,7 @@
         @foreach (var item in @Model)
         {
             <div class="col-sm-4 col-md-3 py-3">
-                <div class="card border-primary">
+                <div class="card accommodation border-primary">
                     <div class="card-img">
                         @if (string.IsNullOrEmpty(item.PhotoUri))
                         {

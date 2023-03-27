@@ -113,7 +113,7 @@ body .wrapper footer {
 }
 
 /* Cards */
-.card:hover {
+.card.accommodation:hover {
     transform: scale(1.10);
     transition-duration: 500ms;
     box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
@@ -153,5 +153,16 @@ body .wrapper footer {
 }
 .add-accommodation i {
     position: relative;
-    top: 5px;
+    top: 2px;
+}
+.add-accommodation span {
+    position: relative;
+    bottom: 2px;
+}
+
+/* Add accommodation form */
+.add-accommodation-header {
+    position: relative;
+    top: 9px;
+    left: 20px;
 }
