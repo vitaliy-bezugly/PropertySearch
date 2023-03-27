@@ -9,6 +9,9 @@ public class ApplicationMapperExtension : Profile
 {
     public ApplicationMapperExtension()
     {
+        CreateMap<AccommodationViewModel, AccommodationDomain>().ReverseMap();
+        CreateMap<AccommodationDomain, AccommodationEntity>().ReverseMap();
+
         CreateMap<UserDomain, UserEntity>();
         CreateMap<RegistrationFormViewModel, UserDomain>();
     }

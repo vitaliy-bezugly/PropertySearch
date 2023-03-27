@@ -7,7 +7,14 @@
             <div class="col-sm-4 col-md-3 py-3">
                 <div class="card border-primary">
                     <div class="card-img">
-                        <img class="card-img-top" src="@item.PhotoUri?.ToString()" alt="Card image cap">
+                        @if(string.IsNullOrEmpty(item.PhotoUri))
+                        {
+                            <img class="card-img-top" src="~/images/default-image-for-rent.jpg" alt="Card image cap">
+                        }
+                        else
+                        {
+                            <img class="card-img-top" src="@item.PhotoUri" alt="Card image cap">
+                        }
                     </div>
                     <div class="card-body">
                         <h3 class="card-title">@item.Title</h3>
