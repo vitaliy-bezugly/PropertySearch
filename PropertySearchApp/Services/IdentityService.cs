@@ -56,9 +56,9 @@ public class IdentityService : IIdentityService
             return new Result<bool>(new RegistrationOperationException(result.Errors.Select(x => x.Description).ToArray()));
         }
     }
-    public async Task<Result<bool>> LoginAsync(string email, string password)
+    public async Task<Result<bool>> LoginAsync(string username, string password)
     {
-        var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
+        var result = await _signInManager.PasswordSignInAsync(username, password, false, false);
 
         if (result.Succeeded == true)
         {

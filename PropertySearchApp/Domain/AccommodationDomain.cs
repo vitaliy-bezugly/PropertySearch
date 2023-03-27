@@ -10,6 +10,7 @@ public class AccommodationDomain : BaseDomain
     public string? Description { get; set; }
     public int Price { get; set; }
     public Guid UserId { get; set; }
+    public string? PhotoUri { get; set; }
 
     public AccommodationDomain()
     {

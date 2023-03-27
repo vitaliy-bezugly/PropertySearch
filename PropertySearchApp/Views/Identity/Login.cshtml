@@ -6,13 +6,13 @@
 
 <form method="post" asp-action="Login" asp-controller="Identity">
   <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
+    <label for="exampleInputEmail1">Username</label>
     <div class="d-flex">
-        <i class='bx bx-envelope' ></i>
-        <input type="email" required class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" asp-for="Email">
+        <i class='bx bxs-user-account'></i>
+        <input type="text" required class="form-control" id="inputUsername" placeholder="Enter username" asp-for="Username">
     </div>
-    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-    <span asp-validation-for="Email" class="text-danger"></span>
+    <small id="emailHelp" class="form-text text-muted">We'll never share your personal data with anyone else.</small>
+    <span asp-validation-for="Username" class="text-danger"></span>
 </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Password</label>

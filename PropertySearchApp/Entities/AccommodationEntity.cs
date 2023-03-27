@@ -14,6 +14,7 @@ public class AccommodationEntity : IEntity
     [DataType(DataType.Text)]
     public string? Description { get; set; }
     public int Price { get; set; }
+    public string? PhotoUri { get; set; }
     [ForeignKey(nameof(User))] 
     public Guid UserId { get; set; }
     public UserEntity? User { get; set; }
