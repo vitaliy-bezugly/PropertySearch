@@ -13,4 +13,6 @@ public class AccommodationViewModel
     public int Price { get; set; }
     [Required, EmailAddress]
     public string LandlordEmail { get; set; }
+    [Required]
+    public string OwnerId { get; set; }
 }

@@ -31,7 +31,7 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(loginModel);
 
-        var result = await _identityService.LoginAsync(loginModel.Email, loginModel.Password);
+        var result = await _identityService.LoginAsync(loginModel.Username, loginModel.Password);
 
         return result.Match<IActionResult>(success =>
         {
