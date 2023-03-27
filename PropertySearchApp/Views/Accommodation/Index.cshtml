@@ -2,7 +2,7 @@
 
 @if (User.IsInRole("landlord"))
 {
-    <a class="btn btn-primary add-accommodation">
+    <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
         <i class='bx bx-add-to-queue'></i>
         Add accommodation
     </a>

@@ -34,11 +34,16 @@ public class AccommodationController : Controller
 
         return View(accommodations);
     }
-    
     [HttpGet]
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
         return accommodation == null ? NotFound() : View(_mapper.Map<AccommodationViewModel>(accommodation));
+    }
+    [HttpGet]
+    public IActionResult Create()
+    {
+        var createAccommodation = new CreateAccommodationViewModel();
+        return View(createAccommodation);
     }
 }
