@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
 using PropertySearchApp.Repositories;
 using PropertySearchApp.Services.Abstract;
@@ -45,5 +46,32 @@ public class AccommodationController : Controller
     {
         var createAccommodation = new CreateAccommodationViewModel();
         return View(createAccommodation);
+    }
+    [ValidateAntiForgeryToken, HttpPost]
+    public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid == false)
+            return View(viewModel);
+
+        // TODO - create ctor
+        var accommodation = new AccommodationDomain 
+        { 
+            Id = Guid.NewGuid(), 
+            Title = viewModel.Title,
+            Description = viewModel.Description,
+            Price = viewModel.Price,
+            PhotoUri = viewModel.PhotoUri,
+            UserId = _userId
+        };
+
+        var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
+
+        return result.Match<IActionResult>(success =>
+        {
+            return RedirectToAction("Index", "Accommodation");
+        }, exception =>
+        {
+            throw new NotImplementedException();
+        });
     }
 }
