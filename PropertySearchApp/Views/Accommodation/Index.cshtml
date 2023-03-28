@@ -8,6 +8,17 @@
     </a>
 }
 
+@{
+    int currentPageId = 0;
+
+    if (ViewContext.RouteData.Values["id"] != null)
+    {
+        currentPageId = int.Parse(ViewContext.RouteData.Values["id"].ToString());
+    }
+
+    currentPageId += 1;
+}
+
 <div class="container py-2">
     <div class="row" data-masonry='{"percentPosition": true }'>
         @foreach (var item in @Model)
@@ -45,6 +56,40 @@
                     </div>
                 </div>
             </div>
+        }
+    </div>
+</div>
+
+<div class="card login-logout-tab">
+    <div class="card-content">
+        @if(currentPageId != 0)
+        {
+            <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@currentPageId - 1" class="btn btn-secondary">
+                Previous
+                <i class='bx bx-skip-previous-circle' ></i>
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-secondary disabled">
+                Previous
+                <i class='bx bx-skip-previous-circle' ></i>
+            </a>
+        }
+
+        @if (Model.Any())
+        {
+            <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@currentPageId + 1" class="btn btn-primary">
+                Next
+                <i class='bx bx-skip-next-circle' ></i>
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-primary disabled">
+                Next
+                <i class='bx bx-skip-next-circle' ></i>
+            </a>
         }
     </div>
 </div>
