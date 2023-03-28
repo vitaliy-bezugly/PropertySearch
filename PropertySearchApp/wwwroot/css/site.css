@@ -169,3 +169,18 @@ body .wrapper footer {
     top: 9px;
     left: 20px;
 }
+
+/* prev-next-menu */
+.prev-next-menu {
+}
+.prev-next-menu a {
+    min-width: 100px;
+}
+.prev-next-menu a i {
+    position: relative;
+    top: 2px;
+}
+.prev-next-menu a span {
+    position: relative;
+    bottom: 2px;
+}

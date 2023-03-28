@@ -1,13 +1,5 @@
 ﻿@model IEnumerable<AccommodationViewModel>
 
-@if (User.IsInRole("landlord"))
-{
-    <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
-        <i class='bx bx-add-to-queue'></i>
-        <span>Add accommodation</span>
-    </a>
-}
-
 @{
     int currentPageId = 0;
 
@@ -16,7 +8,15 @@
         currentPageId = int.Parse(ViewContext.RouteData.Values["id"].ToString());
     }
 
-    currentPageId += 1;
+    int previousPageId = currentPageId - 1, nextPageId = currentPageId + 1;
+}
+
+@if (User.IsInRole("landlord"))
+{
+    <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
+        <i class='bx bx-add-to-queue'></i>
+        <span>Add accommodation</span>
+    </a>
 }
 
 <div class="container py-2">
@@ -57,39 +57,39 @@
                 </div>
             </div>
         }
-    </div>
-</div>
 
-<div class="card login-logout-tab">
-    <div class="card-content">
-        @if(currentPageId != 0)
-        {
-            <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@currentPageId - 1" class="btn btn-secondary">
-                Previous
-                <i class='bx bx-skip-previous-circle' ></i>
-            </a>
-        }
-        else
-        {
-            <a class="btn btn-secondary disabled">
-                Previous
-                <i class='bx bx-skip-previous-circle' ></i>
-            </a>
-        }
+        <div class="prev-next-menu">
+            @if (currentPageId == 0)
+            {
+                /* Disable */
+                <a class="btn btn-secondary disabled">
+                    <i class='bx bx-skip-previous-circle'></i>
+                    <span>Previous</span>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@previousPageId" class="btn btn-secondary">
+                    <i class='bx bx-skip-previous-circle'></i>
+                    <span>Previous</span>
+                </a>
+            }
 
-        @if (Model.Any())
-        {
-            <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@currentPageId + 1" class="btn btn-primary">
-                Next
-                <i class='bx bx-skip-next-circle' ></i>
-            </a>
-        }
-        else
-        {
-            <a class="btn btn-primary disabled">
-                Next
-                <i class='bx bx-skip-next-circle' ></i>
-            </a>
-        }
+            @if (Model.Count() < 12)
+            {
+                /* Disable */
+                <a class="btn btn-primary disabled float-end">
+                    <span>Next</span>
+                    <i class='bx bx-skip-next-circle'></i>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@nextPageId" class="btn btn-primary float-end">
+                    <span>Next</span>
+                    <i class='bx bx-skip-next-circle'></i>
+                </a>
+            }
+        </div>
     </div>
 </div>
