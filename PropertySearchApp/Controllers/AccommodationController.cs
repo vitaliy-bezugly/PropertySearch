@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
 using PropertySearchApp.Repositories;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
+using System.Text;
 
 namespace PropertySearchApp.Controllers;
 
@@ -52,26 +55,41 @@ public class AccommodationController : Controller
     {
         if (ModelState.IsValid == false)
             return View(viewModel);
-
-        // TODO - create ctor
-        var accommodation = new AccommodationDomain 
-        { 
-            Id = Guid.NewGuid(), 
-            Title = viewModel.Title,
-            Description = viewModel.Description,
-            Price = viewModel.Price,
-            PhotoUri = viewModel.PhotoUri,
-            UserId = _userId
-        };
+        
+        var accommodation = new AccommodationDomain(Guid.NewGuid(),viewModel.Title, viewModel.Description,
+            viewModel.Price, viewModel.PhotoUri, _userId);
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
+        return ToResponse<CreateAccommodationViewModel>(result, viewModel);
+    }
+
+    private IActionResult ToResponse<T>(Result<bool> result, T viewModel)
+        where T : class
+    {
         return result.Match<IActionResult>(success =>
         {
-            return RedirectToAction("Index", "Accommodation");
+            TempData["alert-success"] = "Successfully created accommodation";
+            return View();
         }, exception =>
         {
-            throw new NotImplementedException();
+            if (exception is BaseApplicationException appException)
+            {
+                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                return View(viewModel);
+            }
+
+            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
+            throw exception;
         });
+    }
+    private static string BuildExceptionMessage(string[] errors)
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (var item in errors)
+        {
+            stringBuilder.Append(item);
+        }
+        return stringBuilder.ToString();
     }
 }

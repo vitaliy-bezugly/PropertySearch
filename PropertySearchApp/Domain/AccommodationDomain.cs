@@ -12,12 +12,20 @@ public class AccommodationDomain : BaseDomain
     public Guid UserId { get; set; }
     public string? PhotoUri { get; set; }
 
-    public AccommodationDomain()
+    public AccommodationDomain() : base()
     {
         Title = string.Empty;
         Description = string.Empty;
         Price = 0;
         UserId = Guid.Empty;
+    }
+    public AccommodationDomain(Guid id, string title, string? description, int price, string? photoUri, Guid userId) : base(id)
+    {
+        Title = title;
+        Description = description;
+        Price = price;
+        PhotoUri = photoUri;
+        UserId = userId;
     }
 
     public Result<bool> Validate()
