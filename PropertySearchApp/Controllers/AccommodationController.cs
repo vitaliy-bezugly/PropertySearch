@@ -31,9 +31,9 @@ public class AccommodationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute]int id, CancellationToken cancellationToken)
     {
-        var accommodations = (await _accommodationService.GetAccommodationsAsync(cancellationToken))
+        var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View(accommodations);

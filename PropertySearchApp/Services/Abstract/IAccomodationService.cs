@@ -5,6 +5,7 @@ namespace PropertySearchApp.Services.Abstract;
 
 public interface IAccommodationService
 {
+    Task<IEnumerable<AccommodationDomain>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken);
     Task<IEnumerable<AccommodationDomain>> GetAccommodationsAsync(CancellationToken cancellationToken);
     Task<AccommodationDomain?> GetAccommodationByIdAsync(Guid accommodationId, CancellationToken cancellationToken);
     Task<Result<bool>> CreateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken);

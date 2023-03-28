@@ -18,7 +18,10 @@ public class AccommodationService : IAccommodationService
         _mapper = mapper;
         _userValidator = userValidator;
     }
-
+    public async Task<IEnumerable<AccommodationDomain>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
+    {
+        return (await _accommodationRepository.GetWithLimitsAsync(startAt, countOfItems, cancellationToken)).Select(x => _mapper.Map<AccommodationDomain>(x));
+    }
     public async Task<IEnumerable<AccommodationDomain>> GetAccommodationsAsync(CancellationToken cancellationToken)
     {
         return (await _accommodationRepository.GetAllAsync(cancellationToken)).Select(x => _mapper.Map<AccommodationDomain>(x));

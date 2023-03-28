@@ -16,6 +16,15 @@ public class AccommodationRepository : IAccommodationRepository
         _context = context;
         _logger = logger;
     }
+    public async Task<IEnumerable<AccommodationEntity>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
+    {
+        return await _context.Accommodations
+            .AsNoTracking()
+            .OrderBy(x => x.Id)
+            .Skip(startAt)
+            .Take(countOfItems)
+            .ToListAsync(cancellationToken);
+    }
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _context.Accommodations.AsNoTracking().ToListAsync(cancellationToken);

@@ -1,5 +1,16 @@
 ﻿@model IEnumerable<AccommodationViewModel>
 
+@{
+    int currentPageId = 0;
+
+    if (ViewContext.RouteData.Values["id"] != null)
+    {
+        currentPageId = int.Parse(ViewContext.RouteData.Values["id"].ToString());
+    }
+
+    int previousPageId = currentPageId - 1, nextPageId = currentPageId + 1;
+}
+
 @if (User.IsInRole("landlord"))
 {
     <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
@@ -46,5 +57,39 @@
                 </div>
             </div>
         }
+
+        <div class="prev-next-menu">
+            @if (currentPageId == 0)
+            {
+                /* Disable */
+                <a class="btn btn-secondary disabled">
+                    <i class='bx bx-skip-previous-circle'></i>
+                    <span>Previous</span>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@previousPageId" class="btn btn-secondary">
+                    <i class='bx bx-skip-previous-circle'></i>
+                    <span>Previous</span>
+                </a>
+            }
+
+            @if (Model.Count() < 12)
+            {
+                /* Disable */
+                <a class="btn btn-primary disabled float-end">
+                    <span>Next</span>
+                    <i class='bx bx-skip-next-circle'></i>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@nextPageId" class="btn btn-primary float-end">
+                    <span>Next</span>
+                    <i class='bx bx-skip-next-circle'></i>
+                </a>
+            }
+        </div>
     </div>
 </div>
