@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<AccommodationViewModel>
 
 @{
+    ViewData["Title"] = "Accommodation";
+}
+
+@{
     int currentPageId = 0;
 
     if (ViewContext.RouteData.Values["id"] != null)
