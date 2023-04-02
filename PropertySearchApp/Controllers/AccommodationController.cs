@@ -61,10 +61,17 @@ public class AccommodationController : Controller
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
-        return ToResponse<CreateAccommodationViewModel>(result, viewModel);
+        return ToCreateAccommodationResponse<CreateAccommodationViewModel>(result, viewModel);
     }
 
-    private IActionResult ToResponse<T>(Result<bool> result, T viewModel)
+    [ValidateAntiForgeryToken, HttpPost]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _accommodationService.DeleteAccommodationAsync(_userId, id, cancellationToken);
+        return ToDeleteAccommodationResponse<IActionResult>(result);
+    }
+
+    private IActionResult ToCreateAccommodationResponse<T>(Result<bool> result, T viewModel)
         where T : class
     {
         return result.Match<IActionResult>(success =>
@@ -77,6 +84,25 @@ public class AccommodationController : Controller
             {
                 TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
                 return View(viewModel);
+            }
+
+            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
+            throw exception;
+        });
+    }
+    private IActionResult ToDeleteAccommodationResponse<T>(Result<bool> result)
+        where T : class
+    {
+        return result.Match<IActionResult>(success =>
+        {
+            TempData["alert-success"] = "Successfully deleted accommodation";
+            return RedirectToAction("Index", "Accommodation");
+        }, exception =>
+        {
+            if (exception is BaseApplicationException appException)
+            {
+                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                return RedirectToAction("Index", "Accommodation");
             }
 
             _logger.LogError(exception, "Unhandled exception in create accommodation operation");

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<AccommodationViewModel>
+﻿@using System.Security.Claims
+@model IEnumerable<AccommodationViewModel>
 
 @{
     ViewData["Title"] = "Accommodation";
@@ -21,6 +22,19 @@
         <i class='bx bx-add-to-queue'></i>
         <span>Add accommodation</span>
     </a>
+}
+
+@if (TempData["alert-danger"] != null)
+{
+    <div class="alert alert-danger m-1" role="alert">
+        @TempData["alert-danger"]
+    </div>
+}
+else if (TempData["alert-success"] != null)
+{
+    <div class="alert alert-success m-1" role="alert">
+        @TempData["alert-success"]
+    </div>
 }
 
 <div class="container py-2">
@@ -57,6 +71,12 @@
                                 </div>
                             </div>
                         </div>
+                        @if (User.FindFirst(ClaimTypes.NameIdentifier).Value == item.OwnerId)
+                        {
+                            <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
+                                <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete offer</button>
+                            </form>
+                        }
                     </div>
                 </div>
             </div>
