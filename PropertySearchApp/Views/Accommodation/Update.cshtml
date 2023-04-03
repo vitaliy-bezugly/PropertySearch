@@ -22,7 +22,8 @@
             </div>
         }
 
-        <form method="post" asp-controller="Accommodation" asp-action="Delete">
+        <form method="post" asp-controller="Accommodation" asp-action="Update">
+            <input type="text" hidden readonly asp-for="Id"/>
             <div class="form-group">
                 <label asp-for="Title">Title</label>
                 <div class="d-flex">

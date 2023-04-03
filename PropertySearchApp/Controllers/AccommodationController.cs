@@ -75,7 +75,7 @@ public class AccommodationController : Controller
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
-        return ToCreateAccommodationResponse<CreateAccommodationViewModel>(result, viewModel);
+        return ToResponse<CreateAccommodationViewModel>(result, viewModel, "Successfully created accommodation");
     }
 
     [ValidateAntiForgeryToken, HttpPost]
@@ -87,26 +87,27 @@ public class AccommodationController : Controller
     [HttpGet]
     public async Task<IActionResult> Update([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var accommodationToUpdate = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
-        if (accommodationToUpdate == null)
+        var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
+        if (accommodation == null)
             return NotFound();
 
-        var updateAccommodation = new UpdateAccommodationViewModel
-        {
-            Title = accommodationToUpdate.Title,
-            Description = accommodationToUpdate.Description,
-            Price = accommodationToUpdate.Price,
-            PhotoUri = accommodationToUpdate.PhotoUri
-        };
-        return View(updateAccommodation);
+        var updateViewModel = _mapper.Map<UpdateAccommodationViewModel>(accommodation);
+        return View(updateViewModel);
     }
     [ValidateAntiForgeryToken, HttpPost]
-    public async Task<IActionResult> Update(Guid id, CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update([FromForm]UpdateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        if (ModelState.IsValid == false)
+            return View(viewModel);
+
+        var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
+            viewModel.Price, viewModel.PhotoUri, _userId);
+
+        var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
+        return ToResponse<UpdateAccommodationViewModel>(result, viewModel, "Successfully updated accommodation");
     }
 
-    private IActionResult ToCreateAccommodationResponse<T>(Result<bool> result, T viewModel)
+    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
         where T : class
     {
         return result.Match<IActionResult>(success =>
