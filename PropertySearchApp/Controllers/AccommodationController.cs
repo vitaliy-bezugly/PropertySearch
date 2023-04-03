@@ -39,6 +39,15 @@ public class AccommodationController : Controller
         return View(accommodations);
     }
     [HttpGet]
+    public async Task<IActionResult> Mine([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
+            .Select(x => _mapper.Map<AccommodationViewModel>(x));
+
+        accommodations = accommodations.Where(x => x.OwnerId == _userId.ToString());
+        return View("Index", accommodations);
+    }
+    [HttpGet]
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);

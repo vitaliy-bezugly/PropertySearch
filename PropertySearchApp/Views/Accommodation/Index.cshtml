@@ -15,8 +15,18 @@
 
     int previousPageId = currentPageId - 1, nextPageId = currentPageId + 1;
 }
+@{
+    bool IsOwner(string userId)
+    {
+        return User.FindFirst(ClaimTypes.NameIdentifier).Value == userId;
+    }
+    bool IsLandlord()
+    {
+        return User.IsInRole("landlord");
+    }
+}
 
-@if (User.IsInRole("landlord"))
+@if (IsLandlord())
 {
     <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
         <i class='bx bx-add-to-queue'></i>
@@ -42,9 +52,12 @@ else if (TempData["alert-success"] != null)
         <li class="nav-item">
             <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">Offers</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Accommodation" asp-action="Index">Mine</a>
-        </li>
+        @if(IsLandlord())
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Accommodation" asp-action="Mine">Mine</a>
+            </li>
+        }
     </ul>
 </div>
 <div class="container py-2 cards-container">
@@ -81,7 +94,7 @@ else if (TempData["alert-success"] != null)
                                 </div>
                             </div>
                         </div>
-                        @if (User.FindFirst(ClaimTypes.NameIdentifier).Value == item.OwnerId)
+                        @if (IsOwner(item.OwnerId))
                         {
                             <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
                                 <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete offer</button>
@@ -131,8 +144,13 @@ else if (TempData["alert-success"] != null)
 @section Scripts{
     <script>
         $(function() {
-            let offersLink = document.getElementById("offers")
-            offersLink.classList.add('active')
+            var current = location.pathname
+            $('.nav-tabs li a').each(function() {
+                var $this = $(this)
+                if(current.endsWith($this.attr('href'))) {
+                    $this.addClass('active')
+                }
+            })
         })
     </script>
 }
