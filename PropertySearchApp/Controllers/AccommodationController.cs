@@ -2,6 +2,7 @@
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
@@ -36,7 +37,7 @@ public class AccommodationController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index([FromRoute]int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromRoute] int id, CancellationToken cancellationToken)
     {
         var accommodations = (await GetAccommodationsWithLimits(id * 12, 12, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
@@ -69,8 +70,8 @@ public class AccommodationController : Controller
     {
         if (ModelState.IsValid == false)
             return View(viewModel);
-        
-        var accommodation = new AccommodationDomain(Guid.NewGuid(),viewModel.Title, viewModel.Description,
+
+        var accommodation = new AccommodationDomain(Guid.NewGuid(), viewModel.Title, viewModel.Description,
             viewModel.Price, viewModel.PhotoUri, _userId);
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
@@ -95,7 +96,7 @@ public class AccommodationController : Controller
         return View(updateViewModel);
     }
     [ValidateAntiForgeryToken, HttpPost]
-    public async Task<IActionResult> Update([FromForm]UpdateAccommodationViewModel viewModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update([FromForm] UpdateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid == false)
             return View(viewModel);
@@ -112,13 +113,19 @@ public class AccommodationController : Controller
     {
         return result.Match<IActionResult>(success =>
         {
-            TempData["alert-success"] = "Successfully created accommodation";
+            TempData["alert-success"] = successMessage;
             return View();
         }, exception =>
         {
             if (exception is BaseApplicationException appException)
             {
                 TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                return View(viewModel);
+            }
+            else if (exception is InternalDatabaseException dbException)
+            {
+                TempData["alert-danger"] = "Operation failed. Try again later";
+                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
                 return View(viewModel);
             }
 
@@ -138,6 +145,12 @@ public class AccommodationController : Controller
             if (exception is BaseApplicationException appException)
             {
                 TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                return RedirectToAction("Index", "Accommodation");
+            }
+            else if (exception is InternalDatabaseException dbException)
+            {
+                TempData["alert-danger"] = "Operation failed. Try again later";
+                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
                 return RedirectToAction("Index", "Accommodation");
             }
 
