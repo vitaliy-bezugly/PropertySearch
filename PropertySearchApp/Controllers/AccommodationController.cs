@@ -30,21 +30,26 @@ public class AccommodationController : Controller
         _userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 
+    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
+    {
+        return await _accommodationService.GetWithLimitsAsync(firstElement, countOfElements, cancellationToken);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute]int id, CancellationToken cancellationToken)
     {
-        var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
+        var accommodations = (await GetAccommodationsWithLimits(id * 12, 12, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View(accommodations);
     }
     [HttpGet]
-    public async Task<IActionResult> Mine([FromRoute] int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> MyOffers([FromRoute] int id, CancellationToken cancellationToken)
     {
         var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
+            .Where(x => x.UserId == _userId)
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
-        accommodations = accommodations.Where(x => x.OwnerId == _userId.ToString());
         return View("Index", accommodations);
     }
     [HttpGet]

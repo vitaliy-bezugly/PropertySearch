@@ -50,12 +50,12 @@ else if (TempData["alert-success"] != null)
 <div class="card-header" style="background-color: transparent">
     <ul class="nav nav-tabs card-header-tabs">
         <li class="nav-item">
-            <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">Offers</a>
+            <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">All Offers</a>
         </li>
         @if(IsLandlord())
         {
             <li class="nav-item">
-                <a class="nav-link" asp-controller="Accommodation" asp-action="Mine">Mine</a>
+                <a class="nav-link" asp-controller="Accommodation" asp-action="MyOffers">My Offers</a>
             </li>
         }
     </ul>
