@@ -30,13 +30,27 @@ public class AccommodationController : Controller
         _userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 
+    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
+    {
+        return await _accommodationService.GetWithLimitsAsync(firstElement, countOfElements, cancellationToken);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index([FromRoute]int id, CancellationToken cancellationToken)
     {
-        var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
+        var accommodations = (await GetAccommodationsWithLimits(id * 12, 12, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View(accommodations);
+    }
+    [HttpGet]
+    public async Task<IActionResult> MyOffers([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
+            .Where(x => x.UserId == _userId)
+            .Select(x => _mapper.Map<AccommodationViewModel>(x));
+
+        return View("Index", accommodations);
     }
     [HttpGet]
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
@@ -61,7 +75,7 @@ public class AccommodationController : Controller
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
-        return ToCreateAccommodationResponse<CreateAccommodationViewModel>(result, viewModel);
+        return ToResponse<CreateAccommodationViewModel>(result, viewModel, "Successfully created accommodation");
     }
 
     [ValidateAntiForgeryToken, HttpPost]
@@ -70,8 +84,30 @@ public class AccommodationController : Controller
         var result = await _accommodationService.DeleteAccommodationAsync(_userId, id, cancellationToken);
         return ToDeleteAccommodationResponse<IActionResult>(result);
     }
+    [HttpGet]
+    public async Task<IActionResult> Update([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
+        if (accommodation == null)
+            return NotFound();
 
-    private IActionResult ToCreateAccommodationResponse<T>(Result<bool> result, T viewModel)
+        var updateViewModel = _mapper.Map<UpdateAccommodationViewModel>(accommodation);
+        return View(updateViewModel);
+    }
+    [ValidateAntiForgeryToken, HttpPost]
+    public async Task<IActionResult> Update([FromForm]UpdateAccommodationViewModel viewModel, CancellationToken cancellationToken)
+    {
+        if (ModelState.IsValid == false)
+            return View(viewModel);
+
+        var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
+            viewModel.Price, viewModel.PhotoUri, _userId);
+
+        var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
+        return ToResponse<UpdateAccommodationViewModel>(result, viewModel, "Successfully updated accommodation");
+    }
+
+    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
         where T : class
     {
         return result.Match<IActionResult>(success =>

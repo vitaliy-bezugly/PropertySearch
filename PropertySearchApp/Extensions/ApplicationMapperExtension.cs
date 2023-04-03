@@ -15,6 +15,8 @@ public class ApplicationMapperExtension : Profile
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.UserId.ToString()));
         CreateMap<AccommodationDomain, AccommodationEntity>().ReverseMap();
 
+        CreateMap<AccommodationDomain, UpdateAccommodationViewModel>();
+
         CreateMap<UserDomain, UserEntity>();
         CreateMap<RegistrationFormViewModel, UserDomain>();
     }

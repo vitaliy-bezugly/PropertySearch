@@ -1,0 +1,69 @@
+﻿@model UpdateAccommodationViewModel
+
+@{
+    ViewData["Title"] = "Update";
+}
+
+<div class="card login-logout-tab">
+    <div class="card-header">
+        <h5 class="add-accommodation-header">Update accommodation</h5>
+    </div>
+    <div class="card-content">
+        @if (TempData["alert-danger"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["alert-danger"]
+            </div>
+        }
+        else if (TempData["alert-success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["alert-success"]
+            </div>
+        }
+
+        <form method="post" asp-controller="Accommodation" asp-action="Update">
+            <input type="text" hidden readonly asp-for="Id"/>
+            <div class="form-group">
+                <label asp-for="Title">Title</label>
+                <div class="d-flex">
+                    <i class='bx bx-home-heart'></i>
+                    <input type="text" required class="form-control" id="inputTitle" placeholder="Enter title" asp-for="Title">
+                </div>
+                <small class="form-text text-muted">Brief description of what will distinguish the offer from others</small>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description">Description</label>
+                <div class="d-flex">
+                    <i class='bx bx-text'></i>
+                    <textarea type="text" class="form-control" id="inputDescription" placeholder="Enter description"
+                              asp-for="Description"></textarea>
+                </div>
+                <small class="form-text text-muted">An extensive description of the property you wish to rent. It can be peculiarities of place or region, number of rooms and floors ...</small>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price">Price per month</label>
+                <div class="d-flex">
+                    <i class='bx bx-purchase-tag'></i>
+                    <input type="number" min="0" class="form-control" id="inputPrice" placeholder="Enter Price" required asp-for="Price">
+                </div>
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhotoUri">Photo</label>
+                <div class="d-flex">
+                    <i class='bx bx-photo-album'></i>
+                    <input type="url" class="form-control" id="inputPhoto" placeholder="Enter Photo Uri" asp-for="PhotoUri">
+                </div>
+                <span asp-validation-for="PhotoUri" class="text-danger"></span>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
+
+            <button type="submit" class="btn btn-primary float-end">Submit</button>
+            <a class="btn btn-secondary float-end go-back" asp-controller="Accommodation" asp-action="Index">Go back</a>
+        </form>
+    </div>
+</div>
