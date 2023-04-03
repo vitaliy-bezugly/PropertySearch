@@ -37,7 +37,17 @@ else if (TempData["alert-success"] != null)
     </div>
 }
 
-<div class="container py-2">
+<div class="card-header" style="background-color: transparent">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">Offers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Accommodation" asp-action="Index">Mine</a>
+        </li>
+    </ul>
+</div>
+<div class="container py-2 cards-container">
     <div class="row" data-masonry='{"percentPosition": true }'>
         @foreach (var item in @Model)
         {
@@ -117,3 +127,12 @@ else if (TempData["alert-success"] != null)
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            let offersLink = document.getElementById("offers")
+            offersLink.classList.add('active')
+        })
+    </script>
+}
