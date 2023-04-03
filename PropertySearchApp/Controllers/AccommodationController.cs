@@ -84,6 +84,27 @@ public class AccommodationController : Controller
         var result = await _accommodationService.DeleteAccommodationAsync(_userId, id, cancellationToken);
         return ToDeleteAccommodationResponse<IActionResult>(result);
     }
+    [HttpGet]
+    public async Task<IActionResult> Update([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var accommodationToUpdate = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
+        if (accommodationToUpdate == null)
+            return NotFound();
+
+        var updateAccommodation = new UpdateAccommodationViewModel
+        {
+            Title = accommodationToUpdate.Title,
+            Description = accommodationToUpdate.Description,
+            Price = accommodationToUpdate.Price,
+            PhotoUri = accommodationToUpdate.PhotoUri
+        };
+        return View(updateAccommodation);
+    }
+    [ValidateAntiForgeryToken, HttpPost]
+    public async Task<IActionResult> Update(Guid id, CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 
     private IActionResult ToCreateAccommodationResponse<T>(Result<bool> result, T viewModel)
         where T : class
