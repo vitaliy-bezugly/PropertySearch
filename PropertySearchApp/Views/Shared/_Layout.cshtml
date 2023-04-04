@@ -63,7 +63,6 @@
                                 
                                 <li class="nav-item d-flex">
                                     <i class='bx bx-user-circle'></i>
-                                    @*<p class="username">@User?.FindFirst(ClaimTypes.Name)?.Value</p>*@
                                     <a class="link-underline-dark" asp-controller="Identity" asp-action="UserDetails" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value">
                                         @User?.FindFirst(ClaimTypes.Name)?.Value
                                     </a>
