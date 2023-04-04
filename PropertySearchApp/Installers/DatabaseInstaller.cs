@@ -10,7 +10,7 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-        var connectionString = configuration.GetConnectionString("LocalDatabaseConnection")
+        var connectionString = configuration.GetConnectionString("MyConnection")
                                ?? throw new InvalidOperationException("Connection string 'LocalDatabaseConnection' not found.");
 
         services.AddDbContext<ApplicationDbContext>(options =>

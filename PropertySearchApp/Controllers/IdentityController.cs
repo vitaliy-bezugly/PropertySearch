@@ -75,6 +75,14 @@ public class IdentityController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpGet, Authorize]
+    public async Task<IActionResult> UserDetails(Guid id)
+    {
+        var user = await _identityService.GetUserByIdAsync(id);
+        return user == null ? NotFound() : View(_mapper.Map<UserDetailsViewModel>(user));
+    }
+
+    
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
         if (exception is AuthorizationOperationException registrationException)

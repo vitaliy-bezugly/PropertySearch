@@ -1,0 +1,18 @@
+﻿@model UserDetailsViewModel
+
+<h1>Edit Profile</h1>
+<form method="post" action="View" class="mt-5">
+
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-control" asp-for="UserName">
+    </div>
+
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" class="form-control" asp-for="Email">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Edit</button>
+    <button type="submit" class="btn btn-danger" asp-action="Delete" asp-controller="Employee">Delete</button>
+</form>
