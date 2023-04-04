@@ -1,10 +1,13 @@
 using AutoMapper;
+using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence.Exceptions;
+using PropertySearchApp.Repositories.Abstract;
 using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;
@@ -16,13 +19,15 @@ public class IdentityService : IIdentityService
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
     private readonly ILogger<IdentityService> _logger;
     private readonly IMapper _mapper;
-    public IdentityService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole<Guid>> roleManager, ILogger<IdentityService> logger, IMapper mapper)
+    private readonly IUserReceiverRepository _userReceiverRepository;
+    public IdentityService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager, RoleManager<IdentityRole<Guid>> roleManager, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _logger = logger;
         _mapper = mapper;
+        _userReceiverRepository = userReceiverRepository;
     }
 
     public async Task<Result<bool>> RegisterAsync(UserDomain user)
@@ -92,4 +97,10 @@ public class IdentityService : IIdentityService
             throw exception;
         }
     }
+    public async Task<UserDomain?> GetUserByIdAsync(Guid userId)
+    {
+        var entity = await _userReceiverRepository.GetByIdAsync(userId);
+        return entity == null ? null : _mapper.Map<UserDomain>(entity);
+    }
+    
 }
