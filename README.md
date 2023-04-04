@@ -23,7 +23,9 @@ git clone https://github.com/VitaliyMinaev/PropertySearch.git
 <ol start="3">
   <li>Type in cmd <code>docker compose up -d</code>. This action initializes the docker container with all necessary dependencies.</li>
   <li>Use <code>Package Manager Console</code> and run <code>Update-Database</code> command to push the last migration to the database model</li>
-  <li>Then run <code>property-search-initial-script.sql</code> on the newly created mssql database.</li>
+  <li>
+    Then run <code>property-search-initial-script.sql</code> on the newly created mssql database. If you don't have <code>mssms</code> use <a href="https://github.com/VitaliyMinaev/PropertySearch/blob/master/documentation/How-to-run-sql-script-using-bash.md">documentation</a>
+  </li>
   <li>Run the app (normally, it will run in <code>https://localhost:7230</code> url) </li>
   </ol>
   
