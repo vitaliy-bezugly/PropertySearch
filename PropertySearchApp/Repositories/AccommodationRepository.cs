@@ -64,6 +64,7 @@ public class AccommodationRepository : IAccommodationRepository
         exists.Title = accommodation.Title;
         exists.Description = accommodation.Description;
         exists.Price = accommodation.Price;
+        exists.PhotoUri = accommodation.PhotoUri;
         
         var result = await _context.SaveChangesAsync(cancellationToken);
         return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,
