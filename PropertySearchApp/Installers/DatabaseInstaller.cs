@@ -10,8 +10,8 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-        var connectionString = configuration.GetConnectionString("LocalDatabaseConnection")
-                               ?? throw new InvalidOperationException("Connection string 'LocalDatabaseConnection' not found.");
+        var connectionString = configuration.GetConnectionString("DockerConnection")
+                               ?? throw new InvalidOperationException("Connection string not found.");
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
