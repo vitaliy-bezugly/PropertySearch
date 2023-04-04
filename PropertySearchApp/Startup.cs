@@ -49,9 +49,6 @@ public class Startup
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        if(IsUpToDate == false)
-            await app.AddRolesInDatabaseAsync(app.Logger, _requiredRoles);
-
         app.Run();
     }
 }

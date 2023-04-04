@@ -1,4 +1,9 @@
-﻿@model IEnumerable<AccommodationViewModel>
+﻿@using System.Security.Claims
+@model IEnumerable<AccommodationViewModel>
+
+@{
+    ViewData["Title"] = "Accommodation";
+}
 
 @{
     int currentPageId = 0;
@@ -10,8 +15,18 @@
 
     int previousPageId = currentPageId - 1, nextPageId = currentPageId + 1;
 }
+@{
+    bool IsOwner(string userId)
+    {
+        return User.FindFirst(ClaimTypes.NameIdentifier).Value == userId;
+    }
+    bool IsLandlord()
+    {
+        return User.IsInRole("landlord");
+    }
+}
 
-@if (User.IsInRole("landlord"))
+@if (IsLandlord())
 {
     <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
         <i class='bx bx-add-to-queue'></i>
@@ -19,11 +34,37 @@
     </a>
 }
 
-<div class="container py-2">
+@if (TempData["alert-danger"] != null)
+{
+    <div class="alert alert-danger m-1" role="alert">
+        @TempData["alert-danger"]
+    </div>
+}
+else if (TempData["alert-success"] != null)
+{
+    <div class="alert alert-success m-1" role="alert">
+        @TempData["alert-success"]
+    </div>
+}
+
+<div class="card-header" style="background-color: transparent">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">All Offers</a>
+        </li>
+        @if (IsLandlord())
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Accommodation" asp-action="MyOffers">My Offers</a>
+            </li>
+        }
+    </ul>
+</div>
+<div class="container py-2 cards-container">
     <div class="row" data-masonry='{"percentPosition": true }'>
         @foreach (var item in @Model)
         {
-            <div class="col-sm-4 col-md-3 py-3">
+            <div class="col-sm-4 py-3 col-cards">
                 <div class="card accommodation border-primary">
                     <div class="card-img">
                         @if (string.IsNullOrEmpty(item.PhotoUri))
@@ -53,6 +94,23 @@
                                 </div>
                             </div>
                         </div>
+                        @if (IsOwner(item.OwnerId))
+                        {
+                            <div class="container p-0">
+                                <div class="row p-0">
+                                    <div class="col-md-6">
+                                        <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
+                                            <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <form method="get" asp-controller="Accommodation" asp-action="Update" asp-route-id="@item.Id" style="min-width: 100%">
+                                            <button type="submit" class="btn btn-success" style="min-width: 100%">Update</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -93,3 +151,17 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(function() {
+            var current = location.pathname
+            $('.nav-tabs li a').each(function() {
+                var $this = $(this)
+                if (current.endsWith($this.attr('href'))) {
+                    $this.addClass('active')
+                }
+            })
+        })
+    </script>
+}

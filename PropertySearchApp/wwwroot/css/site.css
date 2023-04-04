@@ -184,3 +184,40 @@ body .wrapper footer {
     position: relative;
     bottom: 2px;
 }
+
+/* cards-container */
+.cards-container {
+    border: 1px solid rgba(0,0,0,.125);
+    border-top: none;
+    border-radius: 1px;
+}
+.card-header {
+    border-radius: 1px;
+}
+
+/* media-queries for accommodation Index page */
+@media (max-width: 992px) {
+    div.container-main, div.container.cards-container {
+        max-width: 960px;
+    }
+}
+@media (min-width: 900px) {
+    .col-cards {
+        width: 25%;
+    }
+}
+@media (max-width: 900px) {
+    .col-cards {
+        width: 33.3%;
+    }
+}
+@media (max-width: 630px) {
+    .col-cards {
+        width: 50%;
+    }
+}
+@media (max-width: 452px) {
+    .col-cards {
+        width: 100%;
+    }
+}
