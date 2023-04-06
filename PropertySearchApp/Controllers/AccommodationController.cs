@@ -19,9 +19,10 @@ public class AccommodationController : Controller
     private readonly ILogger<AccommodationRepository> _logger;
     private readonly IMapper _mapper;
     private readonly IAccommodationService _accommodationService;
+    private readonly IIdentityService _identityService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly Guid _userId;
-    public AccommodationController(ILogger<AccommodationRepository> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public AccommodationController(ILogger<AccommodationRepository> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IIdentityService identityService)
     {
         _logger = logger;
         _accommodationService = accommodationService;
@@ -29,11 +30,7 @@ public class AccommodationController : Controller
 
         _httpContextAccessor = httpContextAccessor;
         _userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-    }
-
-    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
-    {
-        return await _accommodationService.GetWithLimitsAsync(firstElement, countOfElements, cancellationToken);
+        _identityService = identityService;
     }
 
     [HttpGet]
@@ -57,7 +54,16 @@ public class AccommodationController : Controller
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
-        return accommodation == null ? NotFound() : View(_mapper.Map<AccommodationViewModel>(accommodation));
+        if (accommodation == null)
+            return NotFound();
+
+        var viewModel = _mapper.Map<AccommodationViewModel>(accommodation);
+        var account = await _identityService.GetUserByIdAsync(Guid.Parse(viewModel.OwnerId));
+        if (account == null)
+            return BadRequest("User account that created this offer does not exist");
+
+        viewModel.OwnerUsername = account.Username;
+        return View(viewModel);
     }
     [HttpGet]
     public IActionResult Create()
@@ -166,5 +172,9 @@ public class AccommodationController : Controller
             stringBuilder.Append(item);
         }
         return stringBuilder.ToString();
+    }
+    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
+    {
+        return await _accommodationService.GetWithLimitsAsync(firstElement, countOfElements, cancellationToken);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace PropertySearchApp.Models;
 
-public class UserDetailsViewModel
+public class EditUserRequest
 {
     public Guid Id { get; set; }
     public string UserName { get; set; }

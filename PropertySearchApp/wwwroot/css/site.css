@@ -221,3 +221,13 @@ body .wrapper footer {
         width: 100%;
     }
 }
+
+/* i html tag */
+a i {
+    position: relative;
+    top: 2px;
+}
+a span {
+    position: relative;
+    bottom: 2px;
+}
