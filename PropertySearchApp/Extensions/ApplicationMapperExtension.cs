@@ -21,6 +21,5 @@ public class ApplicationMapperExtension : Profile
 
         CreateMap<UserDomain, UserEntity>();
         CreateMap<RegistrationFormViewModel, UserDomain>();
-
     }
 }

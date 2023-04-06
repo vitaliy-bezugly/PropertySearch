@@ -74,9 +74,8 @@ public class IdentityController : Controller
         await _identityService.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
-
     [HttpGet, Authorize]
-    public async Task<IActionResult> UserDetails(Guid id)
+    public async Task<IActionResult> Details([FromRoute] Guid id)
     {
         var user = await _identityService.GetUserByIdAsync(id);
         return user == null ? NotFound() : View(_mapper.Map<UserDetailsViewModel>(user));

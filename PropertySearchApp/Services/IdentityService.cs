@@ -2,7 +2,6 @@ using AutoMapper;
 using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
@@ -102,5 +101,4 @@ public class IdentityService : IIdentityService
         var entity = await _userReceiverRepository.GetByIdAsync(userId);
         return entity == null ? null : _mapper.Map<UserDomain>(entity);
     }
-    
 }
