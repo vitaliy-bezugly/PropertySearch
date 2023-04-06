@@ -14,13 +14,15 @@ public class ApplicationMapperExtension : Profile
         CreateMap<AccommodationDomain, AccommodationViewModel>()
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.UserId.ToString()));
         CreateMap<AccommodationDomain, AccommodationEntity>().ReverseMap();
-        
-        CreateMap<UserEntity, UserDomain>();
-        CreateMap<UserDomain, UserDetailsViewModel>();
-        CreateMap<UserDomain, EditUserRequest>();
         CreateMap<AccommodationDomain, UpdateAccommodationViewModel>();
 
-        CreateMap<UserDomain, UserEntity>();
+        CreateMap<UserEntity, UserDomain>().ReverseMap();
+        CreateMap<UserDomain, UserDetailsViewModel>();
+        CreateMap<UserDomain, EditUserRequest>();
+
+        CreateMap<ContactEntity, ContactDomain>().ReverseMap();
+        CreateMap<ContactDomain, ContactViewModel>();
+
         CreateMap<RegistrationFormViewModel, UserDomain>();
     }
 }

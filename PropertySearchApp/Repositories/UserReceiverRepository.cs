@@ -15,7 +15,9 @@ public class UserReceiverRepository : IUserReceiverRepository
 
     public async Task<UserEntity?> GetByIdAsync(Guid id)
     {
-        return await _userManager.FindByIdAsync(id.ToString());
+        return await _userManager.Users
+            .Include(x => x.Contacts)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
     public async Task<UserEntity?> GetByIdWithAccommodationsAsync(Guid userId)
     {
