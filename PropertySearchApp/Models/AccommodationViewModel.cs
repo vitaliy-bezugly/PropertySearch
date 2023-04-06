@@ -11,8 +11,7 @@ public class AccommodationViewModel
     public string Title { get; set; }
     public string? Description { get; set; }
     public int Price { get; set; }
-    [Required, EmailAddress]
-    public string LandlordEmail { get; set; }
+    public string OwnerUsername { get; set; }
     [Required]
     public string OwnerId { get; set; }
 }

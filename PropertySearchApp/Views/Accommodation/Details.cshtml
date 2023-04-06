@@ -21,9 +21,10 @@
                 @Model.Price$
             </h6>
             <div>
-                Landlord's email:
-                <a href="#">
-                    @Model.LandlordEmail
+                <i class='bx bx-user-pin'></i>
+                Owner username:
+                <a asp-controller="Identity" asp-action="Details" asp-route-id="@Model.OwnerId" class="link-primary" target="_blank">
+                    <span>@Model.OwnerUsername</span>
                 </a>
             </div>
         </div>

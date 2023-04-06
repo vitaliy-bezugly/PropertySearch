@@ -7,19 +7,22 @@ using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
+using System.Security.Claims;
 
 namespace PropertySearchApp.Controllers;
 
 public class IdentityController : Controller
 {
     private readonly IIdentityService _identityService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
-    public IdentityController(IIdentityService identityService, IMapper mapper)
+    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor)
     {
         _identityService = identityService;
         _mapper = mapper;
+        _httpContextAccessor = contextAccessor;
     }
-    
+
     [HttpGet]
     public IActionResult Login()
     {
@@ -80,8 +83,14 @@ public class IdentityController : Controller
         var user = await _identityService.GetUserByIdAsync(id);
         return user == null ? NotFound() : View(_mapper.Map<UserDetailsViewModel>(user));
     }
+    [HttpGet, Authorize]
+    public async Task<IActionResult> Edit()
+    {
+        var currentUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var user = await _identityService.GetUserByIdAsync(currentUserId);
+        return user == null ? Forbid() : View(_mapper.Map<EditUserRequest>(user));
+    }
 
-    
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
         if (exception is AuthorizationOperationException registrationException)

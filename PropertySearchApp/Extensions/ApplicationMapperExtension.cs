@@ -16,7 +16,8 @@ public class ApplicationMapperExtension : Profile
         CreateMap<AccommodationDomain, AccommodationEntity>().ReverseMap();
         
         CreateMap<UserEntity, UserDomain>();
-        CreateMap<UserDetailsViewModel, UserDomain>().ReverseMap();
+        CreateMap<UserDomain, UserDetailsViewModel>();
+        CreateMap<UserDomain, EditUserRequest>();
         CreateMap<AccommodationDomain, UpdateAccommodationViewModel>();
 
         CreateMap<UserDomain, UserEntity>();

@@ -18,6 +18,7 @@ public class AccommodationService : IAccommodationService
         _mapper = mapper;
         _userValidator = userValidator;
     }
+    
     public async Task<IEnumerable<AccommodationDomain>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
     {
         return (await _accommodationRepository.GetWithLimitsAsync(startAt, countOfItems, cancellationToken)).Select(x => _mapper.Map<AccommodationDomain>(x));
@@ -26,13 +27,11 @@ public class AccommodationService : IAccommodationService
     {
         return (await _accommodationRepository.GetAllAsync(cancellationToken)).Select(x => _mapper.Map<AccommodationDomain>(x));
     }
-
     public async Task<AccommodationDomain?> GetAccommodationByIdAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
         var entity = await _accommodationRepository.GetAsync(accommodationId, cancellationToken);
         return entity == null ? null : _mapper.Map<AccommodationDomain>(entity);
     }
-
     public async Task<Result<bool>> CreateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
         var accommodationValidationResult = accommodation.Validate();
@@ -48,7 +47,6 @@ public class AccommodationService : IAccommodationService
         var creationResult = await _accommodationRepository.CreateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
         return new Result<bool>(creationResult);
     }
-
     public async Task<Result<bool>> UpdateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
         var accommodationValidationResult = accommodation.Validate();
@@ -64,7 +62,6 @@ public class AccommodationService : IAccommodationService
         var updateResult = await _accommodationRepository.UpdateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
         return updateResult;
     }
-
     public async Task<Result<bool>> DeleteAccommodationAsync(Guid userId, Guid accommodationId, CancellationToken cancellationToken)
     {
         var validationResult = await _userValidator.ValidateAsync(userId, accommodationId, true);
