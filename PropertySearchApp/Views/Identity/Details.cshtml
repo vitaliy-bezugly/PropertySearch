@@ -15,3 +15,33 @@
     <input type="email" class="form-control" asp-for="Email" readonly>
     <span class="small text-secondary">Email address to contact</span>
 </div>
+
+<div class="form-group">
+    <label>Email address</label>
+    <textarea type="text" class="form-control" asp-for="Information" readonly></textarea>
+    <span class="small text-secondary">Email address to contact</span>
+</div>
+
+<ul>
+    @foreach (var item in Model.Contacts)
+    {
+        <li>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contact type</label>
+                            <input type="text" class="form-control" readonly value="@item.ContactType">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contact info</label>
+                            <input type="text" class="form-control" value="@item.Content" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
