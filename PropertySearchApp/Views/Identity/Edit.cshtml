@@ -1,21 +1,53 @@
-﻿@model EditUserRequest
+﻿@using System.Security.Claims;
+@model EditUserRequest
 
 @{
     ViewData["Title"] = "Edit profile";
 }
+@{
+    string currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+}
 
 <h1>Edit Profile</h1>
-<form method="post" asp-controller="Identity" asp-action="Edit" asp-route-id="@Model.Id" class="mt-5">
+<form method="post" asp-controller="Identity" asp-action="Edit" class="mt-1">
     <div class="form-group">
-        <label>Name</label>
+        <label>Username</label>
         <input type="text" class="form-control" asp-for="UserName">
     </div>
 
     <div class="form-group">
-        <label>Email</label>
+        <label>Email address</label>
         <input type="email" class="form-control" asp-for="Email">
+        <span class="small text-secondary">Email address to contact</span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Edit</button>
-    <button type="submit" class="btn btn-danger" asp-action="Delete" asp-controller="Employee">Delete</button>
+    <div class="form-group">
+        <label>Additional Information</label>
+        <textarea type="text" class="form-control" asp-for="Information" rows="8"></textarea>
+    </div>
+
+    <ul style="list-style: none" class="p-0">
+        @foreach (var item in Model.Contacts)
+        {
+            <li>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contact type</label>
+                            <input type="text" class="form-control" readonly value="@item.ContactType">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Contact info</label>
+                            <input type="text" class="form-control" value="@item.Content" readonly>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+
+    <a class="btn btn-secondary" asp-controller="Identity" asp-action="Details" asp-route-id="@currentUserId" style="margin-top: 5px;min-width:100px">Go back</a>
+    <button type="submit" class="btn btn-primary" style="min-width:100px">Submit</button>
 </form>

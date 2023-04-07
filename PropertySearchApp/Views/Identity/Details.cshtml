@@ -1,7 +1,18 @@
-﻿@model UserDetailsViewModel
+﻿@using System.Security.Claims;
+@model UserDetailsViewModel
 
 @{
     ViewData["Title"] = "Identity Details";
+}
+@{
+    string userIdFromRoute = string.Empty;
+    if (ViewContext.RouteData.Values["id"] != null)
+    {
+        userIdFromRoute = ViewContext.RouteData.Values["id"].ToString();
+    }
+}
+@{
+    string currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
 
 <h1>Profile data</h1>
@@ -42,3 +53,9 @@
         </li>
     }
 </ul>
+
+@if (userIdFromRoute == currentUserId) 
+{
+    <a class="btn btn-primary" asp-controller="Identity" asp-action="Edit" style="min-width:100px">Edit</a>
+    <a class="btn btn-danger" asp-controller="Identity" asp-action="Delete" style="min-width:100px">Delete</a>
+}
