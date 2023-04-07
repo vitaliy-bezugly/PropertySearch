@@ -7,6 +7,9 @@
 @{
     string currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
+@{
+    var createContactRequest = new CreateContactRequest();
+}
 
 <h1>Edit Profile</h1>
 <form method="post" asp-controller="Identity" asp-action="Edit" class="mt-1">
@@ -26,7 +29,27 @@
         <textarea type="text" class="form-control" asp-for="Information" rows="8"></textarea>
     </div>
 
-    <ul style="list-style: none" class="p-0">
+    <!-- Add new contact -->
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label>Contact type</label>
+                <input type="text" class="form-control" value="@createContactRequest.ContactType">
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label>Contact info</label>
+                <input type="text" class="form-control" value="@createContactRequest.Content">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="invisible">1</div>
+            <a class="btn btn-primary" style="min-width:100px">Add</a>
+        </div>
+    </div>
+
+    <ul id="contacts-list" style="list-style: none" class="p-0">
         @foreach (var item in Model.Contacts)
         {
             <li>
