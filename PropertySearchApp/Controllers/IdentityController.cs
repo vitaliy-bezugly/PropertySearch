@@ -88,7 +88,17 @@ public class IdentityController : Controller
     {
         var currentUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var user = await _identityService.GetUserByIdAsync(currentUserId);
+        var request = _mapper.Map<EditUserRequest>(user);
         return user == null ? Forbid() : View(_mapper.Map<EditUserRequest>(user));
+    }
+    [HttpPost, ValidateAntiForgeryToken]
+    public IActionResult Edit(EditUserRequest request)
+    {
+        if (ModelState.IsValid == false)
+            return View(request);
+        request.Contacts.Add(request.ContactToAdd);
+        request.ContactToAdd = new ContactViewModel();
+        return View(request);
     }
 
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
