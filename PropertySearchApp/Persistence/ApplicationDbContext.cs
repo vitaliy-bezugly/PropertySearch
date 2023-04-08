@@ -12,7 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity, IdentityRole<G
     {  }
 
     public DbSet<AccommodationEntity> Accommodations { get; set; }
-
+    public DbSet<ContactEntity> Contacts { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
