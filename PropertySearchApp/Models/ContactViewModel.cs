@@ -10,4 +10,9 @@ public class ContactViewModel
         ContactType = string.Empty;
         Content = string.Empty;
     }
+    public ContactViewModel(ContactViewModel other) 
+    {
+        ContactType = other.ContactType;
+        Content = other.Content;
+    }
 }

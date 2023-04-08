@@ -101,28 +101,29 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(request);
 
+        var requestToService = new EditUserFieldsRequest(request);
         /* Add validator from DI */
         if(string.IsNullOrEmpty(request.ContactToAdd.ContactType) == false && string.IsNullOrEmpty(request.ContactToAdd.Content) == false
             && request.Contacts.Any(x => x.Content == request.ContactToAdd.Content) == false)
         {
-            request.Contacts.Add(request.ContactToAdd);
+            requestToService.Contacts.Add(requestToService.ContactToAdd);
         }
 
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var user = new UserDomain
         {
             Id = userId,
-            Username = request.UserName,
-            Information = request.Information,
-            Contacts = request.Contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList(),
-            Password = request.PasswordToCompare
+            Username = requestToService.UserName,
+            Information = requestToService.Information,
+            Contacts = requestToService.Contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList(),
+            Password = requestToService.PasswordToCompare
         };
 
         var result = await _identityService.UpdateUserFields(user);
-        return ToResponse(result, "Profile was updated successfully!");
+        return ToResponse(result, request, "Profile was updated successfully!");
     }
 
-    private IActionResult ToResponse(Result<bool> result, string successMessage)
+    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
     {
         return result.Match<IActionResult>(success =>
         {
@@ -133,13 +134,13 @@ public class IdentityController : Controller
             if (exception is BaseApplicationException appException)
             {
                 TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
-                return RedirectToAction(nameof(Edit), "Identity");
+                return View(viewModel);
             }
             else if (exception is InternalDatabaseException dbException)
             {
                 TempData["alert-danger"] = "Operation failed. Try again later";
                 _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
-                return RedirectToAction(nameof(Edit), "Identity");
+                return View(viewModel);
             }
 
             _logger.LogError(exception, "Unhandled exception in create accommodation operation");

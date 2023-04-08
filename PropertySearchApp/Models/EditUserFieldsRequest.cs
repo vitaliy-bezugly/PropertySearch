@@ -12,4 +12,12 @@ public class EditUserFieldsRequest
         Contacts = new List<ContactViewModel>();
         ContactToAdd = new ContactViewModel { ContactType = string.Empty, Content = string.Empty};
     }
+    public EditUserFieldsRequest(EditUserFieldsRequest other)
+    {
+        UserName = other.UserName;
+        Information = other.Information;
+        Contacts = other.Contacts.Select(x => new ContactViewModel(x)).ToList();
+        ContactToAdd = new ContactViewModel(other.ContactToAdd);
+        PasswordToCompare = other.PasswordToCompare;
+    }
 }
