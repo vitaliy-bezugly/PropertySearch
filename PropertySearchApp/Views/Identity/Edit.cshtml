@@ -93,9 +93,9 @@ else if (TempData["alert-success"] != null)
                         </div>
                     </div>
                     <div class="col-md-1">
-                        <button type="submit" class="btn btn-danger mt-0" style="min-width:100%">
+                        <a asp-controller="Identity" asp-action="RemoveContact" asp-route-contactId="@i" class="btn btn-danger" style="min-width:100%">
                             Delete
-                        </button>
+                        </a>
                     </div>
                 </div>
             </li>
