@@ -6,7 +6,7 @@ public class EditUserRequest
     public string UserName { get; set; }
     public string Information { get; set; }
     public List<ContactViewModel> Contacts { get; set; }
-    public ContactViewModel ContactToAdd { get; set; }
+    public ContactViewModel? ContactToAdd { get; set; }
     public string Email { get; set; }
 
     public EditUserRequest()

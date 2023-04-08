@@ -1,5 +1,6 @@
 using AutoMapper;
 using LanguageExt;
+using LanguageExt.ClassInstances.Pred;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Identity;
 using PropertySearchApp.Common.Exceptions;
@@ -7,6 +8,7 @@ using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence.Exceptions;
 using PropertySearchApp.Repositories.Abstract;
+using PropertySearchApp.Repositories.Extensions;
 using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;
@@ -100,5 +102,10 @@ public class IdentityService : IIdentityService
     {
         var entity = await _userReceiverRepository.GetByIdAsync(userId);
         return entity == null ? null : _mapper.Map<UserDomain>(entity);
+    }
+    public async Task<Result<bool>> UpdateUser(UserDomain user)
+    {
+        var updatedResult = await _userManager.UpdateUserFieldsAsync(_mapper.Map<UserEntity>(user));
+        return updatedResult;
     }
 }

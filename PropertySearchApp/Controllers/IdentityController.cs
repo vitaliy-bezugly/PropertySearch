@@ -3,11 +3,13 @@ using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
+using System.Text;
 
 namespace PropertySearchApp.Controllers;
 
@@ -16,11 +18,13 @@ public class IdentityController : Controller
     private readonly IIdentityService _identityService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
-    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor)
+    private readonly ILogger<IdentityController> _logger;
+    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor, ILogger<IdentityController> logger)
     {
         _identityService = identityService;
         _mapper = mapper;
         _httpContextAccessor = contextAccessor;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -92,15 +96,55 @@ public class IdentityController : Controller
         return user == null ? Forbid() : View(_mapper.Map<EditUserRequest>(user));
     }
     [HttpPost, ValidateAntiForgeryToken]
-    public IActionResult Edit(EditUserRequest request)
+    public async Task<IActionResult> Edit(EditUserRequest request)
     {
         if (ModelState.IsValid == false)
             return View(request);
+
         request.Contacts.Add(request.ContactToAdd);
         request.ContactToAdd = new ContactViewModel();
-        return View(request);
+
+        request.Id = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var user = _mapper.Map<UserDomain>(request);
+        var result = await _identityService.UpdateUser(user);
+
+        return ToResponse(result, request, "Profile was updated successfully!");
     }
 
+    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
+    where T : class
+    {
+        return result.Match<IActionResult>(success =>
+        {
+            TempData["alert-success"] = successMessage;
+            return View(viewModel);
+        }, exception =>
+        {
+            if (exception is BaseApplicationException appException)
+            {
+                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                return View(viewModel);
+            }
+            else if (exception is InternalDatabaseException dbException)
+            {
+                TempData["alert-danger"] = "Operation failed. Try again later";
+                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
+                return View(viewModel);
+            }
+
+            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
+            throw exception;
+        });
+    }
+    private static string BuildExceptionMessage(string[] errors)
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (var item in errors)
+        {
+            stringBuilder.Append(item);
+        }
+        return stringBuilder.ToString();
+    }
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
         if (exception is AuthorizationOperationException registrationException)
