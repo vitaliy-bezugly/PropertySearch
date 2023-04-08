@@ -10,5 +10,5 @@ public interface IIdentityService
     Task<Result<bool>> LoginAsync(string username, string password);
     Task SignOutAsync();
     Task<UserDomain> GetUserByIdAsync(Guid id);
-    Task<Result<bool>> UpdateUser(UserDomain user);
+    Task<Result<bool>> UpdateUserFields(UserDomain user);
 }

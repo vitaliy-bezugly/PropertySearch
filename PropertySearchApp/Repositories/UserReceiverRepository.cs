@@ -23,4 +23,8 @@ public class UserReceiverRepository : IUserReceiverRepository
     {
         return await _userManager.Users.Include(x => x.Accommodations).FirstOrDefaultAsync(x => x.Id == userId);
     }
+    public async Task<UserEntity?> GetByIdWithContactsAsync(Guid userId)
+    {
+        return await _userManager.Users.Include(x => x.Contacts).FirstOrDefaultAsync(x => x.Id == userId);
+    }
 }

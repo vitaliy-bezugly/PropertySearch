@@ -92,27 +92,47 @@ public class IdentityController : Controller
     {
         var currentUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var user = await _identityService.GetUserByIdAsync(currentUserId);
-        var request = _mapper.Map<EditUserRequest>(user);
-        return user == null ? Forbid() : View(_mapper.Map<EditUserRequest>(user));
+        var request = _mapper.Map<EditUserFieldsRequest>(user);
+        return user == null ? Forbid() : View(request);
     }
-    [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(EditUserRequest request)
+    [HttpPost, ValidateAntiForgeryToken, Authorize]
+    public async Task<IActionResult> Edit(EditUserFieldsRequest request)
     {
         if (ModelState.IsValid == false)
             return View(request);
 
-        request.Contacts.Add(request.ContactToAdd);
-        request.ContactToAdd = new ContactViewModel();
+        /* Add validator from DI */
+        string lastContent = string.Empty;
+        if(string.IsNullOrEmpty(request.ContactToAdd.ContactType) == false && string.IsNullOrEmpty(request.ContactToAdd.Content) == false
+            && request.Contacts.Any(x => x.Content == request.ContactToAdd.Content) == false)
+        {
+            request.Contacts.Add(request.ContactToAdd);
+            lastContent = request.ContactToAdd.Content;
+            request.ContactToAdd = new ContactViewModel();
+        }
 
-        request.Id = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        var user = _mapper.Map<UserDomain>(request);
-        var result = await _identityService.UpdateUser(user);
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var user = new UserDomain
+        {
+            Id = userId,
+            Username = request.UserName,
+            Information = request.Information,
+            Contacts = request.Contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList(),
+            Password = request.PasswordToCompare
+        };
 
-        return ToResponse(result, request, "Profile was updated successfully!");
+        var result = await _identityService.UpdateUserFields(user);
+        return ToResponse(result, request, "Profile was updated successfully!", () =>
+        {
+            var contactToRemove = request.Contacts.FirstOrDefault(x => x.Content ==  lastContent);
+            if (contactToRemove != null) {
+                request.Contacts.Remove(contactToRemove);
+            }
+        });
     }
 
-    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
-    where T : class
+    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage, Action ifFaulted)
+        where T : class
     {
         return result.Match<IActionResult>(success =>
         {
@@ -123,6 +143,7 @@ public class IdentityController : Controller
             if (exception is BaseApplicationException appException)
             {
                 TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                ifFaulted?.Invoke();
                 return View(viewModel);
             }
             else if (exception is InternalDatabaseException dbException)
