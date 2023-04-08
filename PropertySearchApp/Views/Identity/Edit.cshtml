@@ -1,5 +1,5 @@
 ﻿@using System.Security.Claims;
-@model EditUserRequest
+@model EditUserFieldsRequest
 
 @{
     ViewData["Title"] = "Edit profile";
@@ -9,45 +9,112 @@
 }
 
 <h1>Edit Profile</h1>
+@if (TempData["alert-danger"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["alert-danger"]
+    </div>
+}
+else if (TempData["alert-success"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["alert-success"]
+    </div>
+}
+
 <form method="post" asp-controller="Identity" asp-action="Edit" class="mt-1">
     <div class="form-group">
         <label>Username</label>
-        <input type="text" class="form-control" asp-for="UserName">
-    </div>
-
-    <div class="form-group">
-        <label>Email address</label>
-        <input type="email" class="form-control" asp-for="Email">
-        <span class="small text-secondary">Email address to contact</span>
+        <input type="text" class="form-control" asp-for="UserName" required>
+        <span asp-validation-for="UserName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label>Additional Information</label>
         <textarea type="text" class="form-control" asp-for="Information" rows="8"></textarea>
+        <span asp-validation-for="Information" class="text-danger"></span>
     </div>
 
-    <ul style="list-style: none" class="p-0">
-        @foreach (var item in Model.Contacts)
+    <!-- Add new contact -->
+    <div class="row">
+        <label>Add new contact</label>
+        <div class="col-md-5">
+            <div class="form-group">
+                <select class="form-select" aria-label="Default select example" asp-for="@Model.ContactToAdd.ContactType" placeholder="Contact type">
+                    <option value="Email address" selected>Email address</option>
+                    <option value="Phone number">Phone number</option>
+                    <option value="Address">Address</option>
+                    <option value="Post code">Post code</option>
+                    <option value="Telegram username">Telegram username</option>
+                    <option value="Instagram account">Instagram account</option>
+                    <option value="LinkedIn account">LinkedIn account</option>
+                </select>
+                <span asp-validation-for="ContactToAdd.ContactType" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <input type="text" class="form-control" asp-for="@Model.ContactToAdd.Content" placeholder="Contact info">
+                <span asp-validation-for="ContactToAdd.Content" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary mt-0" style="min-width:100%">
+                Add
+            </button>
+        </div>
+    </div>
+
+    <ul id="contacts-list" style="list-style: none" class="p-0">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Contact type</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Contact info</label>
+                </div>
+            </div>
+        </div>
+        @for(var i = 0; i < Model.Contacts.Count; ++i)
         {
             <li>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <div class="form-group">
-                            <label>Contact type</label>
-                            <input type="text" class="form-control" readonly value="@item.ContactType">
+                            <input type="text" class="form-control" asp-for="@Model.Contacts[i].ContactType" readonly>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Contact info</label>
-                            <input type="text" class="form-control" value="@item.Content" readonly>
+                            <input type="text" class="form-control" asp-for="@Model.Contacts[i].Content">
                         </div>
+                    </div>
+                    <div class="col-md-1">
+                        <a asp-controller="Identity" asp-action="RemoveContact" asp-route-contactId="@i" class="btn btn-danger" style="min-width:100%">
+                            Delete
+                        </a>
                     </div>
                 </div>
             </li>
         }
     </ul>
 
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" asp-for="PasswordToCompare" required placeholder="Password to compare">
+        <span asp-validation-for="PasswordToCompare" class="text-danger"></span>
+    </div>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
+
     <a class="btn btn-secondary" asp-controller="Identity" asp-action="Details" asp-route-id="@currentUserId" style="margin-top: 5px;min-width:100px">Go back</a>
     <button type="submit" class="btn btn-primary" style="min-width:100px">Submit</button>
 </form>
+
+<!--TODO-->
+<a asp-controller="Identity" asp-action="ChangeEmail">Change email address</a>
+<!--TODO-->
+<a asp-controller="Identity" asp-action="ChangePassword">Change password</a>

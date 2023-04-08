@@ -18,10 +18,10 @@ public class ApplicationMapperExtension : Profile
 
         CreateMap<UserEntity, UserDomain>().ReverseMap();
         CreateMap<UserDomain, UserDetailsViewModel>();
-        CreateMap<UserDomain, EditUserRequest>();
+        CreateMap<UserDomain, EditUserFieldsRequest>();
 
         CreateMap<ContactEntity, ContactDomain>().ReverseMap();
-        CreateMap<ContactDomain, ContactViewModel>();
+        CreateMap<ContactDomain, ContactViewModel>().ReverseMap();
 
         CreateMap<RegistrationFormViewModel, UserDomain>();
     }

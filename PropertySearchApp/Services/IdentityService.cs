@@ -1,6 +1,7 @@
 using AutoMapper;
 using LanguageExt;
 using LanguageExt.Common;
+using LanguageExt.Pipes;
 using Microsoft.AspNetCore.Identity;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Domain;
@@ -100,5 +101,32 @@ public class IdentityService : IIdentityService
     {
         var entity = await _userReceiverRepository.GetByIdAsync(userId);
         return entity == null ? null : _mapper.Map<UserDomain>(entity);
+    }
+    public async Task<Result<bool>> UpdateUserFields(UserDomain user)
+    {
+        var entity = await _userReceiverRepository.GetByIdWithContactsAsync(user.Id);
+        if (entity == null)
+        {
+            var badResult = new Result<bool>(new UserNotFoundException(new[] { "User with given id does not exist" }));
+            return badResult;
+        }
+        
+        /* Validate password */
+        var givenPasswordSameToActual = await _userManager.CheckPasswordAsync(entity, user.Password);
+        if(givenPasswordSameToActual == false)
+        {
+            var badResult = new Result<bool>(new UserNotFoundException(new[] { "Given password and actual are not the same" }));
+            return badResult;
+        }
+        
+        /* Update user fields */
+        entity.UserName = user.Username;
+        entity.Information = user.Information;
+        entity.Contacts = user.Contacts.Select(x => _mapper.Map<ContactEntity>(x)).ToList();
+
+        var result = await _userManager.UpdateAsync(entity);
+        return result.Succeeded ? new Result<bool>(true) : 
+            new Result<bool>(new UserUpdateOperationException(result.Errors
+                .Select(x => x.Description).ToArray()));
     }
 }

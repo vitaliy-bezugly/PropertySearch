@@ -24,7 +24,10 @@
 <div class="form-group">
     <label>Email address</label>
     <input type="email" class="form-control" asp-for="Email" readonly>
-    <span class="small text-secondary">Email address to contact</span>
+    @if (userIdFromRoute == currentUserId)
+    {
+        <a class="small text-secondary" asp-controller="Identity" asp-action="ChangeEmail">Change email address</a>
+    }
 </div>
 
 <div class="form-group">
