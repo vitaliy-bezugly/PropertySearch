@@ -37,7 +37,7 @@ public class ContactsService : IContactsService
         return await _contactsRepository.AddContactToUserAsync(userId, _mapper.Map<ContactEntity>(contact));
     }
 
-    public async Task<Result<bool>> DeleteContactFromUserAsync(Guid userId, ContactDomain contact)
+    public async Task<Result<bool>> DeleteContactFromUserAsync(Guid userId, Guid contactId)
     {
         var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
         if (user == null)

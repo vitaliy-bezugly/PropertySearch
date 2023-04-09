@@ -31,10 +31,13 @@ public class ContactsRepository : IContactsRepository
         return GenerateInternalDatabaseException("Can not add contact to user, initial database error");
     }
 
-    public async Task<Result<bool>> DeleteContactAsync(ContactEntity contact)
+    public async Task<Result<bool>> DeleteContactAsync(Guid contactId)
     {
-        _context.Contacts.Remove(contact);
+        var exists = await _context.Contacts.FirstOrDefaultAsync(x => x.Id == contactId);
+        if (exists == null)
+            return new Result<bool>(new ContactsNotFoundException("There is no contact with given id"));
 
+        _context.Contacts.Remove(exists);
         var result = await _context.SaveChangesAsync();
         if (result > 0)
             return new Result<bool>(true);

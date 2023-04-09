@@ -54,6 +54,37 @@ public class ContactsController : Controller
             throw exception;
         });
     }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    {
+        if (id == Guid.Empty)
+            return BadRequest();
+
+        var userId = Guid.Parse(_contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var result = await _contactsService.DeleteContactFromUserAsync(userId, id);
+
+        return result.Match<IActionResult>(success =>
+        {
+            TempData["alert-success"] = "Successfully deleted contact!";
+            return RedirectToAction("Edit", "Identity");
+        }, exception =>
+        {
+            if (exception is BaseApplicationException appException)
+            {
+                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                return RedirectToAction("Edit", "Identity");
+            }
+            else if (exception is InternalDatabaseException dbException)
+            {
+                TempData["alert-danger"] = "Operation failed. Try again later";
+                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
+                return RedirectToAction("Edit", "Identity");
+            }
+
+            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
+            throw exception;
+        });
+    }
 
     private static string BuildExceptionMessage(string[] errors)
     {
