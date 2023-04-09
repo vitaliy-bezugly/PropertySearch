@@ -26,7 +26,7 @@
     <input type="email" class="form-control" asp-for="Email" readonly>
     @if (userIdFromRoute == currentUserId)
     {
-        <a class="small text-secondary" asp-controller="Identity" asp-action="ChangeEmail">Change email address</a>
+        <a class="small text-secondary" asp-controller="Identity" asp-action="">Change email address</a>
     }
 </div>
 
@@ -60,5 +60,5 @@
 @if (userIdFromRoute == currentUserId) 
 {
     <a class="btn btn-primary" asp-controller="Identity" asp-action="Edit" style="min-width:100px">Edit</a>
-    <a class="btn btn-danger" asp-controller="Identity" asp-action="Delete" style="min-width:100px">Delete</a>
+    <a class="btn btn-danger" asp-controller="Identity" asp-action="" style="min-width:100px">Delete</a>
 }

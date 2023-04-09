@@ -4,14 +4,12 @@ using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Extensions;
 using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
-using System.Text;
 
 namespace PropertySearchApp.Controllers;
 
@@ -91,8 +89,10 @@ public class IdentityController : Controller
         var user = await _identityService.GetUserByIdAsync(id);
         if (user == null)
             return NotFound();
+
         var viewModel = _mapper.Map<UserDetailsViewModel>(user);
         viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
+        
         return View(viewModel);
     }
     [HttpGet, Authorize]
@@ -100,8 +100,11 @@ public class IdentityController : Controller
     {
         var currentUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var user = await _identityService.GetUserByIdAsync(currentUserId);
+        
         var request = _mapper.Map<EditUserFieldsRequest>(user);
+        
         request.Contacts = (await _contactsService.GetUserContactsAsync(currentUserId)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
+        
         return user == null ? Forbid() : View(request);
     }
     [HttpPost, ValidateAntiForgeryToken, Authorize]
@@ -121,36 +124,9 @@ public class IdentityController : Controller
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
         var result = await _identityService.UpdateUserFields(userId, requestToService.UserName, requestToService.Information, requestToService.PasswordToCompare);
-        return ToResponse(result, request, "Profile was updated successfully!");
+        return result.ToResponse("Profile was updated successfully!", TempData, () => RedirectToAction(nameof(Edit), "Identity"), () => View(request), (exception, message) => _logger.LogError(exception, message));
     }
 
-    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
-    {
-        return result.Match<IActionResult>(success =>
-        {
-            TempData["alert-success"] = successMessage;
-            return RedirectToAction(nameof(Edit), "Identity");
-        }, exception =>
-        {
-            if (exception is BaseApplicationException appException)
-            {
-                TempData["alert-danger"] = appException.BuildExceptionMessage();
-                return View(viewModel);
-            }
-            else if (exception is InternalDatabaseException dbException)
-            {
-                TempData["alert-danger"] = "Operation failed. Try again later";
-                foreach (var error in dbException.Errors)
-                {
-                    _logger.LogWarning(exception, error);
-                }
-                return View(viewModel);
-            }
-
-            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
-            throw exception;
-        });
-    }
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
         if (exception is AuthorizationOperationException registrationException)
