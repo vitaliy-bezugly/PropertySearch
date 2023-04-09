@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
-using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PropertySearchApp.Common.Exceptions;
-using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Models;
 using PropertySearchApp.Repositories;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
-using System.Text;
+using PropertySearchApp.Extensions;
 
 namespace PropertySearchApp.Controllers;
 
@@ -33,7 +30,7 @@ public class AccommodationController : Controller
         _identityService = identityService;
     }
 
-    [HttpGet]
+    [HttpGet(nameof(Index))]
     public async Task<IActionResult> Index([FromRoute] int id, CancellationToken cancellationToken)
     {
         var accommodations = (await GetAccommodationsWithLimits(id * 12, 12, cancellationToken))
@@ -41,7 +38,7 @@ public class AccommodationController : Controller
 
         return View(accommodations);
     }
-    [HttpGet]
+    [HttpGet(nameof(MyOffers))]
     public async Task<IActionResult> MyOffers([FromRoute] int id, CancellationToken cancellationToken)
     {
         var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
@@ -50,7 +47,7 @@ public class AccommodationController : Controller
 
         return View("Index", accommodations);
     }
-    [HttpGet]
+    [HttpGet(nameof(Details))]
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
@@ -65,13 +62,14 @@ public class AccommodationController : Controller
         viewModel.OwnerUsername = account.Username;
         return View(viewModel);
     }
-    [HttpGet]
+
+    [HttpGet(nameof(Create))]
     public IActionResult Create()
     {
         var createAccommodation = new CreateAccommodationViewModel();
         return View(createAccommodation);
     }
-    [ValidateAntiForgeryToken, HttpPost]
+    [ValidateAntiForgeryToken, HttpPost(nameof(Create))]
     public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid == false)
@@ -82,16 +80,16 @@ public class AccommodationController : Controller
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
-        return ToResponse<CreateAccommodationViewModel>(result, viewModel, "Successfully created accommodation");
+        return result.ToResponse("Successfully created accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
 
-    [ValidateAntiForgeryToken, HttpPost]
+    [ValidateAntiForgeryToken, HttpPost(nameof(Delete) + "/{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var result = await _accommodationService.DeleteAccommodationAsync(_userId, id, cancellationToken);
-        return ToDeleteAccommodationResponse<IActionResult>(result);
+        return result.ToResponse("Successfully deleted accommodation", TempData, () => RedirectToAction("Index", "Accommodation"), () => RedirectToAction("Index", "Accommodation"), (exception, message) => _logger.LogError(exception, message));
     }
-    [HttpGet]
+    [HttpGet(nameof(Update) + "/{id}")]
     public async Task<IActionResult> Update([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
@@ -101,7 +99,7 @@ public class AccommodationController : Controller
         var updateViewModel = _mapper.Map<UpdateAccommodationViewModel>(accommodation);
         return View(updateViewModel);
     }
-    [ValidateAntiForgeryToken, HttpPost]
+    [ValidateAntiForgeryToken, HttpPost(nameof(Update) + "/{id}")]
     public async Task<IActionResult> Update([FromForm] UpdateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid == false)
@@ -111,67 +109,8 @@ public class AccommodationController : Controller
             viewModel.Price, viewModel.PhotoUri, _userId);
 
         var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
-        return ToResponse<UpdateAccommodationViewModel>(result, viewModel, "Successfully updated accommodation");
-    }
 
-    private IActionResult ToResponse<T>(Result<bool> result, T viewModel, string successMessage)
-        where T : class
-    {
-        return result.Match<IActionResult>(success =>
-        {
-            TempData["alert-success"] = successMessage;
-            return View();
-        }, exception =>
-        {
-            if (exception is BaseApplicationException appException)
-            {
-                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
-                return View(viewModel);
-            }
-            else if (exception is InternalDatabaseException dbException)
-            {
-                TempData["alert-danger"] = "Operation failed. Try again later";
-                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
-                return View(viewModel);
-            }
-
-            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
-            throw exception;
-        });
-    }
-    private IActionResult ToDeleteAccommodationResponse<T>(Result<bool> result)
-        where T : class
-    {
-        return result.Match<IActionResult>(success =>
-        {
-            TempData["alert-success"] = "Successfully deleted accommodation";
-            return RedirectToAction("Index", "Accommodation");
-        }, exception =>
-        {
-            if (exception is BaseApplicationException appException)
-            {
-                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
-                return RedirectToAction("Index", "Accommodation");
-            }
-            else if (exception is InternalDatabaseException dbException)
-            {
-                TempData["alert-danger"] = "Operation failed. Try again later";
-                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
-                return RedirectToAction("Index", "Accommodation");
-            }
-
-            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
-            throw exception;
-        });
-    }
-    private static string BuildExceptionMessage(string[] errors)
-    {
-        var stringBuilder = new StringBuilder();
-        foreach (var item in errors)
-        {
-            stringBuilder.Append(item);
-        }
-        return stringBuilder.ToString();
+        return result.ToResponse("Successfully updated accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
     private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
     {

@@ -9,8 +9,6 @@ namespace PropertySearchApp;
 public class Startup
 {
     private readonly ILogger<Startup> _logger;
-    private readonly List<string> _requiredRoles;
-    private const bool IsUpToDate = false;
     public IConfiguration Configuration
     {
         get;
@@ -20,14 +18,14 @@ public class Startup
         this.Configuration = configuration;
         _logger = logger;
 
-        _requiredRoles = new List<string> { "user", "admin", "landlord" };
+        // _requiredRoles = new List<string> { "user", "admin", "landlord" };
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
         services.InstallServicesInAssembly(Configuration, _logger);
     }
-    public async Task ConfigureAsync(WebApplication app, IWebHostEnvironment env)
+    public void Configure(WebApplication app, IWebHostEnvironment env)
     {
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
