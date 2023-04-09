@@ -6,6 +6,8 @@ using PropertySearchApp.Domain;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
 using System.Text;
+using PropertySearchApp.Extensions;
+using LanguageExt.Common;
 
 namespace PropertySearchApp.Controllers;
 
@@ -31,28 +33,8 @@ public class ContactsController : Controller
         var contact = new ContactDomain { Id = Guid.NewGuid(), ContactType = type, Content = content };
         var userId = Guid.Parse(_contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var result = await _contactsService.AddContactToUserAsync(userId, contact);
-
-        return result.Match<IActionResult>(success =>
-        {
-            TempData["alert-success"] = "Successfully added new contact!";
-            return RedirectToAction("Edit", "Identity");
-        }, exception =>
-        {
-            if (exception is BaseApplicationException appException)
-            {
-                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
-                return RedirectToAction("Edit", "Identity");
-            }
-            else if (exception is InternalDatabaseException dbException)
-            {
-                TempData["alert-danger"] = "Operation failed. Try again later";
-                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
-                return RedirectToAction("Edit", "Identity");
-            }
-
-            _logger.LogError(exception, "Unhandled exception in create accommodation operation");
-            throw exception;
-        });
+        
+        return ToResponse(result, "Successfully created new contact!");
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
@@ -63,36 +45,34 @@ public class ContactsController : Controller
         var userId = Guid.Parse(_contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var result = await _contactsService.DeleteContactFromUserAsync(userId, id);
 
+        return ToResponse(result, "Successfully deleted contact!");
+    }
+
+    private IActionResult ToResponse(Result<bool> result, string successMessage)
+    {
         return result.Match<IActionResult>(success =>
         {
-            TempData["alert-success"] = "Successfully deleted contact!";
+            TempData["alert-success"] = successMessage;
             return RedirectToAction("Edit", "Identity");
         }, exception =>
         {
             if (exception is BaseApplicationException appException)
             {
-                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                TempData["alert-danger"] = appException.BuildExceptionMessage();
                 return RedirectToAction("Edit", "Identity");
             }
             else if (exception is InternalDatabaseException dbException)
             {
                 TempData["alert-danger"] = "Operation failed. Try again later";
-                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
+                foreach (var error in dbException.Errors)
+                {
+                    _logger.LogWarning(exception, error);
+                }
                 return RedirectToAction("Edit", "Identity");
             }
 
             _logger.LogError(exception, "Unhandled exception in create accommodation operation");
             throw exception;
         });
-    }
-
-    private static string BuildExceptionMessage(string[] errors)
-    {
-        var stringBuilder = new StringBuilder();
-        foreach (var item in errors)
-        {
-            stringBuilder.Append(item);
-        }
-        return stringBuilder.ToString();
     }
 }

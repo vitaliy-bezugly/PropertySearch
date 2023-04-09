@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
+using PropertySearchApp.Extensions;
 using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
@@ -133,28 +134,22 @@ public class IdentityController : Controller
         {
             if (exception is BaseApplicationException appException)
             {
-                TempData["alert-danger"] = BuildExceptionMessage(appException.Errors);
+                TempData["alert-danger"] = appException.BuildExceptionMessage();
                 return View(viewModel);
             }
             else if (exception is InternalDatabaseException dbException)
             {
                 TempData["alert-danger"] = "Operation failed. Try again later";
-                _logger.LogWarning(exception, BuildExceptionMessage(dbException.Errors));
+                foreach (var error in dbException.Errors)
+                {
+                    _logger.LogWarning(exception, error);
+                }
                 return View(viewModel);
             }
 
             _logger.LogError(exception, "Unhandled exception in create accommodation operation");
             throw exception;
         });
-    }
-    private static string BuildExceptionMessage(string[] errors)
-    {
-        var stringBuilder = new StringBuilder();
-        foreach (var item in errors)
-        {
-            stringBuilder.Append(item);
-        }
-        return stringBuilder.ToString();
     }
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
