@@ -115,7 +115,7 @@ public class IdentityService : IIdentityService
         var givenPasswordSameToActual = await _userRepository.CheckPasswordAsync(entity, user.Password);
         if(givenPasswordSameToActual == false)
         {
-            var badResult = new Result<bool>(new UserNotFoundException(new[] { "Given password and actual are not the same" }));
+            var badResult = new Result<bool>(new WrongPasswordException(new[] { "Given password and actual are not the same" }));
             return badResult;
         }
         

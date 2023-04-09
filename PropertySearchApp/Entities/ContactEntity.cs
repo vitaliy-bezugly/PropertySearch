@@ -10,4 +10,8 @@ public class ContactEntity : IEntity
     public string ContactType { get; set; }
     public string Content { get; set; }
     public DateTime CreationTime { get; set; }
+
+    [ForeignKey(nameof(User))]
+    public Guid UserId { get; set; }
+    public UserEntity? User { get; set; }
 }
