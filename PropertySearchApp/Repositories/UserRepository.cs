@@ -57,17 +57,14 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
         return await _userManager.Users.Include(x => x.Contacts).FirstOrDefaultAsync(x => x.Id == userId);
     }
 
-    public async Task<IdentityResult> UpdateFieldsAsync(UserEntity user, string newUsername, string newInformation, List<ContactEntity> newContacts)
+    public async Task<IdentityResult> UpdateFieldsAsync(UserEntity user, string newUsername, string newInformation)
     {
         ValidateUserIfInvalidThrowException(user);
         ValidateStringIfInvalidThrowException(nameof(newUsername), newUsername);
         ValidateStringIfInvalidThrowException(nameof(newInformation), newInformation);
-        if (newContacts == null)
-            throw new ArgumentNullException($"{newContacts} can not be null");
 
         user.UserName = newUsername;
         user.Information = newInformation;
-        user.Contacts = newContacts;
 
         return await _userManager.UpdateAsync(user);
     }

@@ -15,7 +15,7 @@ public interface IUserRepository
     /// <param name="newInformation">Future information about given user</param>
     /// <param name="newContacts">Future contacts of given user. Con not be null</param>
     /// <returns></returns>
-    Task<IdentityResult> UpdateFieldsAsync(UserEntity user, string newUsername, string newInformation, List<ContactEntity> newContacts);
+    Task<IdentityResult> UpdateFieldsAsync(UserEntity user, string newUsername, string newInformation);
     Task<IdentityResult> AddToRoleAsync(UserEntity user, string roleName);
     Task<bool> CheckPasswordAsync(UserEntity user, string password);
 }

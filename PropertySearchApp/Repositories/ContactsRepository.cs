@@ -63,7 +63,6 @@ public class ContactsRepository : IContactsRepository
             return new Result<bool>(true);
 
         return GenerateInternalDatabaseException("Can not update contact, initial database error");
-
     }
 
     private Result<bool> GenerateInternalDatabaseException(string errorMessage)

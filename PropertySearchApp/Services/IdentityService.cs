@@ -102,9 +102,9 @@ public class IdentityService : IIdentityService
         var entity = await _userReceiverRepository.GetByIdAsync(userId);
         return entity == null ? null : _mapper.Map<UserDomain>(entity);
     }
-    public async Task<Result<bool>> UpdateUserFields(UserDomain user)
+    public async Task<Result<bool>> UpdateUserFields(Guid userId, string newUsername, string newInformation, string password)
     {
-        var entity = await _userReceiverRepository.GetByIdWithContactsAsync(user.Id);
+        var entity = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
         if (entity == null)
         {
             var badResult = new Result<bool>(new UserNotFoundException(new[] { "User with given id does not exist" }));
@@ -112,7 +112,7 @@ public class IdentityService : IIdentityService
         }
         
         /* Validate password */
-        var givenPasswordSameToActual = await _userRepository.CheckPasswordAsync(entity, user.Password);
+        var givenPasswordSameToActual = await _userRepository.CheckPasswordAsync(entity, password);
         if(givenPasswordSameToActual == false)
         {
             var badResult = new Result<bool>(new WrongPasswordException(new[] { "Given password and actual are not the same" }));
@@ -120,7 +120,7 @@ public class IdentityService : IIdentityService
         }
         
         /* Update user fields */
-        var result = await _userRepository.UpdateFieldsAsync(entity, user.Username, user.Information, user.Contacts.Select(x => _mapper.Map<ContactEntity>(x)).ToList());
+        var result = await _userRepository.UpdateFieldsAsync(entity, newUsername, newInformation);
         return result.Succeeded ? new Result<bool>(true) : 
             new Result<bool>(new UserUpdateOperationException(result.Errors
                 .Select(x => x.Description).ToArray()));
