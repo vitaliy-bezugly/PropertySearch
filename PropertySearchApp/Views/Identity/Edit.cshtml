@@ -135,6 +135,7 @@ else if (TempData["alert-success"] != null)
         link.setAttribute('href', baseLink)
 
         let type = event.target.value
+        type = type.replace(/ /g, '+');
         let linkToCreate = link.getAttribute('href');
 
         let content = document.getElementById('contacts-content').value
@@ -147,6 +148,7 @@ else if (TempData["alert-success"] != null)
         link.setAttribute('href', baseLink)
 
         let type = document.getElementById('contacts-type').value
+        type = type.replace(/ /g, '+');
         let linkToCreate = link.getAttribute('href');
 
         let content = event.target.value
