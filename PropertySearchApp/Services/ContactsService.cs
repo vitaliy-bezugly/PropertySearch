@@ -45,7 +45,7 @@ public class ContactsService : IContactsService
             return new Result<bool>(new UserNotFoundException(new string[] { "User with given id does not exist" }));
         }
 
-        return await _contactsRepository.DeleteContactAsync(_mapper.Map<ContactEntity>(contact));
+        return await _contactsRepository.DeleteContactAsync(contactId);
     }
 
     public async Task<List<ContactDomain>> GetUserContactsAsync(Guid userId)
