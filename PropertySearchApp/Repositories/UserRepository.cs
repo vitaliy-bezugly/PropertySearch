@@ -44,9 +44,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
 
     public async Task<UserEntity?> GetByIdAsync(Guid id)
     {
-        return await _userManager.Users
-            .Include(x => x.Contacts)
-            .FirstOrDefaultAsync(x => x.Id == id);
+        return await _userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
     }
     public async Task<UserEntity?> GetByIdWithAccommodationsAsync(Guid userId)
     {

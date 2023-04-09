@@ -19,12 +19,14 @@ public class IdentityController : Controller
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
     private readonly ILogger<IdentityController> _logger;
-    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor, ILogger<IdentityController> logger)
+    private readonly IContactsService _contactsService;
+    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor, ILogger<IdentityController> logger, IContactsService contactsService)
     {
         _identityService = identityService;
         _mapper = mapper;
         _httpContextAccessor = contextAccessor;
         _logger = logger;
+        _contactsService = contactsService;
     }
 
     [HttpGet]
@@ -93,6 +95,7 @@ public class IdentityController : Controller
         var currentUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var user = await _identityService.GetUserByIdAsync(currentUserId);
         var request = _mapper.Map<EditUserFieldsRequest>(user);
+        request.Contacts = (await _contactsService.GetUserContactsAsync(currentUserId)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
         return user == null ? Forbid() : View(request);
     }
     [HttpPost, ValidateAntiForgeryToken, Authorize]
@@ -110,16 +113,8 @@ public class IdentityController : Controller
         }
 
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        var user = new UserDomain
-        {
-            Id = userId,
-            Username = requestToService.UserName,
-            Information = requestToService.Information,
-            Contacts = requestToService.Contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList(),
-            Password = requestToService.PasswordToCompare
-        };
 
-        var result = await _identityService.UpdateUserFields(user);
+        var result = await _identityService.UpdateUserFields(userId, requestToService.UserName, requestToService.Information, requestToService.PasswordToCompare);
         return ToResponse(result, request, "Profile was updated successfully!");
     }
 

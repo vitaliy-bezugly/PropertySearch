@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Domain;
@@ -35,7 +34,7 @@ public class IdentityServiceTests
     {
         // Arrange
         string userRoleName = "user";
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty, Contacts = new List<ContactDomain>() };
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         var entity = new UserEntity { Id = user.Id, UserName = user.Username, Email = user.Email, IsLandlord = user.IsLandlord, PasswordHash = string.Empty, Information = user.Information, Contacts = new List<ContactEntity>() };
         _mapper.Map<UserEntity>(user).Returns(entity);
         _userRepository.FindByEmailAsync(entity.Email).ReturnsNull();
@@ -56,7 +55,7 @@ public class IdentityServiceTests
     {
         // Arrange
         string userRoleName = "user";
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty, Contacts = new List<ContactDomain>() };
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         var entity = new UserEntity { Id = user.Id, UserName = user.Username, Email = user.Email, IsLandlord = user.IsLandlord, PasswordHash = string.Empty, Information = user.Information, Contacts = new List<ContactEntity>() };
         _mapper.Map<UserEntity>(user).Returns(entity);
         _userRepository.FindByEmailAsync(entity.Email).Returns(new UserEntity { Id = Guid.NewGuid() });
@@ -114,7 +113,7 @@ public class IdentityServiceTests
     public async Task GetUserById_ShouldReturnUser_WhenUserExists()
     {
         // Arrange
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty, Contacts = new List<ContactDomain>() };
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         var entity = new UserEntity { Id = user.Id, UserName = user.Username, Email = user.Email, IsLandlord = user.IsLandlord, PasswordHash = string.Empty, Information = user.Information, Contacts = new List<ContactEntity>() };
         _userReceiver.GetByIdAsync(user.Id).Returns(entity);
         _mapper.Map<UserDomain>(entity).Returns(user);
@@ -129,7 +128,7 @@ public class IdentityServiceTests
     public async Task GetUserById_ShouldReturnNull_WhenUserDoesNotExist()
     {
         // Arrange
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty, Contacts = new List<ContactDomain>() };
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         _userReceiver.GetByIdAsync(user.Id).ReturnsNull();
 
         // Act
@@ -142,33 +141,35 @@ public class IdentityServiceTests
     public async Task UpdateUserFields_ShouldUpdateFields_WhenAllParametersAreValid()
     {
         // Arrange
+        string newUsername = "Changed username", newInformation = "Some information";
         var contacts = new List<ContactDomain> { new ContactDomain { Id = Guid.NewGuid(), ContactType = "Email address", Content = "unit@test.com" } };
         var contactsEntity = contacts.Select(x => new ContactEntity { Id = x.Id, Content = x.Content, ContactType = x.ContactType, CreationTime = DateTime.Now }).ToList();
 
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty, Contacts = contacts };
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         var userInDatabase = new UserEntity { Id = user.Id, UserName = user.Username, Email = user.Email, IsLandlord = user.IsLandlord, PasswordHash = string.Empty, Information = user.Information, Contacts = new List<ContactEntity>() };
         _userReceiver.GetByIdWithContactsAsync(user.Id).Returns(userInDatabase);
         _userRepository.CheckPasswordAsync(userInDatabase, user.Password).Returns(true);
-        _userRepository.UpdateFieldsAsync(userInDatabase, user.Username, user.Information, Arg.Any<List<ContactEntity>>()).Returns(IdentityResult.Success);
+        _userRepository.UpdateFieldsAsync(userInDatabase, newUsername, newInformation).Returns(IdentityResult.Success);
         _mapper.Map<ContactEntity>(contacts[0]).Returns(contactsEntity[0]);
 
         // Act
-        var actual = await _sut.UpdateUserFields(user);
+        var actual = await _sut.UpdateUserFields(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
         actual.IsSuccess.Should().Be(true);
         actual.Should().Be(actual.Match(result => result, exception => throw exception) == true);
-        await _userRepository.Received(1).UpdateFieldsAsync(Arg.Any<UserEntity>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<List<ContactEntity>>());
+        await _userRepository.Received(1).UpdateFieldsAsync(Arg.Any<UserEntity>(), Arg.Any<string>(), Arg.Any<string>());
     }
     [Fact]
     public async Task UpdateUserFields_ShouldNotUpdateFields_WhenUserDoesNotExist()
     {
         // Arrange
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty, Contacts = new List<ContactDomain>() };
+        string newUsername = "Changed username", newInformation = "Some information";
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         _userReceiver.GetByIdWithContactsAsync(user.Id).ReturnsNull();
 
         // Act
-        var actual = await _sut.UpdateUserFields(user);
+        var actual = await _sut.UpdateUserFields(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
         actual.IsFaulted.Should().Be(true);
@@ -186,14 +187,15 @@ public class IdentityServiceTests
     public async Task UpdateUserFields_ShouldNotUpdateFields_WhenPasswordIsWrong()
     {
         // Arrange
+        string newUsername = "Changed username", newInformation = "Some information";
         string wrongPassword = "wrongpassword";
-        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = wrongPassword, Information = string.Empty, Contacts = new List<ContactDomain>() };
+        var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = wrongPassword, Information = string.Empty };
         var entity = new UserEntity { Id = user.Id, UserName = user.Username, Email = user.Email, IsLandlord = user.IsLandlord, PasswordHash = string.Empty, Information = user.Information, Contacts = new List<ContactEntity>() };
         _userReceiver.GetByIdWithContactsAsync(user.Id).Returns(entity);
         _userRepository.CheckPasswordAsync(entity, wrongPassword).Returns(false);
 
         // Act
-        var actual = await _sut.UpdateUserFields(user);
+        var actual = await _sut.UpdateUserFields(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
         actual.IsFaulted.Should().Be(true);
