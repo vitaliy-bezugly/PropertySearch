@@ -12,5 +12,6 @@ public class RepositoriesInstaller : IInstaller
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserReceiverRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IContactsRepository, ContactsRepository>();
     }
 }

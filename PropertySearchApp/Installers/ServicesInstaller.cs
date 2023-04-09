@@ -12,5 +12,6 @@ public class ServicesInstaller : IInstaller
         services.AddScoped<IAccommodationService, AccommodationService>();
         services.AddScoped<IUserValidatorService, UserValidatorService>();
         services.AddScoped<ISignInService, SignInService>();
+        services.AddScoped<IContactsService, ContactsService>();
     }
 }

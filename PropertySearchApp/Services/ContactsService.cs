@@ -50,15 +50,8 @@ public class ContactsService : IContactsService
 
     public async Task<List<ContactDomain>> GetUserContactsAsync(Guid userId)
     {
-        var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
-        if (user == null)
-        {
-            var exception = new UserNotFoundException(new string[] { "User with given id does not exist" });
-            _logger.LogCritical(exception, "Can not get contacts of user that does not exist");
-            throw exception;
-        }
-
-        return user.Contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList();
+        var contacts = await _contactsRepository.GetUserContactsAsync(userId);
+        return contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList();
     }
 
     public async Task<Result<bool>> UpdateUserContactAsync(Guid userId, ContactDomain contact)
