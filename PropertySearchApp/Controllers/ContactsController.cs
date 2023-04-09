@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Models;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
 using System.Text;
@@ -15,17 +14,21 @@ public class ContactsController : Controller
 {
     private readonly IContactsService _contactsService;
     private readonly IHttpContextAccessor _contextAccessor;
-    private readonly ILogger _logger;
-    public ContactsController(IContactsService contactsService, IHttpContextAccessor contextAccessor, ILogger logger)
+    private readonly ILogger<ContactsController> _logger;
+    public ContactsController(IContactsService contactsService, IHttpContextAccessor contextAccessor, ILogger<ContactsController> logger)
     {
         _contactsService = contactsService;
         _contextAccessor = contextAccessor;
         _logger = logger;
     }
 
-    public async Task<IActionResult> AddContact([FromRoute] string contactType, [FromRoute] string content)
+    [HttpGet]
+    public async Task<IActionResult> Create([FromQuery] string type, [FromQuery] string content)
     {
-        var contact = new ContactDomain { Id = Guid.NewGuid(), ContactType = contactType, Content = content };
+        if (string.IsNullOrWhiteSpace(content) || string.IsNullOrEmpty(type))
+            return BadRequest();
+
+        var contact = new ContactDomain { Id = Guid.NewGuid(), ContactType = type, Content = content };
         var userId = Guid.Parse(_contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var result = await _contactsService.AddContactToUserAsync(userId, contact);
 

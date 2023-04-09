@@ -1,4 +1,5 @@
 using AutoMapper;
+using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -87,7 +88,11 @@ public class IdentityController : Controller
     public async Task<IActionResult> Details([FromRoute] Guid id)
     {
         var user = await _identityService.GetUserByIdAsync(id);
-        return user == null ? NotFound() : View(_mapper.Map<UserDetailsViewModel>(user));
+        if (user == null)
+            return NotFound();
+        var viewModel = _mapper.Map<UserDetailsViewModel>(user);
+        viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
+        return View(viewModel);
     }
     [HttpGet, Authorize]
     public async Task<IActionResult> Edit()

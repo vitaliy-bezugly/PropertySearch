@@ -40,7 +40,7 @@ else if (TempData["alert-success"] != null)
         <label>Add new contact</label>
         <div class="col-md-5">
             <div class="form-group">
-                <select class="form-select" aria-label="Default select example" asp-for="@Model.ContactToAdd.ContactType" placeholder="Contact type">
+                <select id="contacts-type" class="form-select" aria-label="Default select example" asp-for="@Model.ContactToAdd.ContactType" placeholder="Contact type">
                     <option value="Email address" selected>Email address</option>
                     <option value="Phone number">Phone number</option>
                     <option value="Address">Address</option>
@@ -54,14 +54,14 @@ else if (TempData["alert-success"] != null)
         </div>
         <div class="col-md-5">
             <div class="form-group">
-                <input type="text" class="form-control" asp-for="@Model.ContactToAdd.Content" placeholder="Contact info">
+                <input id="contacts-content" type="text" class="form-control" asp-for="@Model.ContactToAdd.Content" placeholder="Contact info">
                 <span asp-validation-for="ContactToAdd.Content" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary mt-0" style="min-width:100%">
-                Add
-            </button>
+            <a id="create-contact" class="btn btn-primary mt-0" style="min-width:100%" asp-controller="Contacts" asp-action="Create">
+                Create
+            </a>
         </div>
     </div>
 
@@ -123,3 +123,36 @@ else if (TempData["alert-success"] != null)
 <a asp-controller="Identity" asp-action="ChangeEmail">Change email address</a>
 <!--TODO-->
 <a asp-controller="Identity" asp-action="ChangePassword">Change password</a>
+
+<script type="text/javascript">
+    let link = document.getElementById('create-contact')
+    const baseLink = link.getAttribute('href')
+
+    const typeInput = document.getElementById('contacts-type')
+    const contentInput = document.getElementById('contacts-content')
+
+    typeInput.addEventListener('change', (event) => {
+        link.setAttribute('href', baseLink)
+
+        let type = event.target.value
+        let linkToCreate = link.getAttribute('href');
+
+        let content = document.getElementById('contacts-content').value
+        link.setAttribute('href', linkToCreate + '?type=' + type + '&content=' + content)
+
+        console.log(type)
+        console.log(content)
+    })
+    contentInput.addEventListener('change', (event) => {
+        link.setAttribute('href', baseLink)
+
+        let type = document.getElementById('contacts-type').value
+        let linkToCreate = link.getAttribute('href');
+
+        let content = event.target.value
+        link.setAttribute('href', linkToCreate + '?type=' + type + '&content=' + content)
+
+        console.log(type)
+        console.log(content)
+    })
+</script>
