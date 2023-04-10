@@ -41,5 +41,8 @@
     <Content Include="Views\Identity\_IdentityLayout.cshtml.css" />
     <Content Include="Views\Shared\_Layout.cshtml.css" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\images\Team\" />
+  </ItemGroup>
 
 </Project>
