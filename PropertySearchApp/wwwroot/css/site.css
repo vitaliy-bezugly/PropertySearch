@@ -27,9 +27,17 @@ body {
   margin-bottom: 60px;
   font-family: 'Roboto', sans-serif;
 }
-body nav {
-    padding-left: 15px; 
-    padding-right: 15px;
+
+/* header nav */
+header nav {
+    padding-left: 60px; 
+    padding-right: 25px;
+}
+@media (max-width: 796px) {
+    header nav {
+        padding-left: 40px;
+        padding-right: 15px;
+    }
 }
 
 .wrapper {
@@ -238,4 +246,13 @@ a i {
 a span {
     position: relative;
     bottom: 2px;
+}
+
+/* dropdown-menu */
+.dropdown-menu form.dropdown-item {
+    margin-bottom: 5px;
+    padding: 0.25rem 1rem;
+}
+.dropdown-menu form.dropdown-item button {
+    text-align: left;
 }

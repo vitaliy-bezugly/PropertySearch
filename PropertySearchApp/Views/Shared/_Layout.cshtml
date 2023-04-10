@@ -60,19 +60,25 @@
                         else
                         {
                             <ul class="nav navbar-nav navbar-right">
-                                
                                 <li class="nav-item d-flex">
-                                    <a class="link-underline-dark text-dark" asp-controller="Identity" asp-action="Details" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value" style="text-decoration:none;">
-                                        <img class="img-margin" height="30" width="30" src="/images/user-icon.png">
-                                        <span class="text fs-6">@User?.FindFirst(ClaimTypes.Name)?.Value</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item logout">
-                                    <form method="post" asp-controller="Identity" asp-action="Logout">
-                                        <button type="submit" class="nav-link text-dark">Logout</button>
-                                    </form>
-                                </li>
+                                    <div class="dropdown">
+                                        <button class="bg-transparent" style="border: 0px solid white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <img class="img-margin" height="30" width="30" src="/images/user-icon.png">
+                                            <span class="text fs-6">@User?.FindFirst(ClaimTypes.Name)?.Value</span>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item mt-1" asp-controller="Identity" asp-action="Details" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value" style="text-decoration:none;">
+                                                <span>Profile Details</span>
+                                            </a>
 
+                                            <form class="dropdown-item" method="post" asp-controller="Identity" asp-action="Logout">
+                                                <button type="submit" class="bg-transparent" style="border: 0px solid white">
+                                                    <span>Logout</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
                         }
                     </div>
