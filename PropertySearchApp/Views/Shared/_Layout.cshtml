@@ -62,9 +62,9 @@
                             <ul class="nav navbar-nav navbar-right">
                                 
                                 <li class="nav-item d-flex">
-                                    <i class='bx bx-user-circle'></i>
-                                    <a class="link-underline-dark text-dark" asp-controller="Identity" asp-action="Details" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value" style="text-decoration:none">
-                                        @User?.FindFirst(ClaimTypes.Name)?.Value
+                                    <a class="link-underline-dark text-dark" asp-controller="Identity" asp-action="Details" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value" style="text-decoration:none;">
+                                        <img class="img-margin" height="30" width="30" src="/images/user-icon.png">
+                                        <span class="text fs-6">@User?.FindFirst(ClaimTypes.Name)?.Value</span>
                                     </a>
                                 </li>
                                 <li class="nav-item logout">

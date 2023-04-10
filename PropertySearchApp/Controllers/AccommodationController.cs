@@ -47,8 +47,8 @@ public class AccommodationController : Controller
 
         return View("Index", accommodations);
     }
-    [HttpGet(nameof(Details))]
-    public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
+    [HttpGet(nameof(Details) + "/{id}")]
+    public async Task<IActionResult> Details([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
         if (accommodation == null)

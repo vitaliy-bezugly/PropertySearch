@@ -2,6 +2,15 @@ html {
   font-size: 14px;
 }
 
+body {
+    background-image: url('../images/background.jpg');
+}
+
+a span.text {
+    position: relative;
+    top: 1px;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -33,6 +42,7 @@ body nav {
     flex: 1 1 auto;
 }
 
+/* Forms styles */
 form *{
     padding-top: 2px;
 }
@@ -163,11 +173,10 @@ body .wrapper footer {
     bottom: 2px;
 }
 
-/* Add accommodation form */
-.add-accommodation-header {
-    position: relative;
-    top: 9px;
-    left: 20px;
+.card-header-text {
+    margin-left: 20px;
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 /* prev-next-menu */
@@ -194,7 +203,6 @@ body .wrapper footer {
 .card-header {
     border-radius: 1px;
 }
-
 /* media-queries for accommodation Index page */
 @media (max-width: 992px) {
     div.container-main, div.container.cards-container {
