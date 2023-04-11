@@ -15,50 +15,68 @@
     string currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
 
-<h1>Profile data</h1>
-<div class="form-group">
-    <label>Username</label>
-    <input type="text" class="form-control" asp-for="UserName" readonly>
-</div>
-
-<div class="form-group">
-    <label>Email address</label>
-    <input type="email" class="form-control" asp-for="Email" readonly>
-    @if (userIdFromRoute == currentUserId)
-    {
-        <a class="small text-secondary" asp-controller="Identity" asp-action="ChangeEmail">Change email address</a>
-    }
-</div>
-
-<div class="form-group">
-    <label>Additional Information</label>
-    <textarea type="text" class="form-control" asp-for="Information" readonly rows="8"></textarea>
-</div>
-
-<ul style="list-style: none" class="p-0">
-    @foreach (var item in Model.Contacts)
-    {
-        <li>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Contact type</label>
-                        <input type="text" class="form-control" readonly value="@item.ContactType">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Contact info</label>
-                        <input type="text" class="form-control" value="@item.Content" readonly>
-                    </div>
-                </div>
+<div class="card login-logout-tab">
+    <div class="card-header">
+        <h5 class="card-header-text">Profile data</h5>
+    </div>
+    <div class="card-content">
+        @if (TempData["alert-danger"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["alert-danger"]
             </div>
-        </li>
-    }
-</ul>
+        }
+        else if (TempData["alert-success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["alert-success"]
+            </div>
+        }
 
-@if (userIdFromRoute == currentUserId) 
-{
-    <a class="btn btn-primary" asp-controller="Identity" asp-action="Edit" style="min-width:100px">Edit</a>
-    <a class="btn btn-danger" asp-controller="Identity" asp-action="Delete" style="min-width:100px">Delete</a>
-}
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" asp-for="UserName" readonly>
+        </div>
+        <div class="form-group">
+            <label>Email address</label>
+            <input type="email" class="form-control" asp-for="Email" readonly>
+            @if (userIdFromRoute == currentUserId)
+            {
+                <a class="small text-secondary" asp-controller="Identity" asp-action="">Change email address</a>
+            }
+        </div>
+
+        <div class="form-group">
+            <label>Additional Information</label>
+            <textarea type="text" class="form-control" asp-for="Information" readonly rows="8"></textarea>
+        </div>
+
+        <ul style="list-style: none" class="p-0">
+            @foreach (var item in Model.Contacts)
+            {
+                <li>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contact type</label>
+                                <input type="text" class="form-control" readonly value="@item.ContactType">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contact info</label>
+                                <input type="text" class="form-control" value="@item.Content" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        @if (userIdFromRoute == currentUserId)
+        {
+            <a class="btn btn-primary" asp-controller="Identity" asp-action="Edit" style="min-width:100px">Edit</a>
+            <a class="btn btn-danger" asp-controller="Identity" asp-action="" style="min-width:100px">Delete</a>
+        }
+    </div>
+</div>

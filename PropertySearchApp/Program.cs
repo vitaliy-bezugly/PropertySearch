@@ -8,4 +8,4 @@ var startup = new Startup(builder.Configuration, logger);
 startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
-await startup.ConfigureAsync(app, app.Environment);
+startup.Configure(app, app.Environment);

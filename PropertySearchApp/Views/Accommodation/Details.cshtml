@@ -4,28 +4,75 @@
     ViewData["Title"] = "Details";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="image-wrapper">
-                <img src="@Model.PhotoUri?.ToString()" class="img-rounded" alt="Photo">
+<div class="card login-logout-tab">
+    <div class="card-header">
+        <h5 class="card-header-text">Details</h5>
+    </div>
+    <div class="card-content">
+        @if (TempData["alert-danger"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["alert-danger"]
             </div>
-            <a asp-controller="Accommodation" asp-action="Index" class="btn btn-secondary mt-2" style="min-width:150px">Go back</a>
-        </div>
-        <div class="col-md-8">
-            <h3>@Model.Title</h3>
-            <p class="text-gray">@Model.Description</p>
-            <h6>
-                <i class='bx bx-purchase-tag'></i>
-                Price:
-                @Model.Price$
-            </h6>
-            <div>
-                <i class='bx bx-user-pin'></i>
-                Owner username:
-                <a asp-controller="Identity" asp-action="Details" asp-route-id="@Model.OwnerId" class="link-primary" target="_blank">
-                    <span>@Model.OwnerUsername</span>
-                </a>
+        }
+        else if (TempData["alert-success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["alert-success"]
+            </div>
+        }
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="image-wrapper">
+                        @if (string.IsNullOrEmpty(@Model.PhotoUri))
+                        {
+                            <img class="card-img-top" src="~/images/default-image-for-rent.jpg" alt="Card image cap">
+                        }
+                        else
+                        {
+                            <img src="@Model.PhotoUri.ToString()" class="img-rounded" alt="Photo">
+                        }
+                    </div>
+                    <a asp-controller="Accommodation" asp-action="Index" class="btn btn-secondary mt-2" style="min-width:150px">Go back</a>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <div class="d-flex">
+                            <i class='bx bx-home-heart'></i>
+                            <input readonly class="form-control" value="@Model.Title">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <div class="d-flex">
+                            <i class='bx bx-text'></i>
+                            <textarea readonly class="form-control" rows="3">@Model.Description</textarea>
+                        </div>
+                        <small class="form-text text-muted">Brief description of what will distinguish the offer from others</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price</label>
+                        <div class="d-flex">
+                            <i class='bx bx-purchase-tag'></i>
+                            <input readonly class="form-control" value="@Model.Price">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Owner Username</label>
+                        <div class="d-flex">
+                            <a asp-controller="Identity" asp-action="Details" asp-route-id="@Model.OwnerId" class="link-primary" target="_blank" style="text-decoration:none">
+                                <i class='bx bx-user-pin'></i>
+                                <span style="position:relative;bottom:6px;">@Model.OwnerUsername</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

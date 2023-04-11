@@ -28,7 +28,5 @@ public class DatabaseInstaller : IInstaller
         })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
-
-        logger.LogInformation("Database has been successfully installed");
     }
 }

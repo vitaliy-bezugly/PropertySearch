@@ -9,7 +9,9 @@ public class RepositoriesInstaller : IInstaller
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
         services.AddScoped<IAccommodationRepository, AccommodationRepository>();
-        services.AddScoped<IUserReceiverRepository, UserReceiverRepository>();
-        logger.LogInformation("Repositories are successfully installed"); 
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserReceiverRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IContactsRepository, ContactsRepository>();
     }
 }

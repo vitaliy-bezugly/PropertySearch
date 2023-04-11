@@ -9,7 +9,6 @@ public class UserDomain : BaseDomain
     public string Password { get; set; }
     public bool IsLandlord { get; set; }
     public string Information { get; set; }
-    public List<ContactDomain> Contacts { get; set; }
     public UserDomain() : base()
     {
         Username = String.Empty;
@@ -17,6 +16,5 @@ public class UserDomain : BaseDomain
         Password = String.Empty;
         IsLandlord = false;
         Information = String.Empty;
-        Contacts = new List<ContactDomain>();
     }
 }
