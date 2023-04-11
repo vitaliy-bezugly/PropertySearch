@@ -1,5 +1,4 @@
 using PropertySearchApp.Installers.Extensions;
-using PropertySearchApp.Persistence.Extensions;
 
 namespace PropertySearchApp;
 
