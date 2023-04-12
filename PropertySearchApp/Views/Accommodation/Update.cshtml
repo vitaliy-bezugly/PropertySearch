@@ -62,8 +62,30 @@
 
             <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
 
-            <button type="submit" class="btn btn-primary float-end">Submit</button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#updateModal">
+                Update
+            </button>
             <a class="btn btn-secondary float-end go-back" asp-controller="Accommodation" asp-action="Index">Go back</a>
+
+            <!-- Modal -->
+            <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateModalLabel">Update accommodation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            You are trying to update an accommodation offer
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 </div>
