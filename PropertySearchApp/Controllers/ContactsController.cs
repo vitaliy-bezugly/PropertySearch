@@ -7,7 +7,7 @@ using PropertySearchApp.Extensions;
 
 namespace PropertySearchApp.Controllers;
 
-[Authorize]
+[Authorize, Route("[controller]")]
 public class ContactsController : Controller
 {
     private readonly IContactsService _contactsService;
@@ -20,7 +20,7 @@ public class ContactsController : Controller
         _logger = logger;
     }
 
-    [HttpGet]
+    [HttpGet(nameof(Create))]
     public async Task<IActionResult> Create([FromQuery] string type, [FromQuery] string content)
     {
         if (string.IsNullOrWhiteSpace(content) || string.IsNullOrEmpty(type))
@@ -32,7 +32,7 @@ public class ContactsController : Controller
 
         return result.ToResponse("Successfully created contact", TempData, () => RedirectToAction("Edit", "Identity"), () => RedirectToAction("Edit", "Identity"), (exception, message) => _logger.LogError(exception, message));
     }
-    [HttpGet("{id}")]
+    [HttpGet((nameof(Delete)) + "/{id}")]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         if (id == Guid.Empty)

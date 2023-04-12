@@ -10,7 +10,7 @@ using PropertySearchApp.Extensions;
 
 namespace PropertySearchApp.Controllers;
 
-[Authorize]
+[Authorize, Route("[controller]")]
 public class AccommodationController : Controller
 {
     private readonly ILogger<AccommodationRepository> _logger;
@@ -30,18 +30,20 @@ public class AccommodationController : Controller
         _identityService = identityService;
     }
 
-    [HttpGet(nameof(Index))]
-    public async Task<IActionResult> Index([FromRoute] int id, CancellationToken cancellationToken)
+    [HttpGet("{id:int?}")]
+    public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
-        var accommodations = (await GetAccommodationsWithLimits(id * 12, 12, cancellationToken))
+        var pageId = id == null ? 0 : id.Value;
+        var accommodations = (await GetAccommodationsWithLimits(pageId * 12, 12, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View(accommodations);
     }
-    [HttpGet(nameof(MyOffers))]
-    public async Task<IActionResult> MyOffers([FromRoute] int id, CancellationToken cancellationToken)
+    [HttpGet(nameof(MyOffers) + "/{id:int?}")]
+    public async Task<IActionResult> MyOffers([FromRoute] int? id, CancellationToken cancellationToken)
     {
-        var accommodations = (await _accommodationService.GetWithLimitsAsync(id * 12, 12, cancellationToken))
+        var pageId = id == null ? 0 : id.Value;
+        var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId * 12, 12, cancellationToken))
             .Where(x => x.UserId == _userId)
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
