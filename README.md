@@ -9,6 +9,18 @@ The Home Rental Offer Web Application is a useful tool for anyone looking to cre
   <li>View Other Users' Offers and Accounts: Users can view the offers and accounts of other users who have created an account on the application. This feature allows users to find potential rentals and to connect with other users who may be interested in renting their home.</li>
   <li>User Experience: The application has a clean and intuitive user interface that makes it easy for users to manage their home rental offers. The application's features are designed to be easy to use, and users can easily navigate through the different sections of the application.</li>
 </ul>
+
+## 💻‍‍ Libraries, tools, technologies and frameworks with which the application was created
+
+<ul>
+    <li><code>ASP .NET Core MVC</code> - with razor pages</li>
+    <li><code>ASP .NET Core Identity</code> - to add login authorization and authentication to application.</li>
+    <li><code>Entity Framework Core</code> - as ORM</li>
+    <li><code>MSSQL</code> - as data storage</li>
+    <li><code>XUnit</code> - as framework for testing</li>
+    <li><code>Docker</code> - to help build the application and port it to other devices</li>
+</ul>
+
 <h2>🛠️ Local running</h2>
 <p>Follow the steps</p>
 <ol>
@@ -32,3 +44,10 @@ git clone https://github.com/VitaliyMinaev/PropertySearch.git
 ``` cmd
 dotnet run
 ```
+
+## 👨‍💻 Authors
+
+- [@VitaliyMinaev](https://github.com/VitaliyMinaev)
+- [@Brannmarkt](https://github.com/Brannmarkt)
+- [@Alzgaymer](https://github.com/Alzgaymer)
+- [@DmytroHerasymchuk](https://github.com/DmytroHerasymchuk)
