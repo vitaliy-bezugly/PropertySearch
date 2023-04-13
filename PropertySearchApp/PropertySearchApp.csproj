@@ -41,4 +41,7 @@
     <Content Include="Views\Identity\_IdentityLayout.cshtml.css" />
     <Content Include="Views\Shared\_Layout.cshtml.css" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\css\Contacts.css" />
+  </ItemGroup>
 </Project>
