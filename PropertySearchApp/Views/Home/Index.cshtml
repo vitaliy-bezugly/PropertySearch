@@ -2,7 +2,39 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mt-3">
+            <h1 style="font-weight:900">
+                Your comform is our goal
+            </h1>
+            <br />
+            <p class="text-gray">
+                The Home Rental Offer Web Application is a useful tool for anyone looking to create and manage their home rental offers.
+            </p>
+
+            <p class="text-gray">
+                Looking for a place to rent or have a property to offer? Our app makes it easy for you to connect with others and find the perfect rental match. 
+            </p>
+
+            <p class="text-gray">
+                Whether you're looking for a new home or need to fill a vacancy, our platform allows you to post and view rental offers from people all around the world. With user-friendly features and intuitive navigation, finding the right property has never been easier. Join our community today and start renting with ease!
+            </p>
+
+            <div class="custom-btn">
+                <form method="get" asp-controller="Identity" asp-action="Register">
+                    <button>Start for free</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 mt-3">
+            <div class="card">
+               <div class="card-body">
+                    <div class="card-img">
+                        <img src="~/images/property.jpg" width="100%" height="100%" />
+                    </div>
+               </div>
+            </div>
+        </div>
+    </div>
 </div>

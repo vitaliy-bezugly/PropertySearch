@@ -324,3 +324,23 @@ footer ul.menu li a:hover {
     color: azure !important;
     opacity: 1;
 }
+
+/* custom button */
+.custom-btn button {
+    border-radius: 20px;
+    background: rgb(121, 113, 234);
+    padding: 4px;
+    color: white;
+    font-weight: bolder;
+    border: none;
+    min-width: 160px;
+    min-height: 48px;
+}
+
+.custom-btn button:hover {
+    background: rgb(57, 48, 175);
+}
+
+.custom-btn button:active {
+    background: rgb(105, 95, 255);
+}
