@@ -18,6 +18,9 @@
 @{
     bool IsOwner(string userId)
     {
+        if (User.FindFirst(ClaimTypes.NameIdentifier) == null)
+            return false;
+
         return User.FindFirst(ClaimTypes.NameIdentifier).Value == userId;
     }
     bool IsLandlord()

@@ -18,7 +18,6 @@ public class AccommodationController : Controller
     private readonly IAccommodationService _accommodationService;
     private readonly IIdentityService _identityService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly Guid _userId;
     public AccommodationController(ILogger<AccommodationRepository> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IIdentityService identityService)
     {
         _logger = logger;
@@ -26,11 +25,10 @@ public class AccommodationController : Controller
         _mapper = mapper;
 
         _httpContextAccessor = httpContextAccessor;
-        _userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         _identityService = identityService;
     }
 
-    [HttpGet("{id:int?}")]
+    [HttpGet("{id:int?}"), AllowAnonymous]
     public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
         var pageId = id == null ? 0 : id.Value;
@@ -42,9 +40,10 @@ public class AccommodationController : Controller
     [HttpGet(nameof(MyOffers) + "/{id:int?}")]
     public async Task<IActionResult> MyOffers([FromRoute] int? id, CancellationToken cancellationToken)
     {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var pageId = id == null ? 0 : id.Value;
         var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId * 12, 12, cancellationToken))
-            .Where(x => x.UserId == _userId)
+            .Where(x => x.UserId == userId)
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View("Index", accommodations);
@@ -74,11 +73,12 @@ public class AccommodationController : Controller
     [ValidateAntiForgeryToken, HttpPost(nameof(Create))]
     public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         if (ModelState.IsValid == false)
             return View(viewModel);
 
         var accommodation = new AccommodationDomain(Guid.NewGuid(), viewModel.Title, viewModel.Description,
-            viewModel.Price, viewModel.PhotoUri, _userId);
+            viewModel.Price, viewModel.PhotoUri, userId);
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
@@ -88,7 +88,8 @@ public class AccommodationController : Controller
     [ValidateAntiForgeryToken, HttpPost(nameof(Delete) + "/{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _accommodationService.DeleteAccommodationAsync(_userId, id, cancellationToken);
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var result = await _accommodationService.DeleteAccommodationAsync(userId, id, cancellationToken);
         return result.ToResponse("Successfully deleted accommodation", TempData, () => RedirectToAction("Index", "Accommodation"), () => RedirectToAction("Index", "Accommodation"), (exception, message) => _logger.LogError(exception, message));
     }
     [HttpGet(nameof(Update) + "/{id}")]
@@ -107,8 +108,9 @@ public class AccommodationController : Controller
         if (ModelState.IsValid == false)
             return View(viewModel);
 
+        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
-            viewModel.Price, viewModel.PhotoUri, _userId);
+            viewModel.Price, viewModel.PhotoUri, userId);
 
         var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
 
