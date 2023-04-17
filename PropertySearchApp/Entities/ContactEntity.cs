@@ -11,7 +11,7 @@ public class ContactEntity : IEntity
     public string Content { get; set; }
     public DateTime CreationTime { get; set; }
 
-    [ForeignKey(nameof(User))]
+    [ForeignKey("UserEntity")]
     public Guid UserEntityId { get; set; }
     public UserEntity? User { get; set; }
 }

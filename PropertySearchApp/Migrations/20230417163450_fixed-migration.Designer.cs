@@ -12,8 +12,8 @@ using PropertySearchApp.Persistence;
 namespace PropertySearchApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230409123229_addedkeytocontact")]
-    partial class addedkeytocontact
+    [Migration("20230417163450_fixed-migration")]
+    partial class fixedmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -208,12 +208,12 @@ namespace PropertySearchApp.Migrations
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("UserEntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserEntityId");
 
                     b.ToTable("Contact");
                 });
@@ -361,7 +361,7 @@ namespace PropertySearchApp.Migrations
                 {
                     b.HasOne("PropertySearchApp.Entities.UserEntity", "User")
                         .WithMany("Contacts")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
