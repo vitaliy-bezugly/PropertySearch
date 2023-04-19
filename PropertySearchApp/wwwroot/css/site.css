@@ -39,6 +39,10 @@ header nav {
         padding-right: 15px;
     }
 }
+header nav .nav-item i {
+    position: relative;
+    top: 3px;
+}
 
 .navbar-brand i {
     color: dodgerblue;

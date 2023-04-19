@@ -7,10 +7,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PropertySearch</title>
+    <link rel="icon" type="image/x-icon" href="~/images/icon.jpg">
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/homepage.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PropertySearchApp.styles.css" asp-append-version="true" />    
     
     <!-- Boxicons -->
@@ -38,15 +40,36 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">
+                                    <i class='bx bx-home-alt-2'></i>
+                                    Home
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">
+                                    <i class='bx bx-lock-alt'></i>
+                                    Privacy
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Contacts">
+                                    <i class='bx bxs-contact' ></i>
+                                    Contacts
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="About">
+                                    <i class='bx bx-cube-alt'></i>
+                                    About
+                               </a>
                             </li>
                             @if (User?.Identity?.IsAuthenticated == true)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Accommodation" asp-action="Index">Accommodations</a>
+                                    <a class="nav-link text-dark" asp-controller="Accommodation" asp-action="Index">
+                                        <i class='bx bx-list-plus' ></i>
+                                        Accommodations
+                                    </a>
                                 </li>
                             }
                         </ul>
