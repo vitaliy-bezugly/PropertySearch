@@ -40,6 +40,12 @@ header nav {
     }
 }
 
+.navbar-brand i {
+    color: dodgerblue;
+    position: relative;
+    top: 4px;
+}
+
 .wrapper {
     min-height: 100%;
     display: flex;

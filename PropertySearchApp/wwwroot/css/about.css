@@ -1,0 +1,10 @@
+﻿div.container.about {
+    font-family: Sen, Roboto, sans-serif;
+}
+.text-wrapper {
+    margin: auto;
+    width: 75%;
+}
+.technologies-item img {
+    width: 100%;
+}
