@@ -143,21 +143,6 @@ body .wrapper footer {
     top: 60px;
 }
 
-/* Cards */
-.card.accommodation:hover {
-    transform: scale(1.10);
-    transition-duration: 500ms;
-    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
-}
-.card .card-body .price {
-    display: inline;
-    color: crimson;
-}
-.bx-purchase-tag {
-    position: relative;
-    top: 4px;
-}
-
 /* Image wrapper */
 .image-wrapper {
     border: 4px solid dodgerblue;
@@ -176,19 +161,6 @@ body .wrapper footer {
 /* Text styles */
 .text-gray {
     color: gray;
-}
-
-/* add-accommodation */
-.add-accommodation {
-    margin-left: 12px;
-}
-.add-accommodation i {
-    position: relative;
-    top: 2px;
-}
-.add-accommodation span {
-    position: relative;
-    bottom: 2px;
 }
 
 .card-header-text {
@@ -220,32 +192,6 @@ body .wrapper footer {
 }
 .card-header {
     border-radius: 1px;
-}
-/* media-queries for accommodation Index page */
-@media (max-width: 992px) {
-    div.container-main, div.container.cards-container {
-        max-width: 960px;
-    }
-}
-@media (min-width: 900px) {
-    .col-cards {
-        width: 25%;
-    }
-}
-@media (max-width: 900px) {
-    .col-cards {
-        width: 33.3%;
-    }
-}
-@media (max-width: 630px) {
-    .col-cards {
-        width: 50%;
-    }
-}
-@media (max-width: 452px) {
-    .col-cards {
-        width: 100%;
-    }
 }
 
 /* i html tag */
@@ -353,4 +299,8 @@ footer ul.menu li a:hover {
 
 .custom-btn button:active {
     background: rgb(105, 95, 255);
+}
+
+i.geo {
+    color: dodgerblue;
 }

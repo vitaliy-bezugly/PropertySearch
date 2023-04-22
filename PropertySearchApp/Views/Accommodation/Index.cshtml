@@ -82,45 +82,59 @@ else if (TempData["alert-success"] != null)
                     <div class="card-body">
                         <h3 class="card-title">@item.Title</h3>
                         <p class="card-text">@item.Description</p>
-                        <div class="container p-0">
-                            @if(User?.Identity?.IsAuthenticated == true)
-                            {
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" style="width: 100%" target="_blank">
-                                            Details
-                                        </a>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="" style="width: 100%">
-                                            <i class='bx bx-purchase-tag'></i>
-                                            <p class="price">@item.Price$</p>
-                                        </div>
+                        @if (User?.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="accomodation-data">
+                                        <i class='bx bx-map-pin geo'></i>
+                                        <span>@item.Location.City</span>
                                     </div>
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="" style="width: 100%">
-                                    <i class='bx bx-purchase-tag'></i>
-                                    <p class="price">@item.Price$</p>
+                                <div class="col-6">
+                                    <div>
+                                        <i class='bx bx-purchase-tag'></i>
+                                        <span class="price">@item.Price$</span>
+                                    </div>
                                 </div>
-                            }
-                        </div>
+                            </div>
+                            <div class="row">
+                                <div class="details">
+                                    <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" style="width: 100%" target="_blank">
+                                        Details
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-sm-6 accomodation-data">
+                                    <div>
+                                        <i class='bx bx-map-pin geo'></i>
+                                        <span>@item.Location.City</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div>
+                                        <i class='bx bx-purchase-tag'></i>
+                                        <span class="price">@item.Price$</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                         @if (IsOwner(item.OwnerId))
                         {
-                            <div class="container p-0">
-                                <div class="row p-0">
-                                    <div class="col-md-6">
-                                        <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
-                                            <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete</button>
-                                        </form>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <form method="get" asp-controller="Accommodation" asp-action="Update" asp-route-id="@item.Id" style="min-width: 100%">
-                                            <button type="submit" class="btn btn-success" style="min-width: 100%">Update</button>
-                                        </form>
-                                    </div>
+                            <div class="row p-0">
+                                <div class="col-md-6">
+                                    <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
+                                        <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form method="get" asp-controller="Accommodation" asp-action="Update" asp-route-id="@item.Id" style="min-width: 100%">
+                                        <button type="submit" class="btn btn-success" style="min-width: 100%">Update</button>
+                                    </form>
                                 </div>
                             </div>
                         }
