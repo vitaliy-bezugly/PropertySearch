@@ -37,6 +37,7 @@
                     </div>
                     <a asp-controller="Accommodation" asp-action="Index" class="btn btn-secondary mt-2" style="min-width:150px">Go back</a>
                 </div>
+
                 <div class="col-md-8">
                     <div class="form-group">
                         <label>Title</label>
@@ -64,7 +65,36 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Owner Username</label>
+                        <label><i class='bx bx-map geo'></i>Country</label>
+                        <div class="d-flex">
+                            <i class='bx bx-map-pin'></i>
+                            <input readonly class="form-control" asp-for="Location.Country">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Region</label>
+                        <div class="d-flex">
+                            <i class='bx bx-camera-home'></i>
+                            <input readonly class="form-control" placeholder="Enter Region" asp-for="Location.Region">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <div class="d-flex">
+                            <i class='bx bx-buildings'></i>
+                            <input readonly class="form-control" asp-for="Location.City">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <div class="d-flex">
+                            <i class='bx bx-map-alt'></i>
+                            <input readonly class="form-control" placeholder="Enter Address" asp-for="Location.Address">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Owner</label>
                         <div class="d-flex">
                             <a asp-controller="Identity" asp-action="Details" asp-route-id="@Model.OwnerId" class="link-primary" target="_blank" style="text-decoration:none">
                                 <i class='bx bx-user-pin'></i>
@@ -74,48 +104,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <!-- Location -->
-                    <div class="card mt-4">
-                        <div class="card-header location">
-                            <i class='bx bx-map geo'></i>
-                            <span>Location</span>
-                        </div>
 
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Country</label>
-                                <div class="d-flex">
-                                    <i class='bx bx-map-pin'></i>
-                                    <input readonly class="form-control" asp-for="Location.Country">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Region</label>
-                                <div class="d-flex">
-                                    <i class='bx bx-camera-home'></i>
-                                    <input readonly class="form-control" placeholder="Enter Region" asp-for="Location.Region">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>City</label>
-                                <div class="d-flex">
-                                    <i class='bx bx-buildings'></i>
-                                    <input readonly class="form-control" asp-for="Location.City">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <div class="d-flex">
-                                    <i class='bx bx-map-alt'></i>
-                                    <input readonly class="form-control" placeholder="Enter Address" asp-for="Location.Address">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <br />
         </div>
     </div>
 </div>
