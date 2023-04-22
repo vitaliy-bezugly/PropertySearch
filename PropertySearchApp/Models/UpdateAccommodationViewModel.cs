@@ -10,4 +10,12 @@ public class UpdateAccommodationViewModel
     public string? Description { get; set; }
     public int Price { get; set; }
     public string? PhotoUri { get; set; }
+    public LocationViewModel? Location { get; set; }
+
+    public UpdateAccommodationViewModel()
+    {
+        Price = 0;
+        Title = Description = string.Empty;
+        Location = null;
+    }
 }

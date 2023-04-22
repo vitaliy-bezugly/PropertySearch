@@ -4,13 +4,15 @@ using PropertySearchApp.Domain.Abstract;
 
 namespace PropertySearchApp.Domain;
 
-public class AccommodationDomain : BaseDomain
+public class AccommodationDomain : DomainBase
 {
     public string Title { get; set; }
     public string? Description { get; set; }
     public int Price { get; set; }
     public Guid UserId { get; set; }
     public string? PhotoUri { get; set; }
+    public LocationDomain? Location { get; set; }
+    public DateTime CreationTime { get; set; }
 
     public AccommodationDomain() : base()
     {
