@@ -301,6 +301,18 @@ footer ul.menu li a:hover {
     background: rgb(105, 95, 255);
 }
 
+/* privacy */
+.center {
+    justify-content:center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+/* home */
+div.container.home {
+    font-family: Sen, Roboto, sans-serif;
+}
 i.geo {
     color: dodgerblue;
 }
