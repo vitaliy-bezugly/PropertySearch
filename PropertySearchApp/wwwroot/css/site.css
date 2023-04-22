@@ -304,3 +304,14 @@ footer ul.menu li a:hover {
 i.geo {
     color: dodgerblue;
 }
+
+.card .card-header.location {
+    margin-left: 5px;
+    margin-top: 7px;
+
+    background-color: transparent;
+}
+i.bx-map {
+    position: relative;
+    top: 3px;
+}

@@ -6,7 +6,8 @@ public class CreateAccommodationViewModel
 {
     [Required]
     public string Title { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
+    [Range(0, int.MaxValue)]
     public int Price { get; set; }
     public string? PhotoUri { get; set; }
     [Required]
@@ -15,7 +16,8 @@ public class CreateAccommodationViewModel
     public CreateAccommodationViewModel()
     {
         Price = 0;
-        Title = Description = string.Empty;
+        Title = string.Empty;
+        Description = null;
         Location = new LocationViewModel();
     }
 }

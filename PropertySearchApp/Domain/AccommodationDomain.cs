@@ -21,13 +21,14 @@ public class AccommodationDomain : DomainBase
         Price = 0;
         UserId = Guid.Empty;
     }
-    public AccommodationDomain(Guid id, string title, string? description, int price, string? photoUri, Guid userId) : base(id)
+    public AccommodationDomain(Guid id, string title, string? description, int price, string? photoUri, Guid userId, LocationDomain location) : base(id)
     {
         Title = title;
         Description = description;
         Price = price;
         PhotoUri = photoUri;
         UserId = userId;
+        Location = location;
     }
 
     public Result<bool> Validate()
