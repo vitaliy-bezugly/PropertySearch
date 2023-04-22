@@ -12,8 +12,8 @@ using PropertySearchApp.Persistence;
 namespace PropertySearchApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230406144741_added-information-and-contacts")]
-    partial class addedinformationandcontacts
+    [Migration("20230422122555_bettermodels")]
+    partial class bettermodels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -171,6 +171,9 @@ namespace PropertySearchApp.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PhotoUri")
                         .HasColumnType("nvarchar(max)");
 
@@ -179,16 +182,19 @@ namespace PropertySearchApp.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accommodation");
+                    b.ToTable("Accommodations");
                 });
 
             modelBuilder.Entity("PropertySearchApp.Entities.ContactEntity", b =>
@@ -199,23 +205,53 @@ namespace PropertySearchApp.Migrations
 
                     b.Property<string>("ContactType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("UserEntityId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserEntityId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("Contact");
+                    b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("PropertySearchApp.Entities.LocationEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(128)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("PropertySearchApp.Entities.UserEntity", b =>
@@ -242,7 +278,6 @@ namespace PropertySearchApp.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Information")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsLandlord")
@@ -348,8 +383,27 @@ namespace PropertySearchApp.Migrations
 
             modelBuilder.Entity("PropertySearchApp.Entities.AccommodationEntity", b =>
                 {
+                    b.HasOne("PropertySearchApp.Entities.LocationEntity", "Location")
+                        .WithOne("Accommodation")
+                        .HasForeignKey("PropertySearchApp.Entities.AccommodationEntity", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PropertySearchApp.Entities.UserEntity", "User")
                         .WithMany("Accommodations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PropertySearchApp.Entities.ContactEntity", b =>
+                {
+                    b.HasOne("PropertySearchApp.Entities.UserEntity", "User")
+                        .WithMany("Contacts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -357,11 +411,9 @@ namespace PropertySearchApp.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PropertySearchApp.Entities.ContactEntity", b =>
+            modelBuilder.Entity("PropertySearchApp.Entities.LocationEntity", b =>
                 {
-                    b.HasOne("PropertySearchApp.Entities.UserEntity", null)
-                        .WithMany("Contacts")
-                        .HasForeignKey("UserEntityId");
+                    b.Navigation("Accommodation");
                 });
 
             modelBuilder.Entity("PropertySearchApp.Entities.UserEntity", b =>

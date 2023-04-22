@@ -1,14 +1,14 @@
 namespace PropertySearchApp.Domain.Abstract;
 
-public abstract class BaseDomain
+public abstract class DomainBase
 {
     public Guid Id { get; set; }
 
-    public BaseDomain()
+    public DomainBase()
     {
         Id = Guid.Empty;
     }
-    public BaseDomain(Guid id)
+    public DomainBase(Guid id)
     {
         Id = id;
     }

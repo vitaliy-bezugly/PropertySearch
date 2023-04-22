@@ -1,0 +1,75 @@
+﻿/* Cards */
+.card.accommodation:hover {
+    transform: scale(1.10);
+    transition-duration: 500ms;
+    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+.bx-purchase-tag {
+    display: inline;
+    color: crimson;
+}
+
+.price {
+    position: relative;
+    bottom: 5px;
+}
+
+div.accomodation-data {
+    width: 100%;
+}
+div.accomodation-data span {
+    position: relative;
+    bottom: 3px;
+}
+
+div.row .details {
+    max-width: 50%;
+}
+
+/* add-accommodation */
+.add-accommodation {
+    margin-left: 12px;
+}
+
+.add-accommodation i {
+    position: relative;
+    top: 2px;
+}
+
+.add-accommodation span {
+    position: relative;
+    bottom: 2px;
+}
+
+/* media-queries for accommodation Index page */
+@media (max-width: 992px) {
+    div.container-main, div.container.cards-container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 900px) {
+    .col-cards {
+        width: 25%;
+    }
+}
+
+@media (max-width: 900px) {
+    .col-cards {
+        width: 33.3%;
+    }
+}
+
+@media (max-width: 630px) {
+    .col-cards {
+        width: 50%;
+    }
+}
+
+@media (max-width: 452px) {
+    .col-cards {
+        width: 100%;
+    }
+}
+

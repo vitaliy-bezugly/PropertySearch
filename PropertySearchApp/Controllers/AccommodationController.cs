@@ -32,7 +32,7 @@ public class AccommodationController : Controller
     public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
         var pageId = id == null ? 0 : id.Value;
-        var accommodations = (await GetAccommodationsWithLimits(pageId * 12, 12, cancellationToken))
+        var accommodations = (await GetAccommodationsWithLimits(pageId, 64, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View(accommodations);
@@ -42,7 +42,7 @@ public class AccommodationController : Controller
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var pageId = id == null ? 0 : id.Value;
-        var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId * 12, 12, cancellationToken))
+        var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId, 64, cancellationToken))
             .Where(x => x.UserId == userId)
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
@@ -77,8 +77,9 @@ public class AccommodationController : Controller
         if (ModelState.IsValid == false)
             return View(viewModel);
 
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };    
         var accommodation = new AccommodationDomain(Guid.NewGuid(), viewModel.Title, viewModel.Description,
-            viewModel.Price, viewModel.PhotoUri, userId);
+            viewModel.Price, viewModel.PhotoUri, userId, location);
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
@@ -109,15 +110,16 @@ public class AccommodationController : Controller
             return View(viewModel);
 
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };
         var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
-            viewModel.Price, viewModel.PhotoUri, userId);
+            viewModel.Price, viewModel.PhotoUri, userId, location);
 
         var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
 
         return result.ToResponse("Successfully updated accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
-    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
+    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int pageId, int countOfElements, CancellationToken cancellationToken)
     {
-        return await _accommodationService.GetWithLimitsAsync(firstElement, countOfElements, cancellationToken);
+        return await _accommodationService.GetWithLimitsAsync(pageId * countOfElements, countOfElements, cancellationToken);
     }
 }

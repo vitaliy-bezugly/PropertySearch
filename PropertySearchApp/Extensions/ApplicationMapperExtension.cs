@@ -13,6 +13,7 @@ public class ApplicationMapperExtension : Profile
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => Guid.Parse(src.OwnerId)));
         CreateMap<AccommodationDomain, AccommodationViewModel>()
             .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.UserId.ToString()));
+        
         CreateMap<AccommodationDomain, AccommodationEntity>().ReverseMap();
         CreateMap<AccommodationDomain, UpdateAccommodationViewModel>();
 
@@ -22,6 +23,9 @@ public class ApplicationMapperExtension : Profile
 
         CreateMap<ContactEntity, ContactDomain>().ReverseMap();
         CreateMap<ContactDomain, ContactViewModel>().ReverseMap();
+
+        CreateMap<LocationEntity, LocationDomain>().ReverseMap();
+        CreateMap<LocationDomain, LocationViewModel>().ReverseMap();
 
         CreateMap<RegistrationFormViewModel, UserDomain>();
     }

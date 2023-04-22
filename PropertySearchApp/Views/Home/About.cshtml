@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+
+<div class="container about">
+    <div class="row">
+        <h1 class="text-center" style="font-weight:bold; color:dodgerblue">
+            Property search
+        </h1>
+    </div>
+    <div class="row">
+        <div class="text-wrapper mt-3">
+            <p class="text-center">
+                Welcome to the Home Rental Offer Web Application! Our application is designed to make it easy for anyone to create and manage their home rental offers. Whether you're a homeowner looking to rent out your property or a tenant searching for the perfect place to live, our application has everything you need to get started.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-wrapper mt-3">
+            <p class="text-center">
+                We're proud to offer a user-friendly and intuitive application that makes managing your rental business a breeze. Thank you for choosing the Home Rental Offer Web Application!
+            </p>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <h3 class="text-center">Technologies and Tools</h3>
+        <div class="col-md-4 technologies-item">
+            Our application was built using ASP .NET Core MVC with razor pages, which provides a fast and efficient way to create dynamic web pages. We also use ASP .NET Core Identity to add login authorization and authentication to the application, ensuring that your data is secure.
+        </div>
+        <div class="col-md-4">
+            To store all of your rental information, we use Entity Framework Core as the object-relational mapper (ORM) and MSSQL as the data storage. This allows us to easily manage and access your rental data, so you can stay organized and on top of your rental business.
+        </div>
+        <div class="col-md-4">
+            Finally, we use Docker to help build the application and port it to other devices. This means that you can access your rental information from anywhere, whether you're on your desktop computer or your mobile device.
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6">
+            <p>
+                Our application was developed for educational purposes as a pet project in a team of 4 people. We wanted to create a useful tool for anyone looking to create and manage their home rental offers, while also gaining valuable experience in software development.
+            </p>
+            <a asp-controller="Home" asp-action="Team" class="text-gray">See our team</a>
+        </div>
+    </div>
+</div>
