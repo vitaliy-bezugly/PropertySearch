@@ -83,22 +83,29 @@ else if (TempData["alert-success"] != null)
                         <h3 class="card-title">@item.Title</h3>
                         <p class="card-text">@item.Description</p>
                         <div class="container p-0">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    @if (User?.Identity?.IsAuthenticated == true)
-                                    {
-                                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary" style="width: 100%" target="_blank">
+                            @if(User?.Identity?.IsAuthenticated == true)
+                            {
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary" style="width: 100%" target="_blank">
                                             Details
                                         </a>
-                                    }
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="" style="width: 100%">
-                                        <i class='bx bx-purchase-tag'></i>
-                                        <p class="price">@item.Price$</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="" style="width: 100%">
+                                            <i class='bx bx-purchase-tag'></i>
+                                            <p class="price">@item.Price$</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
+                            else
+                            {
+                                <div class="" style="width: 100%">
+                                    <i class='bx bx-purchase-tag'></i>
+                                    <p class="price">@item.Price$</p>
+                                </div>
+                            }
                         </div>
                         @if (IsOwner(item.OwnerId))
                         {
