@@ -2,7 +2,7 @@
 
 namespace PropertySearchApp.Domain;
 
-public class UserDomain : BaseDomain
+public class UserDomain : DomainBase
 {
     public string Username { get; set; }
     public string Email { get; set; }

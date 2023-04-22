@@ -77,8 +77,9 @@ public class AccommodationController : Controller
         if (ModelState.IsValid == false)
             return View(viewModel);
 
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };    
         var accommodation = new AccommodationDomain(Guid.NewGuid(), viewModel.Title, viewModel.Description,
-            viewModel.Price, viewModel.PhotoUri, userId);
+            viewModel.Price, viewModel.PhotoUri, userId, location);
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
 
@@ -109,8 +110,9 @@ public class AccommodationController : Controller
             return View(viewModel);
 
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };
         var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
-            viewModel.Price, viewModel.PhotoUri, userId);
+            viewModel.Price, viewModel.PhotoUri, userId, location);
 
         var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
 

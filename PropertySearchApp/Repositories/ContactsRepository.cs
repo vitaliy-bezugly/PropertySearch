@@ -21,7 +21,7 @@ public class ContactsRepository : IContactsRepository
     {
         if(contact == null) throw new ArgumentNullException(nameof(contact));
 
-        contact.UserEntityId = userId;
+        contact.UserId = userId;
         await _context.Contacts.AddAsync(contact);
 
         var result = await _context.SaveChangesAsync();
@@ -47,7 +47,7 @@ public class ContactsRepository : IContactsRepository
 
     public async Task<List<ContactEntity>> GetUserContactsAsync(Guid userId)
     {
-        return await _context.Contacts.Where(x => x.UserEntityId == userId).ToListAsync();
+        return await _context.Contacts.Where(x => x.UserId == userId).ToListAsync();
     }
 
     public async Task<Result<bool>> UpdateContactAsync(ContactEntity contact)

@@ -19,6 +19,7 @@ public class AccommodationRepository : IAccommodationRepository
     public async Task<IEnumerable<AccommodationEntity>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
     {
         return await _context.Accommodations
+            .Include(x => x.Location)
             .AsNoTracking()
             .OrderBy(x => x.Id)
             .Skip(startAt)
@@ -27,11 +28,11 @@ public class AccommodationRepository : IAccommodationRepository
     }
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.AsNoTracking().ToListAsync(cancellationToken);
+        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().ToListAsync(cancellationToken);
     }
     public async Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
     }
 
     public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
@@ -49,26 +50,39 @@ public class AccommodationRepository : IAccommodationRepository
         return false;
     }
 
-    public async Task<Result<bool>> UpdateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
+    public async Task<Result<bool>> UpdateAsync(AccommodationEntity destination, CancellationToken cancellationToken)
     {
-        ValidateAccommodationFieldsIfInvalidThrowException(accommodation);
+        ValidateAccommodationFieldsIfInvalidThrowException(destination);
 
-        var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodation.Id, cancellationToken);
-        if (exists == null)
+        var source = await _context.Accommodations.Include(x => x.Location).FirstOrDefaultAsync(x => x.Id == destination.Id, cancellationToken);
+        if (source == null)
         {
-            var exception = new AccommodationValidationException(new string[] {"There is no accommodation with given parameters"});
+            var exception = new AccommodationValidationException(new string[] { "There is no accommodation with given parameters" });
             _logger.LogWarning(exception, "Can not update accommodation");
             return new Result<bool>(exception);
         }
 
-        exists.Title = accommodation.Title;
-        exists.Description = accommodation.Description;
-        exists.Price = accommodation.Price;
-        exists.PhotoUri = accommodation.PhotoUri;
-        
+        UpdateFields(source, destination);
+
         var result = await _context.SaveChangesAsync(cancellationToken);
         return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,
-            $"Can not update accommodation with title: {accommodation.Title}");
+            $"Can not update accommodation with title: {destination.Title}");
+    }
+
+    private static void UpdateFields(AccommodationEntity source, AccommodationEntity destination)
+    {
+        source.Title = destination.Title;
+        source.Description = destination.Description;
+        source.Price = destination.Price;
+        source.PhotoUri = destination.PhotoUri;
+
+        if (destination.Location is not null)
+        {
+            source.Location.Country = destination.Location.Country;
+            source.Location.City = destination.Location.City;
+            source.Location.Region = destination.Location.Region;
+            source.Location.Address = destination.Location.Address;
+        }
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid accommodationId, CancellationToken cancellationToken)
