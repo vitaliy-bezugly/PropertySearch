@@ -32,7 +32,7 @@ public class AccommodationController : Controller
     public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
         var pageId = id == null ? 0 : id.Value;
-        var accommodations = (await GetAccommodationsWithLimits(pageId * 12, 12, cancellationToken))
+        var accommodations = (await GetAccommodationsWithLimits(pageId, 64, cancellationToken))
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View(accommodations);
@@ -42,7 +42,7 @@ public class AccommodationController : Controller
     {
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var pageId = id == null ? 0 : id.Value;
-        var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId * 12, 12, cancellationToken))
+        var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId, 64, cancellationToken))
             .Where(x => x.UserId == userId)
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
@@ -116,8 +116,8 @@ public class AccommodationController : Controller
 
         return result.ToResponse("Successfully updated accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
-    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int firstElement, int countOfElements, CancellationToken cancellationToken)
+    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int pageId, int countOfElements, CancellationToken cancellationToken)
     {
-        return await _accommodationService.GetWithLimitsAsync(firstElement, countOfElements, cancellationToken);
+        return await _accommodationService.GetWithLimitsAsync(pageId * countOfElements, countOfElements, cancellationToken);
     }
 }
