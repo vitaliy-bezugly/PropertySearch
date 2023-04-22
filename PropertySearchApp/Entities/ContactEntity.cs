@@ -1,17 +1,18 @@
-﻿using PropertySearchApp.Entities.Abstract;
+﻿using Microsoft.Build.Framework;
+using PropertySearchApp.Entities.Abstract;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PropertySearchApp.Entities;
 
-[Table("Contact")]
-public class ContactEntity : IEntity
+[Table("Contacts")]
+public class ContactEntity : EntityBase
 {
-    public Guid Id { get; set; }
+    [Required, Column(TypeName = "nvarchar(64)")]
     public string ContactType { get; set; }
+    [Required, Column(TypeName = "nvarchar(128)")]
     public string Content { get; set; }
-    public DateTime CreationTime { get; set; }
 
-    [ForeignKey("UserEntity")]
-    public Guid UserEntityId { get; set; }
+    [ForeignKey(nameof(User))]
+    public Guid UserId { get; set; }
     public UserEntity? User { get; set; }
 }
