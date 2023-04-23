@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using PropertySearchApp.Installers.Extensions;
 
 namespace PropertySearchApp;
@@ -34,12 +35,14 @@ public class Startup
             app.UseHsts();
         }
 
+        app.UseForwardedHeaders();
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
         app.UseRouting();
-        app.UseAuthentication();;
-
+        
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(

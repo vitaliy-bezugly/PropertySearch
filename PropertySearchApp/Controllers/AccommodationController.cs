@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Domain;
@@ -18,14 +19,15 @@ public class AccommodationController : Controller
     private readonly IAccommodationService _accommodationService;
     private readonly IIdentityService _identityService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    public AccommodationController(ILogger<AccommodationRepository> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IIdentityService identityService)
+    private readonly ILocationLoadingService _locationService;
+    public AccommodationController(ILogger<AccommodationRepository> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IIdentityService identityService, ILocationLoadingService locationService)
     {
         _logger = logger;
         _accommodationService = accommodationService;
         _mapper = mapper;
-
         _httpContextAccessor = httpContextAccessor;
         _identityService = identityService;
+        _locationService = locationService;
     }
 
     [HttpGet("{id:int?}"), AllowAnonymous]
@@ -65,10 +67,16 @@ public class AccommodationController : Controller
     }
 
     [HttpGet(nameof(Create))]
-    public IActionResult Create()
+    public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var createAccommodation = new CreateAccommodationViewModel();
-        return View(createAccommodation);
+        var remoteIp = Request.HttpContext.Connection.RemoteIpAddress;
+
+        var location = await _locationService.GetLocationByUrlAsync(remoteIp, cancellationToken);
+        var createAccommodationModel = new CreateAccommodationViewModel
+        {
+            Location = _mapper.Map<LocationViewModel>(location)
+        };
+        return View(createAccommodationModel);
     }
     [ValidateAntiForgeryToken, HttpPost(nameof(Create))]
     public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
@@ -108,7 +116,7 @@ public class AccommodationController : Controller
     {
         if (ModelState.IsValid == false)
             return View(viewModel);
-
+        
         var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };
         var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
