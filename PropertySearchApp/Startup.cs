@@ -17,8 +17,6 @@ public class Startup
     {
         this.Configuration = configuration;
         _logger = logger;
-
-        // _requiredRoles = new List<string> { "user", "admin", "landlord" };
     }
 
     public void ConfigureServices(IServiceCollection services)
