@@ -8,10 +8,10 @@ using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;
 
-public class IpInfoLocationService : ILocationLoadingService
+public class IpInfoLocationLoadingService : ILocationLoadingService
 {
     private readonly IPinfoClient _client;
-    public IpInfoLocationService(IPInfoClientContainer container)
+    public IpInfoLocationLoadingService(IPInfoClientContainer container)
     {
         _client = container.Client;
     }

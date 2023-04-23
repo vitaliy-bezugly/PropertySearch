@@ -1,6 +1,8 @@
+using IPinfo;
+
 namespace PropertySearchApp.Services.Abstract;
 
-public interface IpInfoClientContainer
+public interface IPInfoClientContainer
 {
-    
+    public IPinfoClient Client { get; }
 }

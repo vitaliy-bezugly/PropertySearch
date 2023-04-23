@@ -1,24 +1,18 @@
 using IPinfo;
+using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;
 
-public class IpClientContainer
+public class DefaultIpInfoClientContainer : IPInfoClientContainer
 {
-    private readonly IpClientBuilder _builder;
-    private IPinfoClient? _client;
-    public IpClientContainer(IpClientBuilder builder)
+    private readonly IPinfoClient _client;
+    public DefaultIpInfoClientContainer(IpInfoClientBuilder builder)
     {
-        _client = null;
-        _builder = builder;
+        _client = builder.Build();
     }
 
     public IPinfoClient Client
     {
-        get
-        {
-            if (_client is null)
-                _client = _builder.Build();
-            return _client;
-        }
+        get => _client;
     }
 }

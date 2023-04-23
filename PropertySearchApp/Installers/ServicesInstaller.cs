@@ -14,7 +14,9 @@ public class ServicesInstaller : IInstaller
         services.AddScoped<IUserValidatorService, UserValidatorService>();
         services.AddScoped<ISignInService, SignInService>();
         services.AddScoped<IContactsService, ContactsService>();
-        
-        services.AddSingleton<ILocationLoadingService, IpInfoLocationService>();
+        services.AddScoped<ILocationLoadingService, IpInfoLocationLoadingService>();
+
+        services.AddSingleton<IPInfoClientContainer, DefaultIpInfoClientContainer>();
+        services.AddSingleton<IpInfoClientBuilder>();
     }
 }
