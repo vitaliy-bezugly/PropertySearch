@@ -1,6 +1,4 @@
 using System.Net;
-using System.Net.Sockets;
-using System.Text.Json;
 using IPinfo;
 using IPinfo.Models;
 using Newtonsoft.Json;
@@ -13,12 +11,9 @@ namespace PropertySearchApp.Services;
 public class IpInfoLocationService : ILocationLoadingService
 {
     private readonly IPinfoClient _client;
-    public IpInfoLocationService(IConfiguration configuration)
+    public IpInfoLocationService(IPInfoClientContainer container)
     {
-        string token = configuration.GetSection("Tokens").GetSection("IpInfoToken").Value;
-        _client = new IPinfoClient.Builder()
-            .AccessToken(token)
-            .Build();
+        _client = container.Client;
     }
 
     public async Task<LocationDomain> GetLocationByUrlAsync(IPAddress ipAddress, CancellationToken cancellationToken)
