@@ -1,3 +1,4 @@
+using IPinfo;
 using PropertySearchApp.Installers.Abstract;
 using PropertySearchApp.Services;
 using PropertySearchApp.Services.Abstract;
@@ -13,5 +14,9 @@ public class ServicesInstaller : IInstaller
         services.AddScoped<IUserValidatorService, UserValidatorService>();
         services.AddScoped<ISignInService, SignInService>();
         services.AddScoped<IContactsService, ContactsService>();
+        services.AddScoped<ILocationLoadingService, IpInfoLocationLoadingService>();
+
+        services.AddSingleton<IPInfoClientContainer, DefaultIpInfoClientContainer>();
+        services.AddSingleton<IpInfoClientBuilder>();
     }
 }
