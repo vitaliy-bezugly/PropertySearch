@@ -15,7 +15,7 @@ public class Startup
     }
     public Startup(IConfiguration configuration, ILogger<Startup> logger)
     {
-        this.Configuration = configuration;
+        Configuration = configuration;
         _logger = logger;
     }
 
