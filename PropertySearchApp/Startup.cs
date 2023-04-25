@@ -51,6 +51,7 @@ public class Startup
 
         app.MapRazorPages();
 
+        
         app.Run();
     }
 }
