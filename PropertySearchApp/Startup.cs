@@ -34,6 +34,7 @@ public class Startup
             app.UseHsts();
         }
 
+        // For ip address getting
         app.UseForwardedHeaders();
         
         app.UseHttpsRedirection();
