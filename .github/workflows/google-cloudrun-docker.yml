@@ -50,7 +50,7 @@ on:
 
 env:
   PROJECT_ID: plenary-beanbag-384217 # TODO: update Google Cloud project id
-  GAR_LOCATION: europe-west3 (Frankfurt) # TODO: update Artifact Registry location
+  GAR_LOCATION: europe-west3-c # TODO: update Artifact Registry location
   SERVICE: property-search # TODO: update Cloud Run service name
   REGION: europe-west3 # TODO: update Cloud Run service region
 
