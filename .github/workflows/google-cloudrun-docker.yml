@@ -103,7 +103,7 @@ jobs:
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v0
         with:
-          flags: --port=80 --min-instances=1 --max-instances=4 
+          flags: --port=80 --min-instances=1 --max-instances=4 --cpu 2 --memory 2Gi
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           # NOTE: If using a pre-built image, update the image name here
