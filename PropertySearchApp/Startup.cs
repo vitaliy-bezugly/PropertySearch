@@ -21,6 +21,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // install services via reflection 
         services.InstallServicesInAssembly(Configuration, _logger);
     }
     public void Configure(WebApplication app, IWebHostEnvironment env)
