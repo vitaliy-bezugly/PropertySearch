@@ -10,6 +10,7 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
+        // TODO: get it as env variable
         var connectionString = configuration.GetConnectionString("Production")
                                ?? throw new InvalidOperationException("Connection string not found.");
 
