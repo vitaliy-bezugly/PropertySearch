@@ -51,7 +51,7 @@ on:
 env:
   PROJECT_ID: plenary-beanbag-384217 # TODO: update Google Cloud project id
   GAR_LOCATION: europe-west3 # TODO: update Artifact Registry location
-  SERVICE: property-search # TODO: update Cloud Run service name
+  SERVICE: property-search-registry # Artifact Registry
   REGION: europe-west3 # TODO: update Cloud Run service region
 
 jobs:
