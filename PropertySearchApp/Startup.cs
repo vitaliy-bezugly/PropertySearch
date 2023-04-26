@@ -38,6 +38,7 @@ public class Startup
         
         app.UseHttpsRedirection();
         app.UseStaticFiles();
+        app.UseDefaultFiles();
 
         app.UseRouting();
         

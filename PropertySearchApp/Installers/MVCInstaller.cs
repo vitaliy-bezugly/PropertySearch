@@ -13,5 +13,7 @@ public class MVCInstaller : IInstaller
         {
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
         });
+
+        logger.LogInformation("MVC has been successfully installed");
     }
 }

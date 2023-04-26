@@ -12,6 +12,7 @@ if (port != null)
     builder.WebHost.UseUrls($"http://*:{port}");
 }
 
+builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
 builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 
 // build application
