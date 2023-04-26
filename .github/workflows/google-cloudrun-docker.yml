@@ -99,11 +99,12 @@ jobs:
 
       # END - Docker auth and build
 
+      # https://cloud.google.com/sdk/gcloud/reference/run/deploy
       - name: Deploy to Cloud Run
         id: deploy
-        uses: google-github-actions/deploy-cloudrun@v0
+        uses: google-github-actions/deploy-cloudrun@v1.0.1
         with:
-          flags: --args="--read-write"
+          flags:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           # NOTE: If using a pre-built image, update the image name here
