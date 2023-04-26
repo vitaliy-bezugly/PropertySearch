@@ -14,7 +14,7 @@ COPY ["PropertySearchApp/PropertySearchApp.csproj", "PropertySearchApp/"]
 RUN dotnet restore "PropertySearchApp/PropertySearchApp.csproj"
 COPY . .
 WORKDIR "/src/PropertySearchApp"
-RUN dotnet build "PropertySearchApp.csproj" -c Release -o /app/build
+RUN dotnet build "PropertySearchApp.csproj" -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish "PropertySearchApp.csproj" -c Release -o /app/publish /p:UseAppHost=false
