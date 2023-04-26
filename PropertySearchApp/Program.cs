@@ -9,7 +9,15 @@ startup.ConfigureServices(builder.Services);
 string? port = Environment.GetEnvironmentVariable("PORT");
 if (port != null)
 {
-    builder.WebHost.UseUrls($"http://*:{port}");
+    if (builder.Environment.IsProduction() == true) 
+    {
+        builder.WebHost.UseUrls($"https://*:{port}");
+
+    }
+    else
+    {
+        builder.WebHost.UseUrls($"http://*:{port}");
+    }
 }
 
 // build application
