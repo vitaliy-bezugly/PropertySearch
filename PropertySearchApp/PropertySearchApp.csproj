@@ -58,4 +58,9 @@
   <ItemGroup>
     <None Include="wwwroot\css\Contacts.css" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="Views\Accommodation\Create.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
