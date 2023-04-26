@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-COPY ["PropertySearchApp/Views", "app/Views"]
+COPY ["PropertySearchApp/Views", "./Views/"]
 EXPOSE $PORT
 EXPOSE 443
 
