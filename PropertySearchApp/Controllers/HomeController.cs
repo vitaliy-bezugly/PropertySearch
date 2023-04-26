@@ -13,30 +13,35 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [HttpGet]
     public IActionResult Index()
     {
         _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Index));
         return View();
     }
 
+    [HttpGet]
     public IActionResult Privacy()
     {
         _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Privacy));
         return View();
     }
 
+    [HttpGet]
     public IActionResult Team()
     {
         _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Team));
         return View();
     }
 
+    [HttpGet]
     public IActionResult Contacts()
     {
         _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Contacts));
         return View();
     }
 
+    [HttpGet]
     public IActionResult About()
     {
         _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(About));

@@ -9,6 +9,14 @@
 	<RazorCompileOnBuild>false</RazorCompileOnBuild>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <FileAlignment>8192</FileAlignment>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <FileAlignment>8192</FileAlignment>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="IPinfo" Version="2.1.0" />
@@ -22,11 +30,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.12" />
   </ItemGroup>
 
   <ItemGroup>
+
     <EmbeddedResource Include="Views\Accommodation\Index.cshtml" />
     <EmbeddedResource Include="Views\Home\Index.cshtml" />
     <EmbeddedResource Include="Views\Home\Privacy.cshtml" />
@@ -38,6 +48,7 @@
     <EmbeddedResource Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <EmbeddedResource Include="Views\_ViewImports.cshtml" />
     <EmbeddedResource Include="Views\_ViewStart.cshtml" />
+
   </ItemGroup>
   
   <ItemGroup>
@@ -50,5 +61,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\css\Contacts.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Views\Accommodation\Create.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
