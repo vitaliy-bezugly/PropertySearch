@@ -10,9 +10,9 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-        // TODO: get it as env variable
-        var connectionString = configuration.GetConnectionString("Production")
-                               ?? throw new InvalidOperationException("Connection string not found.");
+
+
+        var connectionString = GetConnString(configuration);
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
@@ -29,5 +29,15 @@ public class DatabaseInstaller : IInstaller
         })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+    }
+    private string GetConnString(IConfiguration configuration)
+    {
+        var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
+        if (connectionString != null) return connectionString;
+
+        connectionString = configuration.GetConnectionString("Production")
+                           ?? throw new InvalidOperationException("Connection string not found.");
+
+        return connectionString;
     }
 }
