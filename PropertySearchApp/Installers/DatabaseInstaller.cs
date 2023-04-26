@@ -10,9 +10,7 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-
-
-        var connectionString = GetConnString(configuration);
+        var connectionString = GetConnString(configuration, logger);
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
@@ -30,11 +28,16 @@ public class DatabaseInstaller : IInstaller
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
     }
-    private string GetConnString(IConfiguration configuration)
+    private string GetConnString(IConfiguration configuration, ILogger<Startup> logger)
     {
         var connectionString = Environment.GetEnvironmentVariable("DB_CONN");
-        if (connectionString != null) return connectionString;
+        if (connectionString != null)
+        {
+            logger.LogInformation("Received connection string from environment");
+            return connectionString;
+        }
 
+        logger.LogWarning("Connection string as environment variable has been not found. Use appsetting.json");
         connectionString = configuration.GetConnectionString("Production")
                            ?? throw new InvalidOperationException("Connection string not found.");
 
