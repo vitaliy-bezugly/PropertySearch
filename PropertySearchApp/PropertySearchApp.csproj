@@ -27,17 +27,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="Views\Accommodation\Index.cshtml" />
-    <AdditionalFiles Include="Views\Home\Index.cshtml" />
-    <AdditionalFiles Include="Views\Home\Privacy.cshtml" />
-    <AdditionalFiles Include="Views\Identity\Login.cshtml" />
-    <AdditionalFiles Include="Views\Identity\Register.cshtml" />
-    <AdditionalFiles Include="Views\Identity\_IdentityLayout.cshtml" />
-    <AdditionalFiles Include="Views\Shared\Error.cshtml" />
-    <AdditionalFiles Include="Views\Shared\_Layout.cshtml" />
-    <AdditionalFiles Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
-    <AdditionalFiles Include="Views\_ViewImports.cshtml" />
-    <AdditionalFiles Include="Views\_ViewStart.cshtml" />
+    <EmbeddedResource Include="Views\Accommodation\Index.cshtml" />
+    <EmbeddedResource Include="Views\Home\Index.cshtml" />
+    <EmbeddedResource Include="Views\Home\Privacy.cshtml" />
+    <EmbeddedResource Include="Views\Identity\Login.cshtml" />
+    <EmbeddedResource Include="Views\Identity\Register.cshtml" />
+    <EmbeddedResource Include="Views\Identity\_IdentityLayout.cshtml" />
+    <EmbeddedResource Include="Views\Shared\Error.cshtml" />
+    <EmbeddedResource Include="Views\Shared\_Layout.cshtml" />
+    <EmbeddedResource Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <EmbeddedResource Include="Views\_ViewImports.cshtml" />
+    <EmbeddedResource Include="Views\_ViewStart.cshtml" />
   </ItemGroup>
   
   <ItemGroup>
