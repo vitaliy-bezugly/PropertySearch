@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.HttpOverrides;
 using PropertySearchApp.Installers.Extensions;
 
 namespace PropertySearchApp;
