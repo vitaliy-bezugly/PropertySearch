@@ -38,7 +38,7 @@ public class DatabaseInstaller : IInstaller
         }
 
         logger.LogWarning("Connection string as environment variable has been not found. Use appsetting.json");
-        connectionString = configuration.GetConnectionString("Production")
+        connectionString = configuration.GetConnectionString("DockerConnection")
                            ?? throw new InvalidOperationException("Connection string not found.");
 
         return connectionString;
