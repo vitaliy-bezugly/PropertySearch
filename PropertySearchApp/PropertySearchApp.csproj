@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+	<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+	<Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>b9e339e1-ece2-4fee-a9e3-5fdbf7a59ee4</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
