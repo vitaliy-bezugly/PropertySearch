@@ -27,7 +27,7 @@ namespace PropertySearchApp.Services.Cached
                 {
                     _memoryCache.Set(ipAddress, location, new MemoryCacheEntryOptions
                     {
-                        SlidingExpiration = TimeSpan.FromSeconds(30),
+                        SlidingExpiration = TimeSpan.FromSeconds(60),
                         AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(3600)
                     });
                 }
