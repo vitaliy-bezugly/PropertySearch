@@ -6,14 +6,12 @@ ILogger<Startup> logger = builder.CreateLogger<Startup>();
 
 var startup = new Startup(builder.Configuration, logger);
 startup.ConfigureServices(builder.Services);
+
 string? port = Environment.GetEnvironmentVariable("PORT");
-if (port != null)
+if(string.IsNullOrEmpty(port) == false)
 {
     builder.WebHost.UseUrls($"http://*:{port}");
 }
-
-builder.Host.UseContentRoot(Directory.GetCurrentDirectory());
-builder.WebHost.UseContentRoot(Directory.GetCurrentDirectory());
 
 // build application
 var app = builder.Build();
