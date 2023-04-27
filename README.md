@@ -51,3 +51,11 @@ dotnet run
 - [@Brannmarkt](https://github.com/Brannmarkt)
 - [@Alzgaymer](https://github.com/Alzgaymer)
 - [@DmytroHerasymchuk](https://github.com/DmytroHerasymchuk)
+
+## 🧿 Images
+![image](https://user-images.githubusercontent.com/87979065/234870871-d2d8f643-21d9-4da6-bc68-6c1f88f5c51d.png)
+![image](https://user-images.githubusercontent.com/87979065/234871712-5f10daa8-7ecb-46e1-a2e3-b5390910f80d.png)
+![image](https://user-images.githubusercontent.com/87979065/234871734-e9218444-b945-4429-8ff4-e36e5a01a848.png)
+![image](https://user-images.githubusercontent.com/87979065/234871887-0859ee01-ffc4-45ba-af66-6c82322ba1b7.png)
+
+
