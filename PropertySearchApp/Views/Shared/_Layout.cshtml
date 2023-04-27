@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/css/homepage.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/accommodation.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css//footer.css" />
     <link rel="stylesheet" href="~/PropertySearchApp.styles.css" asp-append-version="true" />    
     
     <!-- Boxicons -->
@@ -121,51 +122,41 @@
         </div>
         <br/>
         <br/>
-        <footer class="footer" id="footer">
-            <div class="waves">
-                <div class="wave" id="wave1"></div>
-                <div class="wave" id="wave2"></div>
-                <div class="wave" id="wave3"></div>
-                <div class="wave" id="wave4"></div>
+        <footer id="footer">
+            <div class="row">
+                <ul class="menu">
+                    <li>
+                        <a class="menu__link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li>
+                        <a class="menu__link" asp-controller="Home" asp-action="About">About</a>
+                    </li>
+                    <li>
+                        <a class="menu__link" asp-controller="Home" asp-action="Team">Team</a>
+                    </li>
+                    <li>
+                        <a class="menu__link" asp-controller="Home" asp-action="Contacts">Contacts</a>
+                    </li>
+                </ul>
             </div>
-            <ul class="social-icon">
-                <li class="social-icon__item">
-                    <a class="social-icon__link" href="#">
-                        <ion-icon name="logo-facebook"></ion-icon>
-                    </a>
-                </li>
-                <li class="social-icon__item">
-                    <a class="social-icon__link" href="#">
-                        <ion-icon name="logo-twitter"></ion-icon>
-                    </a>
-                </li>
-                <li class="social-icon__item">
-                    <a class="social-icon__link" href="#">
-                        <ion-icon name="logo-linkedin"></ion-icon>
-                    </a>
-                </li>
-                <li class="social-icon__item">
-                    <a class="social-icon__link" href="#">
-                        <ion-icon name="logo-instagram"></ion-icon>
-                    </a>
-                </li>
-            </ul>
-            <ul class="menu">
-                <li class="menu__item">
-                    <a class="menu__link" asp-controller="Home" asp-action="Index">Home</a>
-                </li>
-                <li class="menu__item">
-                    <a class="menu__link" asp-controller="Home" asp-action="About">About</a>
-                </li>
-                <li class="menu__item">
-                    <a class="menu__link" asp-controller="Home" asp-action="Team">Team</a>
-                </li>
-                <li class="menu__item">
-                    <a class="menu__link" asp-controller="Home" asp-action="Contacts">Contacts</a>
-                </li>
-
-            </ul>
-            <p>&copy;2023 Property Search | All Rights Reserved</p>
+            <div class="row text">
+                <p>
+                    <i class='bx bx-map'></i>
+                    <span>Nauky Ave. 14, Kharkiv, 61166, Ukraine</span>
+                </p>
+            </div>
+            <div class="row text">
+                <div class="col-md-8">
+                    <p>&copy 2023 Property Search | All Rights Reserved</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="social-media float-end">
+                        <a href="#"><i class='bx bxl-github'></i></a>
+                        <a href="#"><i class='bx bxl-gmail'></i></a>
+                        <a href="#"><i class='bx bxl-telegram'></i></a>
+                    </div>
+                </div>
+            </div>
         </footer>
     </div>
 

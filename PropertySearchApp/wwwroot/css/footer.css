@@ -1,0 +1,60 @@
+﻿footer {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    padding-left: 50px;
+    padding-right: 50px;
+
+    background-color: dodgerblue;
+
+    color: white;
+}
+
+footer div.text.row {
+    color: ghostwhite;
+    padding-left: 20px;
+}
+
+footer ul, footer ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: inherit;
+}
+
+footer ul li, footer ol li {
+  float: left;
+}
+
+footer ul li a, footer ol li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  text-decoration: none;
+}
+
+footer ul li a:hover, footer ol li a:hover {
+  opacity: 1;
+}
+
+footer p i {
+    font-size: 18px;
+}
+
+footer p i.bx-map {
+    position: relative;
+    top: 2px;
+}
+
+footer .social-media a i {
+    font-size: 32px;
+    color: white;
+    opacity: 0.8;
+
+    margin-left: 5px;
+    margin-right: 5px;
+}
+footer .social-media a:hover i {
+    opacity: 1;
+}

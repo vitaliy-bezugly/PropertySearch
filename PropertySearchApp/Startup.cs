@@ -38,6 +38,7 @@ public class Startup
         
         app.UseHttpsRedirection();
         app.UseStaticFiles();
+        app.UseDefaultFiles();
 
         app.UseRouting();
         
@@ -49,7 +50,6 @@ public class Startup
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
         app.MapRazorPages();
-
         
         app.Run();
     }
