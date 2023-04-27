@@ -11,9 +11,11 @@ namespace PropertySearchApp.Services;
 public class IpInfoLocationLoadingService : ILocationLoadingService
 {
     private readonly IPinfoClient _client;
-    public IpInfoLocationLoadingService(IPInfoClientContainer container)
+    private readonly ILogger<IpInfoLocationLoadingService> _logger;
+    public IpInfoLocationLoadingService(IPInfoClientContainer container, ILogger<IpInfoLocationLoadingService> logger)
     {
         _client = container.Client;
+        _logger = logger;
     }
 
     public async Task<LocationDomain> GetLocationByUrlAsync(IPAddress ipAddress, CancellationToken cancellationToken)
@@ -28,7 +30,8 @@ public class IpInfoLocationLoadingService : ILocationLoadingService
         {
             return new LocationDomain();
         }
-        
+
+        _logger.LogInformation("Client ip address: " + ipAddress.ToString());
         // making API call
         IPResponse apiResponse = await _client.IPApi.GetDetailsAsync(ipAddress, cancellationToken);
 
