@@ -1,6 +1,7 @@
 using AutoMapper;
 using LanguageExt;
 using LanguageExt.Common;
+using LanguageExt.Pipes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -98,7 +99,7 @@ public class IdentityController : Controller
     [HttpGet, Authorize]
     public async Task<IActionResult> Edit()
     {
-        var currentUserId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var currentUserId = GetUserId(_httpContextAccessor.HttpContext.User);
         var user = await _identityService.GetUserByIdAsync(currentUserId);
         
         var request = _mapper.Map<EditUserFieldsRequest>(user);
@@ -121,9 +122,9 @@ public class IdentityController : Controller
             requestToService.Contacts.Add(requestToService.ContactToAdd);
         }
 
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var userId = GetUserId(_httpContextAccessor.HttpContext.User);
 
-        var result = await _identityService.UpdateUserFields(userId, requestToService.UserName, requestToService.Information, requestToService.PasswordToCompare);
+        var result = await _identityService.UpdateUserFieldsAsync(userId, requestToService.UserName, requestToService.Information, requestToService.PasswordToCompare);
         return result.ToResponse("Profile was updated successfully!", TempData, () => RedirectToAction(nameof(Edit), "Identity"), () => View(request), (exception, message) => _logger.LogError(exception, message));
     }
 
@@ -133,13 +134,22 @@ public class IdentityController : Controller
         var viewModel = new ChangePasswordViewModel();
         return View(viewModel);
     }
-
     [HttpPost, Authorize, ValidateAntiForgeryToken]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
     {
-        throw new NotImplementedException();
+        if(ModelState.IsValid == false)
+            return View(viewModel);
+
+        var userId = GetUserId(_httpContextAccessor.HttpContext.User);
+
+        var result = await _identityService.ChangePasswordAsync(userId, viewModel.CurrentPassword, viewModel.NewPassword);
+        return result.ToResponse("Password has been changed successfully!", TempData, () => RedirectToAction(nameof(ChangePassword), "Identity"), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
 
+    private Guid GetUserId(ClaimsPrincipal user)
+    {
+        return Guid.Parse(user.FindFirst(ClaimTypes.NameIdentifier).Value);
+    }
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
         if (exception is AuthorizationOperationException registrationException)

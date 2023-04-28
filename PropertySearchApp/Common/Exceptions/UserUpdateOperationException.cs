@@ -2,7 +2,7 @@
 
 namespace PropertySearchApp.Common.Exceptions;
 
-public class UserUpdateOperationException : BaseApplicationException
+public class UserUpdateOperationException : Abstract.HandledApplicationException
 {
     public UserUpdateOperationException() : base()
     { }

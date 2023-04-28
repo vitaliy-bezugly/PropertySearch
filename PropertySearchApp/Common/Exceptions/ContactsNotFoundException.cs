@@ -2,7 +2,7 @@
 
 namespace PropertySearchApp.Common.Exceptions;
 
-public class ContactsNotFoundException : BaseApplicationException
+public class ContactsNotFoundException : Abstract.HandledApplicationException
 {
     public ContactsNotFoundException(string message) : base(message)
     {

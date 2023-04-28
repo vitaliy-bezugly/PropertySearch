@@ -16,7 +16,7 @@ public static class ResultExtensions
             return ifSuccess();
         }, exception =>
         {
-            if (exception is BaseApplicationException appException)
+            if (exception is Common.Exceptions.Abstract.HandledApplicationException appException)
             {
                 tempData["alert-danger"] = appException.BuildExceptionMessage();
                 return ifFaulted();

@@ -18,4 +18,5 @@ public interface IUserRepository
     Task<IdentityResult> UpdateFieldsAsync(UserEntity user, string newUsername, string newInformation);
     Task<IdentityResult> AddToRoleAsync(UserEntity user, string roleName);
     Task<bool> CheckPasswordAsync(UserEntity user, string password);
+    Task<IdentityResult> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword);
 }
