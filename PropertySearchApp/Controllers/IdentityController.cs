@@ -127,6 +127,19 @@ public class IdentityController : Controller
         return result.ToResponse("Profile was updated successfully!", TempData, () => RedirectToAction(nameof(Edit), "Identity"), () => View(request), (exception, message) => _logger.LogError(exception, message));
     }
 
+    [HttpGet, Authorize]
+    public IActionResult ChangePassword()
+    {
+        var viewModel = new ChangePasswordViewModel();
+        return View(viewModel);
+    }
+
+    [HttpPost, Authorize, ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
+    {
+        throw new NotImplementedException();
+    }
+
     private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
     {
         if (exception is AuthorizationOperationException registrationException)
