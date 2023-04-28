@@ -4,6 +4,7 @@ using LanguageExt.Common;
 using LanguageExt.Pipes;
 using Microsoft.AspNetCore.Identity;
 using PropertySearchApp.Common.Exceptions;
+using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence.Exceptions;
@@ -102,7 +103,7 @@ public class IdentityService : IIdentityService
         var entity = await _userReceiverRepository.GetByIdAsync(userId);
         return entity == null ? null : _mapper.Map<UserDomain>(entity);
     }
-    public async Task<Result<bool>> UpdateUserFields(Guid userId, string newUsername, string newInformation, string password)
+    public async Task<Result<bool>> UpdateUserFieldsAsync(Guid userId, string newUsername, string newInformation, string password)
     {
         var entity = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
         if (entity == null)
@@ -124,5 +125,21 @@ public class IdentityService : IIdentityService
         return result.Succeeded ? new Result<bool>(true) : 
             new Result<bool>(new UserUpdateOperationException(result.Errors
                 .Select(x => x.Description).ToArray()));
+    }
+
+    public async Task<Result<bool>> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
+    {
+        var user = await _userReceiverRepository.GetByIdAsync(userId);
+        if(user is null)
+        {
+            return new Result<bool>(new UserNotFoundException());
+        }
+
+        var result = await _userRepository.ChangePasswordAsync(user, currentPassword, newPassword); 
+        if(result.Succeeded)
+            return new Result<bool>(true);
+
+        return new Result<bool>(new HandledApplicationException(
+            result.Errors.Select(x => x.Description).ToArray()));
     }
 }

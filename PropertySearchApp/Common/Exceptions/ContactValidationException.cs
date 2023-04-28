@@ -2,7 +2,7 @@
 
 namespace PropertySearchApp.Common.Exceptions;
 
-public class ContactValidationException : BaseApplicationException
+public class ContactValidationException : Abstract.HandledApplicationException
 {
     public ContactValidationException(string error) : base(error)
     { }

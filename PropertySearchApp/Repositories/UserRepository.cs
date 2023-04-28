@@ -94,4 +94,9 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
         throw exception == null ? throw new NullReferenceException("Can not cast exception to argument exception")
             : exception;
     }
+
+    public async Task<IdentityResult> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword)
+    {
+        return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+    }
 }

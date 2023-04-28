@@ -2,7 +2,7 @@ using PropertySearchApp.Common.Exceptions.Abstract;
 
 namespace PropertySearchApp.Common.Exceptions;
 
-public class UserValidationException : BaseApplicationException
+public class UserValidationException : Abstract.HandledApplicationException
 {
     public UserValidationException() : base()
     {

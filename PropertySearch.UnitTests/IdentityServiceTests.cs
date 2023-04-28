@@ -153,7 +153,7 @@ public class IdentityServiceTests
         _mapper.Map<ContactEntity>(contacts[0]).Returns(contactsEntity[0]);
 
         // Act
-        var actual = await _sut.UpdateUserFields(user.Id, newUsername, newInformation, user.Password);
+        var actual = await _sut.UpdateUserFieldsAsync(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
         actual.IsSuccess.Should().Be(true);
@@ -169,7 +169,7 @@ public class IdentityServiceTests
         _userReceiver.GetByIdWithContactsAsync(user.Id).ReturnsNull();
 
         // Act
-        var actual = await _sut.UpdateUserFields(user.Id, newUsername, newInformation, user.Password);
+        var actual = await _sut.UpdateUserFieldsAsync(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
         actual.IsFaulted.Should().Be(true);
@@ -195,7 +195,7 @@ public class IdentityServiceTests
         _userRepository.CheckPasswordAsync(entity, wrongPassword).Returns(false);
 
         // Act
-        var actual = await _sut.UpdateUserFields(user.Id, newUsername, newInformation, user.Password);
+        var actual = await _sut.UpdateUserFieldsAsync(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
         actual.IsFaulted.Should().Be(true);

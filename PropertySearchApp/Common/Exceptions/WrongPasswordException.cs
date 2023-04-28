@@ -2,7 +2,7 @@
 
 namespace PropertySearchApp.Common.Exceptions;
 
-public class WrongPasswordException : BaseApplicationException
+public class WrongPasswordException : Abstract.HandledApplicationException
 {
     public WrongPasswordException(string[] errors) : base(errors)
     { }
