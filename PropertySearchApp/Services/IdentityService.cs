@@ -130,7 +130,7 @@ public class IdentityService : IIdentityService
 
     private OperationResult HandleErrors(IEnumerable<IdentityError> errors, string errorMessageForLogger)
     {
-        _logger.LogWarning("Can not update user fields.");
+        _logger.LogWarning(errorMessageForLogger);
         foreach (var error in errors)
         {
             _logger.LogWarning($"Code: {error.Code}; Description: {error.Description}");
