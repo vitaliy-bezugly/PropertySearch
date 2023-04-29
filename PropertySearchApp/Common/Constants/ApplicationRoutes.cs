@@ -23,8 +23,7 @@ public static class ApplicationRoutes
     public static class Accommodation
     {
         private const string Base = nameof(Accommodation);
-
-        public const string Index = Base + "/" + nameof(Index) + "/{id:int?}";
+        
         public const string MyOffers = Base + "/" + nameof(MyOffers) + "/{id:int?}";
         public const string Details = Base + "/" + nameof(Details) + "/{id}";
         public const string Create = Base + "/" + nameof(Create);

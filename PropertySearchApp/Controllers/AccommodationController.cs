@@ -32,7 +32,7 @@ public class AccommodationController : Controller
         _locationService = locationService;
     }
 
-    [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Accommodation.Index)]
+    [HttpGet, AllowAnonymous]
     public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
         var pageId = id == null ? 0 : id.Value;
