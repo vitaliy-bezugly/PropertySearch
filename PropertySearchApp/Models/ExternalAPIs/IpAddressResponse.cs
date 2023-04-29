@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace PropertySearchApp.Models;
+namespace PropertySearchApp.Models.ExternalAPIs;
 
 public class IpAddressResponse
 {

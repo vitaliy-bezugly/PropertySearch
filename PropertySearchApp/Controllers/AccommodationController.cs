@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Models;
 using PropertySearchApp.Repositories;
 using PropertySearchApp.Services.Abstract;
-using System.Security.Claims;
-using PropertySearchApp.Extensions;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Controllers.Extensions;
 using System.Net;
 using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Models.Accommodations;
+using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Controllers;
 

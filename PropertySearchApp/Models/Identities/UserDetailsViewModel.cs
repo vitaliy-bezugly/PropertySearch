@@ -1,4 +1,6 @@
-﻿namespace PropertySearchApp.Models;
+﻿using PropertySearchApp.Models.Contacts;
+
+namespace PropertySearchApp.Models.Identities;
 
 public class UserDetailsViewModel
 {

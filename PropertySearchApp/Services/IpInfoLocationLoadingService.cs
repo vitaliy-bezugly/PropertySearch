@@ -3,7 +3,7 @@ using IPinfo;
 using IPinfo.Models;
 using Newtonsoft.Json;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Models;
+using PropertySearchApp.Models.ExternalAPIs;
 using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Services;

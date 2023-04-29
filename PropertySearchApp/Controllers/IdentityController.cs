@@ -8,7 +8,8 @@ using PropertySearchApp.Common.Extensions;
 using PropertySearchApp.Controllers.Extensions;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Extensions;
-using PropertySearchApp.Models;
+using PropertySearchApp.Models.Contacts;
+using PropertySearchApp.Models.Identities;
 using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Controllers;

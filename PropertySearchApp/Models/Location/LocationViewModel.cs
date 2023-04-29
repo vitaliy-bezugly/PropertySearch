@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PropertySearchApp.Models;
+namespace PropertySearchApp.Models.Location;
 
 public class LocationViewModel
 {

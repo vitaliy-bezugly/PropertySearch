@@ -1,4 +1,4 @@
-﻿namespace PropertySearchApp.Models;
+﻿namespace PropertySearchApp.Models.Contacts;
 
 public class ContactViewModel
 {
@@ -11,7 +11,7 @@ public class ContactViewModel
         ContactType = string.Empty;
         Content = string.Empty;
     }
-    public ContactViewModel(ContactViewModel other) 
+    public ContactViewModel(ContactViewModel other)
     {
         ContactType = other.ContactType;
         Content = other.Content;

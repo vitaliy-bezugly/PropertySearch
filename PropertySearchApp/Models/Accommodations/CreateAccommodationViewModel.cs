@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PropertySearchApp.Models.Location;
 
-namespace PropertySearchApp.Models;
+namespace PropertySearchApp.Models.Accommodations;
 
 public class CreateAccommodationViewModel
 {
