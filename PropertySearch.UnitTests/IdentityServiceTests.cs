@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using PropertySearchApp.Common.Exceptions;
+using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Repositories.Abstract;
@@ -46,8 +46,7 @@ public class IdentityServiceTests
         var actual = await _sut.RegisterAsync(user);
 
         // Assert
-        actual.IsSuccess.Should().Be(true);
-        actual.Should().Be(actual.Match(result => result, exception => throw exception) == true);
+        actual.Succeeded.Should().Be(true);
         await _userRepository.Received(1).CreateAsync(Arg.Any<UserEntity>(), Arg.Any<string>());
     }
     [Fact]
@@ -64,15 +63,8 @@ public class IdentityServiceTests
         var actual = await _sut.RegisterAsync(user);
 
         // Assert
-        actual.IsFaulted.Should().Be(true);
-        actual.Invoking((x) =>
-        {
-            x.IfFail((exception) =>
-            {
-                throw exception;
-            });
-        }).Should()
-        .Throw<RegistrationOperationException>();
+        actual.Succeeded.Should().Be(false);
+        actual.ErrorMessage.Should().BeEquivalentTo(ErrorMessages.User.SameEmail);
     }
     [Fact]
     public async Task Login_ShouldLogin_WhenAllParametersAreValid()
@@ -84,12 +76,11 @@ public class IdentityServiceTests
         var actual = await _sut.LoginAsync(username, password);
 
         // Assert
-        actual.IsSuccess.Should().Be(true);
-        actual.Should().Be(actual.Match(result => result, exception => throw exception) == true);
+        actual.Succeeded.Should().Be(true);
         await _signInService.Received(1).PasswordSignInAsync(username, password, false, false);
     }
     [Fact]
-    public async Task Login_ShouldNotLogin_WhenAllPasswordAreIncorrect()
+    public async Task Login_ShouldNotLogin_WhenCredentialsIsWrong()
     {
         // Arrange
         string username = "xunit", password = "incorrectpassword";
@@ -98,15 +89,8 @@ public class IdentityServiceTests
         var actual = await _sut.LoginAsync(username, password);
 
         // Assert
-        actual.IsFaulted.Should().Be(true);
-        actual.Invoking((x) =>
-        {
-            x.IfFail((exception) =>
-            {
-                throw exception;
-            });
-        }).Should()
-        .Throw<LoginOperationException>();
+        actual.Succeeded.Should().Be(false);
+        actual.ErrorMessage.Should().BeEquivalentTo(ErrorMessages.User.WrongCredentials);
         await _signInService.Received(1).PasswordSignInAsync(username, password, false, false);
     }
     [Fact]
@@ -156,8 +140,7 @@ public class IdentityServiceTests
         var actual = await _sut.UpdateUserFieldsAsync(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
-        actual.IsSuccess.Should().Be(true);
-        actual.Should().Be(actual.Match(result => result, exception => throw exception) == true);
+        actual.Succeeded.Should().Be(true);
         await _userRepository.Received(1).UpdateFieldsAsync(Arg.Any<UserEntity>(), Arg.Any<string>(), Arg.Any<string>());
     }
     [Fact]
@@ -172,15 +155,8 @@ public class IdentityServiceTests
         var actual = await _sut.UpdateUserFieldsAsync(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
-        actual.IsFaulted.Should().Be(true);
-        actual.Invoking((x) =>
-        {
-            x.IfFail((exception) =>
-            {
-                throw exception;
-            });
-        }).Should()
-        .Throw<UserNotFoundException>(); 
+        actual.Succeeded.Should().Be(false);
+        actual.ErrorMessage.Should().BeEquivalentTo(ErrorMessages.User.NotFound);
         await _userReceiver.Received(1).GetByIdWithContactsAsync(Arg.Any<Guid>());
     }
     [Fact]
@@ -198,15 +174,8 @@ public class IdentityServiceTests
         var actual = await _sut.UpdateUserFieldsAsync(user.Id, newUsername, newInformation, user.Password);
 
         // Assert
-        actual.IsFaulted.Should().Be(true);
-        actual.Invoking((x) =>
-        {
-            x.IfFail((exception) =>
-            {
-                throw exception;
-            });
-        }).Should()
-        .Throw<WrongPasswordException>();
+        actual.Succeeded.Should().Be(false);
+        actual.ErrorMessage.Should().BeEquivalentTo(ErrorMessages.User.WrongPassword);
         await _userReceiver.Received(1).GetByIdWithContactsAsync(Arg.Any<Guid>());
         await _userRepository.Received(1).CheckPasswordAsync(entity, wrongPassword);
     }
