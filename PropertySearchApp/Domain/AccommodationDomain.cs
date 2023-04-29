@@ -1,5 +1,3 @@
-using LanguageExt.Common;
-using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Domain.Abstract;
 
 namespace PropertySearchApp.Domain;

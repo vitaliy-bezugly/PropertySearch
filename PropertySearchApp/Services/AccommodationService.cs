@@ -1,6 +1,5 @@
 using AutoMapper;
 using FluentValidation;
-using LanguageExt.Common;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Domain;

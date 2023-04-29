@@ -85,9 +85,10 @@ public class AccommodationController : Controller
     [HttpPost, ValidateAntiForgeryToken, Route(ApplicationRoutes.Accommodation.Create)]
     public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
-        Guid userId = _httpContextAccessor.GetUserId();
         if (ModelState.IsValid == false)
             return View(viewModel);
+
+        Guid userId = _httpContextAccessor.GetUserId();
 
         var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };    
         var accommodation = new AccommodationDomain(Guid.NewGuid(), viewModel.Title, viewModel.Description,

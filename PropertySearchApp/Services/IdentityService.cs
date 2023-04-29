@@ -1,6 +1,4 @@
 using AutoMapper;
-using LanguageExt;
-using LanguageExt.Pipes;
 using Microsoft.AspNetCore.Identity;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
