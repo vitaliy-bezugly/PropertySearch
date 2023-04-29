@@ -9,20 +9,20 @@ using PropertySearchApp.Common.Extensions;
 
 namespace PropertySearchApp.Controllers;
 
-[Authorize, Route("[controller]")]
-public class ContactsController : Controller
+[Authorize]
+public class ContactController : Controller
 {
-    private readonly IContactsService _contactsService;
+    private readonly IContactService _contactsService;
     private readonly IHttpContextAccessor _contextAccessor;
-    private readonly ILogger<ContactsController> _logger;
-    public ContactsController(IContactsService contactsService, IHttpContextAccessor contextAccessor, ILogger<ContactsController> logger)
+    private readonly ILogger<ContactController> _logger;
+    public ContactController(IContactService contactsService, IHttpContextAccessor contextAccessor, ILogger<ContactController> logger)
     {
         _contactsService = contactsService;
         _contextAccessor = contextAccessor;
         _logger = logger;
     }
 
-    [HttpGet(nameof(Create))]
+    [HttpGet, Route(ApplicationRoutes.Contact.Create)]
     public async Task<IActionResult> Create([FromQuery] string type, [FromQuery] string content)
     {
         bool isFaulted = ValidateContactIfInvalidAddErrorsToModelState(type, content);
@@ -37,19 +37,19 @@ public class ContactsController : Controller
             () => RedirectToAction("Edit", "Identity"), 
             () => RedirectToAction("Edit", "Identity"));
     }
-    [HttpGet((nameof(Delete)) + "/{id}")]
+    [HttpGet, Route(ApplicationRoutes.Contact.Delete)]
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         if (id == Guid.Empty)
         {
-            ModelState.AddModelError(nameof(id), "Contact id can not be empty");
+            ModelState.AddModelError(nameof(id), ErrorMessages.Contacts.Validation.IdIsEmpty);
             return ValidationProblem(ModelState);
         }
 
         Guid userId = _contextAccessor.GetUserId();
         var result = await _contactsService.DeleteContactFromUserAsync(userId, id);
 
-        return result.ToResponse("Successfully deleted contact", TempData, 
+        return result.ToResponse(SuccessMessages.Contacts.Deleted, TempData, 
             () => RedirectToAction("Edit", "Identity"), 
             () => RedirectToAction("Edit", "Identity"));
     }
@@ -59,12 +59,12 @@ public class ContactsController : Controller
         bool isFaulted = false;
         if (string.IsNullOrEmpty(contactType))
         {
-            ModelState.AddModelError("type", ErrorMessages.Contacts.TypeIsEmpty);
+            ModelState.AddModelError("type", ErrorMessages.Contacts.Validation.TypeIsEmpty);
             isFaulted = true;
         }
         if (string.IsNullOrEmpty(contactContent))
         {
-            ModelState.AddModelError("content", ErrorMessages.Contacts.ContentIsEmpty);
+            ModelState.AddModelError("content", ErrorMessages.Contacts.Validation.ContentIsEmpty);
             isFaulted = true;
         }
 

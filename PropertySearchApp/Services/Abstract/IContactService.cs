@@ -3,7 +3,7 @@ using PropertySearchApp.Domain;
 
 namespace PropertySearchApp.Services.Abstract;
 
-public interface IContactsService
+public interface IContactService
 {
     Task<List<ContactDomain>> GetUserContactsAsync(Guid userId);
     Task<OperationResult> AddContactToUserAsync(Guid userId, ContactDomain contact);

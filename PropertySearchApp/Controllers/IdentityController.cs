@@ -20,8 +20,8 @@ public class IdentityController : Controller
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
     private readonly ILogger<IdentityController> _logger;
-    private readonly IContactsService _contactsService;
-    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor, ILogger<IdentityController> logger, IContactsService contactsService)
+    private readonly IContactService _contactsService;
+    public IdentityController(IIdentityService identityService, IMapper mapper, IHttpContextAccessor contextAccessor, ILogger<IdentityController> logger, IContactService contactsService)
     {
         _identityService = identityService;
         _mapper = mapper;
