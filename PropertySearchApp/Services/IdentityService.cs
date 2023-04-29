@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Exceptions;
-using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence.Exceptions;

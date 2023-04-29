@@ -7,10 +7,13 @@ using PropertySearchApp.Repositories;
 using PropertySearchApp.Services.Abstract;
 using System.Security.Claims;
 using PropertySearchApp.Extensions;
+using PropertySearchApp.Common.Constants;
+using PropertySearchApp.Controllers.Extensions;
+using System.Net;
 
 namespace PropertySearchApp.Controllers;
 
-[Authorize, Route("[controller]")]
+[Authorize]
 public class AccommodationController : Controller
 {
     private readonly ILogger<AccommodationRepository> _logger;
@@ -29,7 +32,7 @@ public class AccommodationController : Controller
         _locationService = locationService;
     }
 
-    [HttpGet("{id:int?}"), AllowAnonymous]
+    [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Accommodation.Index)]
     public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
         var pageId = id == null ? 0 : id.Value;
@@ -38,18 +41,19 @@ public class AccommodationController : Controller
 
         return View(accommodations);
     }
-    [HttpGet(nameof(MyOffers) + "/{id:int?}")]
+    [HttpGet, Route(ApplicationRoutes.Accommodation.MyOffers)]
     public async Task<IActionResult> MyOffers([FromRoute] int? id, CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         var pageId = id == null ? 0 : id.Value;
+        Guid userId = _httpContextAccessor.GetUserId();
+
         var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId, 64, cancellationToken))
             .Where(x => x.UserId == userId)
             .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
         return View("Index", accommodations);
     }
-    [HttpGet(nameof(Details) + "/{id}")]
+    [HttpGet, Route(ApplicationRoutes.Accommodation.Details)]
     public async Task<IActionResult> Details([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
@@ -65,10 +69,10 @@ public class AccommodationController : Controller
         return View(viewModel);
     }
 
-    [HttpGet(nameof(Create))]
+    [HttpGet, Route(ApplicationRoutes.Accommodation.Create)]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var remoteIp = Request.HttpContext.Connection.RemoteIpAddress;
+        IPAddress? remoteIp = Request.HttpContext.Connection.RemoteIpAddress;
 
         var location = await _locationService.GetLocationByUrlAsync(remoteIp, cancellationToken);
         var createAccommodationModel = new CreateAccommodationViewModel
@@ -77,10 +81,10 @@ public class AccommodationController : Controller
         };
         return View(createAccommodationModel);
     }
-    [ValidateAntiForgeryToken, HttpPost(nameof(Create))]
+    [HttpPost, ValidateAntiForgeryToken, Route(ApplicationRoutes.Accommodation.Create)]
     public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        Guid userId = _httpContextAccessor.GetUserId();
         if (ModelState.IsValid == false)
             return View(viewModel);
 
@@ -93,14 +97,14 @@ public class AccommodationController : Controller
         return result.ToResponse("Successfully created accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
 
-    [ValidateAntiForgeryToken, HttpPost(nameof(Delete) + "/{id}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [HttpPost, Route(ApplicationRoutes.Accommodation.Delete)]
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        Guid userId = _httpContextAccessor.GetUserId();
         var result = await _accommodationService.DeleteAccommodationAsync(userId, id, cancellationToken);
         return result.ToResponse("Successfully deleted accommodation", TempData, () => RedirectToAction("Index", "Accommodation"), () => RedirectToAction("Index", "Accommodation"), (exception, message) => _logger.LogError(exception, message));
     }
-    [HttpGet(nameof(Update) + "/{id}")]
+    [HttpGet, Route(ApplicationRoutes.Accommodation.Update)]
     public async Task<IActionResult> Update([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
@@ -110,7 +114,7 @@ public class AccommodationController : Controller
         var updateViewModel = _mapper.Map<UpdateAccommodationViewModel>(accommodation);
         return View(updateViewModel);
     }
-    [ValidateAntiForgeryToken, HttpPost(nameof(Update) + "/{id}")]
+    [HttpPost, ValidateAntiForgeryToken, Route(ApplicationRoutes.Accommodation.Update)]
     public async Task<IActionResult> Update([FromForm] UpdateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {
         if (ModelState.IsValid == false)
@@ -125,6 +129,7 @@ public class AccommodationController : Controller
 
         return result.ToResponse("Successfully updated accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
     }
+
     private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int pageId, int countOfElements, CancellationToken cancellationToken)
     {
         return await _accommodationService.GetWithLimitsAsync(pageId * countOfElements, countOfElements, cancellationToken);

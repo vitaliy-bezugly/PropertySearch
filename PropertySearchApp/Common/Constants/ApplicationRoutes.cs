@@ -20,4 +20,15 @@ public static class ApplicationRoutes
         public const string Edit = Base + "/" + nameof(Edit);
         public const string ChangePassword = Base + "/" + nameof(ChangePassword);
     }
+    public static class Accommodation
+    {
+        private const string Base = nameof(Accommodation);
+
+        public const string Index = Base + "/" + nameof(Index) + "/{id:int?}";
+        public const string MyOffers = Base + "/" + nameof(MyOffers) + "/{id:int?}";
+        public const string Details = Base + "/" + nameof(Details) + "/{id}";
+        public const string Create = Base + "/" + nameof(Create);
+        public const string Delete = Base + "/" + nameof(Delete) + "/{id}";
+        public const string Update = Base + "/" + nameof(Update) + "/{id}";
+    }
 }
