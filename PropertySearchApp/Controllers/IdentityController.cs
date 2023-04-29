@@ -1,12 +1,12 @@
 using AutoMapper;
 using LanguageExt;
-using LanguageExt.Common;
 using LanguageExt.Pipes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
-using PropertySearchApp.Common.Exceptions.Abstract;
+using PropertySearchApp.Common.Extensions;
 using PropertySearchApp.Controllers.Extensions;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Extensions;
@@ -43,17 +43,7 @@ public class IdentityController : Controller
             return View(loginModel);
 
         var result = await _identityService.LoginAsync(loginModel.Username, loginModel.Password);
-
-        return result.Match<IActionResult>(success =>
-        {
-            return RedirectToAction("Index", "Home");
-        }, exception =>
-        {
-            if (AddErrorsToModelState(ModelState, exception))
-                return View(loginModel);
-            else
-                throw exception;
-        });
+        return HandleResult(result, loginModel);
     }
     [HttpGet, Route(ApplicationRoutes.Identity.Register)]
     public IActionResult Register()
@@ -66,18 +56,8 @@ public class IdentityController : Controller
         if (ModelState.IsValid == false)
             return View(registrationModel);
 
-        Result<bool> result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
-
-        return result.Match<IActionResult>(success =>
-        {
-            return RedirectToAction("Index", "Home");
-        }, exception =>
-        {
-            if (AddErrorsToModelState(ModelState, exception))
-                return View(registrationModel);
-            else
-                throw exception;
-        });
+        var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
+        return HandleResult(result, registrationModel);
     }
     [HttpPost, Authorize, Route(ApplicationRoutes.Identity.Logout)]
     public async Task<IActionResult> Logout()
@@ -94,7 +74,6 @@ public class IdentityController : Controller
 
         var viewModel = _mapper.Map<UserDetailsViewModel>(user);
         viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
-        
         return View(viewModel);
     }
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Edit)]
@@ -118,7 +97,9 @@ public class IdentityController : Controller
         Guid userId = _httpContextAccessor.GetUserId();
 
         var result = await _identityService.UpdateUserFieldsAsync(userId, request.UserName, request.Information, request.PasswordToCompare);
-        return result.ToResponse("Profile was updated successfully!", TempData, () => RedirectToAction(nameof(Edit), "Identity"), () => View(request), (exception, message) => _logger.LogError(exception, message));
+        return result.ToResponse("Profile was updated successfully!", TempData, 
+            () => RedirectToAction(nameof(Edit), "Identity"), 
+            () => View(request));
     }
 
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.ChangePassword)]
@@ -136,22 +117,21 @@ public class IdentityController : Controller
         Guid userId = _httpContextAccessor.GetUserId();
 
         var result = await _identityService.ChangePasswordAsync(userId, viewModel.CurrentPassword, viewModel.NewPassword);
-        return result.ToResponse("Password has been changed successfully!", TempData, () => RedirectToAction(nameof(ChangePassword), "Identity"), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
+        return result.ToResponse("Password has been changed successfully!", TempData, 
+            () => RedirectToAction(nameof(ChangePassword), "Identity"), 
+            () => View(viewModel));
     }
 
-    private bool AddErrorsToModelState(ModelStateDictionary modelState, Exception exception)
+    private IActionResult HandleResult<T>(OperationResult result, T model)
     {
-        if (exception is AuthorizationOperationException registrationException)
-        {
-            foreach (var error in registrationException.GetErrors())
-            {
-                modelState.AddModelError(string.Empty, error);
-            }
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        if (result.Succeeded)
+            return RedirectToAction("Index", "Home");
+
+        AddErrorsToModelState(ModelState, result);
+        return View(model);
+    }
+    private void AddErrorsToModelState(ModelStateDictionary modelState, OperationResult result)
+    {
+        modelState.AddModelError(string.Empty, result.ErrorMessage);
     }
 }

@@ -18,5 +18,8 @@ public static class ErrorMessages
     public static class User
     {
         public const string NotFound = "User with given id does not exist";
+        public const string WrongCredentials = "User with this username and password does not exist";
+        public const string SameEmail = "User with same email already exists";
+        public const string WrongPassword = "Given password and actual are not the same";
     }
 }
