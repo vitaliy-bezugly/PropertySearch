@@ -44,7 +44,7 @@
                 <label>Add new contact</label>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <select id="contacts-type" class="form-select" aria-label="Default select example" asp-for="@Model.ContactToAdd.ContactType" placeholder="Contact type">
+                        <select id="contacts-type" class="form-select" aria-label="Default select example" placeholder="Contact type">
                             <option value="Email address" selected>Email address</option>
                             <option value="Phone number">Phone number</option>
                             <option value="Address">Address</option>
@@ -53,13 +53,11 @@
                             <option value="Instagram account">Instagram account</option>
                             <option value="LinkedIn account">LinkedIn account</option>
                         </select>
-                        <span asp-validation-for="ContactToAdd.ContactType" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <input id="contacts-content" type="text" class="form-control" asp-for="@Model.ContactToAdd.Content" placeholder="Contact info">
-                        <span asp-validation-for="ContactToAdd.Content" class="text-danger"></span>
+                        <input id="contacts-content" type="text" class="form-control" placeholder="Contact info">
                     </div>
                 </div>
                 <div class="col-md-2">
