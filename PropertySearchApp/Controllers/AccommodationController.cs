@@ -10,6 +10,7 @@ using PropertySearchApp.Extensions;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Controllers.Extensions;
 using System.Net;
+using PropertySearchApp.Common.Extensions;
 
 namespace PropertySearchApp.Controllers;
 
@@ -93,17 +94,22 @@ public class AccommodationController : Controller
             viewModel.Price, viewModel.PhotoUri, userId, location);
 
         var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
-
-        return result.ToResponse("Successfully created accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
+        return result.ToResponse(SuccessMessages.Accommodation.Created, TempData, 
+            () => View(), 
+            () => View(viewModel));
     }
-
+    
     [HttpPost, Route(ApplicationRoutes.Accommodation.Delete)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         Guid userId = _httpContextAccessor.GetUserId();
+        
         var result = await _accommodationService.DeleteAccommodationAsync(userId, id, cancellationToken);
-        return result.ToResponse("Successfully deleted accommodation", TempData, () => RedirectToAction("Index", "Accommodation"), () => RedirectToAction("Index", "Accommodation"), (exception, message) => _logger.LogError(exception, message));
+        return result.ToResponse(SuccessMessages.Accommodation.Deleted, TempData, 
+            () => RedirectToAction("Index", "Accommodation"), 
+            () => RedirectToAction("Index", "Accommodation"));
     }
+    
     [HttpGet, Route(ApplicationRoutes.Accommodation.Update)]
     public async Task<IActionResult> Update([FromRoute] Guid id, CancellationToken cancellationToken)
     {
@@ -120,14 +126,17 @@ public class AccommodationController : Controller
         if (ModelState.IsValid == false)
             return View(viewModel);
         
-        var userId = Guid.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        var userId = _httpContextAccessor.GetUserId();
+        
         var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };
         var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
             viewModel.Price, viewModel.PhotoUri, userId, location);
 
         var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
 
-        return result.ToResponse("Successfully updated accommodation", TempData, () => View(), () => View(viewModel), (exception, message) => _logger.LogError(exception, message));
+        return result.ToResponse(SuccessMessages.Accommodation.Updated, TempData, 
+            () => View(), 
+            () => View(viewModel));
     }
 
     private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int pageId, int countOfElements, CancellationToken cancellationToken)

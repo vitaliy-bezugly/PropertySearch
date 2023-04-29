@@ -15,6 +15,15 @@ public class OperationResult
         Succeeded = false;
         ErrorMessage = errorMessage;
     }
+    public OperationResult(IEnumerable<string> errorMessages)
+    {
+        Succeeded = false;
+        ErrorMessage = string.Empty;
+        foreach (var item in errorMessages)
+        {
+            ErrorMessage += item + ";";
+        }
+    }
 }
 
 public class OperationResult<T> : OperationResult
@@ -27,6 +36,10 @@ public class OperationResult<T> : OperationResult
         Value = value;
     }
     public OperationResult(string errorMessage) : base(errorMessage) 
+    {
+        Value = default;
+    }
+    public OperationResult(IEnumerable<string> errorMessages) : base(errorMessages)
     {
         Value = default;
     }

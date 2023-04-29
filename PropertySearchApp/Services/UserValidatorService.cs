@@ -1,5 +1,5 @@
-using LanguageExt.Common;
-using PropertySearchApp.Common.Exceptions;
+using PropertySearchApp.Common;
+using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Repositories.Abstract;
 using PropertySearchApp.Services.Abstract;
 
@@ -15,32 +15,29 @@ public class UserValidatorService : IUserValidatorService
         _logger = logger;
     }
 
-    public async Task<Result<bool>> ValidateAsync(Guid userId, Guid accommodationId, bool validateAccess)
+    public async Task<OperationResult> ValidateAsync(Guid userId, Guid accommodationId, bool validateAccess)
     {
         var user = validateAccess == true ? await _userReceiver.GetByIdWithAccommodationsAsync(userId) :
                 await _userReceiver.GetByIdAsync(userId);
         
         if (user == null)
         {
-            var exception = new UserNotFoundException(new string[] { "There is no user with given id" });
-            _logger.LogWarning(exception, "Can not validate not existing user");
-            return new Result<bool>(exception);
+            _logger.LogWarning("Can not validate not existing user");
+            return new OperationResult(ErrorMessages.User.NotFound);
         }
-        else if (user.IsLandlord == false)
+
+        if (user.IsLandlord == false)
         {
-            var exception = new UserValidationException(new[] { "Regular user does not have access to accommodation offers" });
-            _logger.LogWarning(exception, "User is not a landlord");
-            return new Result<bool>(exception);
+            _logger.LogWarning("User is not a landlord");
+            return new OperationResult(ErrorMessages.User.NotLandlord);
         }
         else if (validateAccess == true && user.Accommodations.Any(x => x.Id == accommodationId) == false)
         {
-            var exception = new UserValidationException(new[] { "Given user has no access to this accommodation" });
-            _logger.LogWarning(exception, "Access error");
-            return new Result<bool>(exception);
+            _logger.LogWarning("Access error");
+            return new OperationResult(ErrorMessages.User.HasNoAccess);
         }
-        else
-        {
-            return new Result<bool>(true);
-        }
+
+        // success
+        return new OperationResult();
     }
 }

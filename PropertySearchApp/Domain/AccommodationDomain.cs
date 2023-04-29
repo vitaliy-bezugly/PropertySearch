@@ -30,30 +30,4 @@ public class AccommodationDomain : DomainBase
         UserId = userId;
         Location = location;
     }
-
-    public Result<bool> Validate()
-    {
-        var titleValidation = ValidateTitle();
-        if (titleValidation.IsFaulted)
-            return titleValidation;
-        
-        var priceValidation = ValidatePrice();
-        if (priceValidation.IsFaulted)
-            return priceValidation;
-
-        return new Result<bool>(true);
-    }
-
-    public Result<bool> ValidateTitle()
-    {
-        if (String.IsNullOrEmpty(Title))
-            return new Result<bool>(new AccommodationValidationException($"{nameof(Title)} is not valid"));
-        return new Result<bool>(true);
-    }
-    public Result<bool> ValidatePrice()
-    {
-        if (Price < 0)
-            return new Result<bool>(new AccommodationValidationException($"{nameof(Price)} is not valid"));
-        return new Result<bool>(true);
-    }
 }
