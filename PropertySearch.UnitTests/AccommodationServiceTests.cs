@@ -11,6 +11,7 @@ using PropertySearchApp.Entities;
 using PropertySearchApp.Repositories.Abstract;
 using PropertySearchApp.Services;
 using PropertySearchApp.Services.Abstract;
+using PropertySearchApp.Validations;
 
 namespace PropertySearch.UnitTests;
 
@@ -23,8 +24,8 @@ public class AccommodationServiceTests
     private readonly IMapper _mapper = Substitute.For<IMapper>();
     private readonly IUserReceiverRepository _userReceiver = Substitute.For<IUserReceiverRepository>();
     private readonly ILogger<UserValidatorService> _logger = Substitute.For<ILogger<UserValidatorService>>();
-    private readonly IValidator<AccommodationDomain> _accommodationValidator = Substitute.For<IValidator<AccommodationDomain>>();
-    private readonly IValidator<LocationDomain> _locationValidator = Substitute.For<IValidator<LocationDomain>>();
+    private readonly IValidator<AccommodationDomain> _accommodationValidator = new AccommodationDomainValidator();
+    private readonly IValidator<LocationDomain> _locationValidator = new LocationDomainValidator();
 
     public AccommodationServiceTests()
     {
@@ -43,8 +44,9 @@ public class AccommodationServiceTests
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Test title", description = "Some description";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdAsync(userId).Returns(new UserEntity { Id = userId, IsLandlord = true });
@@ -59,14 +61,37 @@ public class AccommodationServiceTests
         await _accommodationRepository.Received(1).CreateAsync(Arg.Any<AccommodationEntity>(), CancellationToken.None);
     }
     [Fact]
+    public async Task CreateAccommodation_ShouldNotCreateAccommodation_LocationIsNull()
+    {
+        // Arrange
+        Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
+        const string title = "Test title", description = "Some description";
+        const int price = 980;
+
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = null, PhotoUri = null };
+        var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        _userReceiver.GetByIdAsync(userId).Returns(new UserEntity { Id = userId, IsLandlord = true });
+        _mapper.Map<AccommodationEntity>(accommodation).Returns(accommodationEntity);
+        _accommodationRepository.CreateAsync(accommodationEntity, CancellationToken.None).Returns(true);
+
+        // Act
+        var actual = await _sut.CreateAccommodationAsync(accommodation, CancellationToken.None);
+
+        // Assert
+        actual.Succeeded.Should().Be(false);
+        actual.ErrorMessage.Should().Contain(ErrorMessages.Accommodation.Validation.NullLocation);
+    }
+    [Fact]
     public async Task CreateAccommodation_ShouldNotCreateAccommodation_UserDoesNotExist()
     {
         // Arrange
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Test title", description = "Some description";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
 
         _userReceiver.GetByIdAsync(userId).ReturnsNull();
@@ -88,8 +113,9 @@ public class AccommodationServiceTests
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Test title", description = "Some description";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
 
         _userReceiver.GetByIdAsync(userId).Returns(new UserEntity {Id = userId, IsLandlord = false });
@@ -112,8 +138,9 @@ public class AccommodationServiceTests
     {
         // Arrange
         Guid accommodationId = Guid.Parse(accommodationIdentifier), userId = Guid.Parse(userIdentifier);
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdAsync(userId).Returns(new UserEntity {Id = userId, IsLandlord = true });
@@ -134,8 +161,9 @@ public class AccommodationServiceTests
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Unit test", description = "Updating test", updatedDescription = "UpdatedDescription";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdWithAccommodationsAsync(userId).Returns(new UserEntity 
@@ -164,8 +192,9 @@ public class AccommodationServiceTests
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Unit test", description = "Updating test", updatedDescription = "UpdatedDescription";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdWithAccommodationsAsync(userId).Returns(new UserEntity 
@@ -194,8 +223,9 @@ public class AccommodationServiceTests
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Unit test", description = "Updating test", updatedDescription = "UpdatedDescription";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdWithAccommodationsAsync(userId).Returns(new UserEntity 
@@ -226,7 +256,8 @@ public class AccommodationServiceTests
         // Arrange
         Guid accommodationId = Guid.Parse(accommodationIdentifier), userId = Guid.Parse(userIdentifier);
 
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdWithAccommodationsAsync(userId).Returns(new UserEntity 
@@ -255,8 +286,9 @@ public class AccommodationServiceTests
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
         const string title = "Unit test", description = "Deleting test";
         const int price = 980;
-        
-        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
+
+        var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
+        var accommodation = new AccommodationDomain { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price, Location = location, PhotoUri = null };
         var accommodationEntity = new AccommodationEntity { Id = accommodationId, Title = title, Description = description, UserId = userId, Price = price };
         
         _userReceiver.GetByIdWithAccommodationsAsync(userId).Returns(new UserEntity 
