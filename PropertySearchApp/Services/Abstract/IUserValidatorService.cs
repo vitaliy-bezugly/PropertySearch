@@ -1,8 +1,8 @@
-using LanguageExt.Common;
+using PropertySearchApp.Common;
 
 namespace PropertySearchApp.Services.Abstract;
 
 public interface IUserValidatorService
 {
-    public Task<Result<bool>> ValidateAsync(Guid userId, Guid accommodationId, bool validateAccess);
+    public Task<OperationResult> ValidateAsync(Guid userId, Guid accommodationId, bool validateAccess);
 }

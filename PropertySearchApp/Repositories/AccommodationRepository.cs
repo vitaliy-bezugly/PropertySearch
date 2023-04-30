@@ -1,5 +1,6 @@
-using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
+using PropertySearchApp.Common;
+using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Exceptions;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence;
@@ -34,7 +35,6 @@ public class AccommodationRepository : IAccommodationRepository
     {
         return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
     }
-
     public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
     {
         ValidateAccommodationFieldsIfInvalidThrowException(accommodation);
@@ -49,24 +49,35 @@ public class AccommodationRepository : IAccommodationRepository
         _logger.LogWarning($"Can not add accommodation with title: {accommodation.Title}", accommodation);
         return false;
     }
-
-    public async Task<Result<bool>> UpdateAsync(AccommodationEntity destination, CancellationToken cancellationToken)
+    public async Task<OperationResult> UpdateAsync(AccommodationEntity destination, CancellationToken cancellationToken)
     {
         ValidateAccommodationFieldsIfInvalidThrowException(destination);
 
         var source = await _context.Accommodations.Include(x => x.Location).FirstOrDefaultAsync(x => x.Id == destination.Id, cancellationToken);
         if (source == null)
         {
-            var exception = new AccommodationValidationException(new string[] { "There is no accommodation with given parameters" });
-            _logger.LogWarning(exception, "Can not update accommodation");
-            return new Result<bool>(exception);
+            _logger.LogWarning("Can not update accommodation");
+            return new OperationResult(ErrorMessages.Accommodation.NotFound);
         }
 
         UpdateFields(source, destination);
 
         var result = await _context.SaveChangesAsync(cancellationToken);
         return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,
-            $"Can not update accommodation with title: {destination.Title}");
+            ErrorMessages.Accommodation.CanNotUpdate);
+    }
+    public async Task<OperationResult> DeleteAsync(Guid accommodationId, CancellationToken cancellationToken)
+    {
+        var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+        if (exists == null)
+        {
+            _logger.LogWarning( "Can not delete accommodation");
+            return new OperationResult(ErrorMessages.Accommodation.NotFound);
+        }
+
+        _context.Accommodations.Remove(exists);
+        var result = await _context.SaveChangesAsync(cancellationToken);
+        return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result, ErrorMessages.Accommodation.CanNotDelete);
     }
 
     private static void UpdateFields(AccommodationEntity source, AccommodationEntity destination)
@@ -84,37 +95,21 @@ public class AccommodationRepository : IAccommodationRepository
             source.Location.Address = destination.Location.Address;
         }
     }
-
-    public async Task<Result<bool>> DeleteAsync(Guid accommodationId, CancellationToken cancellationToken)
-    {
-        var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
-        if (exists == null)
-        {
-            var exception = new AccommodationValidationException(new string[] {"There is no accommodation with given id"});
-            _logger.LogWarning(exception, "Can not delete accommodation");
-            return new Result<bool>(exception);
-        }
-
-        _context.Accommodations.Remove(exists);
-        var result = await _context.SaveChangesAsync(cancellationToken);
-        return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,$"Can not delete accommodation with id: {accommodationId}");
-    }
-
     private void ValidateAccommodationFieldsIfInvalidThrowException(AccommodationEntity accommodation)
     {
         if (accommodation == null || accommodation.UserId == Guid.Empty)
             throw new ArgumentNullException($"{nameof(accommodation)} and {nameof(accommodation.UserId)} can not be null or empty");
     }
 
-    private Result<bool> ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(int entriesNumber, string errorMessage)
+    private OperationResult ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(int entriesNumber, string errorMessage)
     {
         if (entriesNumber > 0)
         {
-            return new Result<bool>(true);
+            return new OperationResult();
         }
 
         var error = new InternalDatabaseException(new[] { errorMessage });
         _logger.LogWarning(error, "Internal database error. Can not complete operation");
-        return new Result<bool>(error);
+        return new OperationResult(errorMessage);
     }
 }

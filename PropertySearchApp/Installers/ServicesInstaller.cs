@@ -13,7 +13,7 @@ public class ServicesInstaller : IInstaller
         services.AddScoped<IAccommodationService, AccommodationService>();
         services.AddScoped<IUserValidatorService, UserValidatorService>();
         services.AddScoped<ISignInService, SignInService>();
-        services.AddScoped<IContactsService, ContactsService>();
+        services.AddScoped<IContactService, ContactService>();
         services.AddScoped<ILocationLoadingService, IpInfoLocationLoadingService>();
         services.Decorate<ILocationLoadingService, IpInfoLocationLoadingCachedService>();
 

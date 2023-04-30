@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PropertySearchApp.Models.Location;
 
-namespace PropertySearchApp.Models;
+namespace PropertySearchApp.Models.Accommodations;
 
-public class AccommodationViewModel
+public class UpdateAccommodationViewModel
 {
     public Guid Id { get; set; }
     [Required]
@@ -12,15 +13,13 @@ public class AccommodationViewModel
     public int Price { get; set; }
     [DataType(DataType.Url)]
     public string? PhotoUri { get; set; }
-    [Required]
-    public string OwnerId { get; set; }
-    public string? OwnerUsername { get; set; }
     public LocationViewModel Location { get; set; }
-    public DateTime CreationTime { get; set; }
 
-    public AccommodationViewModel()
+    public UpdateAccommodationViewModel()
     {
+        Price = 0;
         Title = string.Empty;
+        Description = null;
         Location = new LocationViewModel();
     }
 }

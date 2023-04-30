@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace PropertySearchApp.Models;
+namespace PropertySearchApp.Models.Identities;
 
 public class RegistrationFormViewModel
 {
-    [Required(ErrorMessage = $"{nameof(Username)} can not be null"), Display(Name = "Username")] 
+    [Required(ErrorMessage = $"{nameof(Username)} can not be null"), Display(Name = "Username")]
     public string Username { get; set; }
     [EmailAddress, Display(Name = "Email address")]
     public string Email { get; set; }

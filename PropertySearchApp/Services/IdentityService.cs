@@ -1,10 +1,8 @@
 using AutoMapper;
-using LanguageExt;
-using LanguageExt.Common;
-using LanguageExt.Pipes;
 using Microsoft.AspNetCore.Identity;
+using PropertySearchApp.Common;
+using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Exceptions;
-using PropertySearchApp.Common.Exceptions.Abstract;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence.Exceptions;
@@ -31,15 +29,14 @@ public class IdentityService : IIdentityService
         _userReceiverRepository = userReceiverRepository;
     }
 
-    public async Task<Result<bool>> RegisterAsync(UserDomain user)
+    public async Task<OperationResult> RegisterAsync(UserDomain user)
     {
         var userEntity = _mapper.Map<UserEntity>(user);
         
         var exists = await _userRepository.FindByEmailAsync(user.Email);
         if (exists != null)
         {
-            var badResult = new Result<bool>(new RegistrationOperationException(new []{ "User with same email already exists" }));
-            return badResult;
+            return new OperationResult(ErrorMessages.User.SameEmail);
         }
         
         // Add user
@@ -55,25 +52,16 @@ public class IdentityService : IIdentityService
 
             // Set cookies
             await _signInService.SignInAsync(userEntity, false);
-            return new Result<bool>(true);
+            return new OperationResult();
         }
-        else
-        {
-            return new Result<bool>(new RegistrationOperationException(result.Errors.Select(x => x.Description).ToArray()));
-        }
+
+        return new OperationResult(result.Errors.First().Description);
     }
-    public async Task<Result<bool>> LoginAsync(string username, string password)
+    public async Task<OperationResult> LoginAsync(string username, string password)
     {
         var result = await _signInService.PasswordSignInAsync(username, password, false, false);
-
-        if (result.Succeeded == true)
-        {
-            return new Result<bool>(true);
-        }
-        else
-        {
-            return new Result<bool>(new LoginOperationException(new[] { "User with this username and password does not exist" }));
-        }
+        return result.Succeeded == true ? new OperationResult()
+            : new OperationResult(ErrorMessages.User.WrongCredentials);
     }
     public async Task SignOutAsync()
     {
@@ -103,43 +91,50 @@ public class IdentityService : IIdentityService
         var entity = await _userReceiverRepository.GetByIdAsync(userId);
         return entity == null ? null : _mapper.Map<UserDomain>(entity);
     }
-    public async Task<Result<bool>> UpdateUserFieldsAsync(Guid userId, string newUsername, string newInformation, string password)
+    public async Task<OperationResult> UpdateUserFieldsAsync(Guid userId, string newUsername, string newInformation, string password)
     {
         var entity = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
         if (entity == null)
         {
-            var badResult = new Result<bool>(new UserNotFoundException(new[] { "User with given id does not exist" }));
-            return badResult;
+            return new OperationResult(ErrorMessages.User.NotFound);
         }
         
         /* Validate password */
         var givenPasswordSameToActual = await _userRepository.CheckPasswordAsync(entity, password);
         if(givenPasswordSameToActual == false)
         {
-            var badResult = new Result<bool>(new WrongPasswordException(new[] { "Given password and actual are not the same" }));
-            return badResult;
+            return new OperationResult(ErrorMessages.User.WrongPassword);
         }
         
         /* Update user fields */
         var result = await _userRepository.UpdateFieldsAsync(entity, newUsername, newInformation);
-        return result.Succeeded ? new Result<bool>(true) : 
-            new Result<bool>(new UserUpdateOperationException(result.Errors
-                .Select(x => x.Description).ToArray()));
-    }
+        if (result.Succeeded)
+            return new OperationResult();
 
-    public async Task<Result<bool>> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
+        return HandleErrors(result.Errors, "Can not update user fields.");
+    }
+    public async Task<OperationResult> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
     {
         var user = await _userReceiverRepository.GetByIdAsync(userId);
         if(user is null)
         {
-            return new Result<bool>(new UserNotFoundException());
+            return new OperationResult(ErrorMessages.User.NotFound);
         }
 
         var result = await _userRepository.ChangePasswordAsync(user, currentPassword, newPassword); 
         if(result.Succeeded)
-            return new Result<bool>(true);
+            return new OperationResult();
 
-        return new Result<bool>(new HandledApplicationException(
-            result.Errors.Select(x => x.Description).ToArray()));
+        return HandleErrors(result.Errors, "Can not change password");
+    }
+
+    private OperationResult HandleErrors(IEnumerable<IdentityError> errors, string errorMessageForLogger)
+    {
+        _logger.LogWarning(errorMessageForLogger);
+        foreach (var error in errors)
+        {
+            _logger.LogWarning($"Code: {error.Code}; Description: {error.Description}");
+        }
+        return new OperationResult(errors.First().Description);
     }
 }

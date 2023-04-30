@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Entities;
-using PropertySearchApp.Models;
+using PropertySearchApp.Models.Accommodations;
+using PropertySearchApp.Models.Contacts;
+using PropertySearchApp.Models.Identities;
+using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Extensions;
 
