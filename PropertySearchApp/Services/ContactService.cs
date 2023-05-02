@@ -23,6 +23,11 @@ public class ContactService : IContactService
     public async Task<List<ContactDomain>> GetUserContactsAsync(Guid userId)
     {
         var contacts = await _contactsRepository.GetUserContactsAsync(userId);
+        if(contacts is null)
+        {
+            return new List<ContactDomain>();
+        }
+
         return contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList();
     }
     public async Task<OperationResult> AddContactToUserAsync(Guid userId, ContactDomain contact)
