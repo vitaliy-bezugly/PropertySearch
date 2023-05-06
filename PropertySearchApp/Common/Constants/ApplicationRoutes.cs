@@ -32,7 +32,7 @@ public static class ApplicationRoutes
     }
     public static class Error
     {
-        private const string Base = nameof(Error);
+        public const string Base = nameof(Error);
 
         public const string NotFound = Base + "/" + "404";
     }

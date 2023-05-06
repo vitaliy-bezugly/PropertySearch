@@ -53,12 +53,12 @@ public class AccommodationController : Controller
 
         return View("Index", accommodations);
     }
-    [HttpGet, Route(ApplicationRoutes.Accommodation.Details)]
+    [HttpGet, Route(ApplicationRoutes.Accommodation.Details), Authorize]
     public async Task<IActionResult> Details([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
         if (accommodation == null)
-            return NotFound();
+            return RedirectToAction("PageNotFound", ApplicationRoutes.Error.Base);
 
         var viewModel = _mapper.Map<AccommodationViewModel>(accommodation);
         var account = await _identityService.GetUserByIdAsync(Guid.Parse(viewModel.OwnerId));

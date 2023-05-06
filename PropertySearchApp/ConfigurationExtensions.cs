@@ -8,7 +8,9 @@ public static class ConfigurationExtensions
         {
             await next();
 
-            if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+            if ((context.Response.StatusCode == StatusCodes.Status404NotFound 
+                || context.Response.StatusCode == StatusCodes.Status302Found) 
+                && !context.Response.HasStarted)
             {
                 //Re-execute the request so the user gets the error page
                 string originalPath = context.Request.Path.Value;
