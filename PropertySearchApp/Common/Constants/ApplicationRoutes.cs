@@ -35,5 +35,6 @@ public static class ApplicationRoutes
         public const string Base = nameof(Error);
 
         public const string NotFound = Base + "/" + "404";
+        public const string Unauthorized = Base + "/" + "401";
     }
 }

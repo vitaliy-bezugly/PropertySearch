@@ -53,7 +53,7 @@ public class AccommodationController : Controller
 
         return View("Index", accommodations);
     }
-    [HttpGet, Route(ApplicationRoutes.Accommodation.Details), Authorize]
+    [HttpGet, Route(ApplicationRoutes.Accommodation.Details)]
     public async Task<IActionResult> Details([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);

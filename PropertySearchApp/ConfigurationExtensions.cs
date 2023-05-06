@@ -1,4 +1,6 @@
-﻿namespace PropertySearchApp;
+﻿using PropertySearchApp.Common.Constants;
+
+namespace PropertySearchApp;
 
 public static class ConfigurationExtensions
 {
@@ -14,7 +16,7 @@ public static class ConfigurationExtensions
                 //Re-execute the request so the user gets the error page
                 string originalPath = context.Request.Path.Value;
                 context.Items["originalPath"] = originalPath;
-                context.Request.Path = "/error/404";
+                context.Request.Path = "/" + ApplicationRoutes.Error.NotFound;
                 await next();
             }
         });
