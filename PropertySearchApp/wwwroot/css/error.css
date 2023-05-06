@@ -1,0 +1,13 @@
+﻿/* error */
+.error-body {
+    font-family: Sen, Roboto, sans-serif;
+}
+
+.error-body .error-header {
+    font-weight: 900;
+}
+
+.home-page-link {
+    color:deepskyblue;
+    text-decoration: none;
+}

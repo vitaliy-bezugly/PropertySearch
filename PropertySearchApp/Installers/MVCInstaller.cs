@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Memory;
+using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Installers.Abstract;
 
 namespace PropertySearchApp.Installers;
@@ -15,6 +16,8 @@ public class MVCInstaller : IInstaller
         {
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
         });
+
+        services.ConfigureApplicationCookie(options => options.LoginPath = "/" + ApplicationRoutes.Identity.Login);
 
         logger.LogInformation("MVC has been successfully installed");
     }

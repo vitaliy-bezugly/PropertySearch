@@ -58,7 +58,7 @@ public class AccommodationController : Controller
     {
         var accommodation = await _accommodationService.GetAccommodationByIdAsync(id, cancellationToken);
         if (accommodation == null)
-            return NotFound();
+            return RedirectToAction("PageNotFound", ApplicationRoutes.Error.Base);
 
         var viewModel = _mapper.Map<AccommodationViewModel>(accommodation);
         var account = await _identityService.GetUserByIdAsync(Guid.Parse(viewModel.OwnerId));

@@ -33,6 +33,8 @@ public class Startup
             app.UseHsts();
         }
 
+        app.Configure404Error();
+
         // For ip address getting
         app.UseForwardedHeaders();
         
