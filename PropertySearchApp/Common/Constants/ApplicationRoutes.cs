@@ -30,4 +30,10 @@ public static class ApplicationRoutes
         public const string Delete = Base + "/" + nameof(Delete) + "/{id}";
         public const string Update = Base + "/" + nameof(Update) + "/{id}";
     }
+    public static class Error
+    {
+        private const string Base = nameof(Error);
+
+        public const string NotFound = Base + "/" + "404";
+    }
 }
