@@ -5,7 +5,7 @@
     Layout = "~/Views/Identity/_IdentityLayout.cshtml";
 }
 
-<form method="post" asp-controller="Identity" asp-action="Register">    
+<form id="registration" method="post" asp-controller="Identity" asp-action="Register">
     <div class="form-group">
         <label for="inputUsername">Username</label>
         <div class="d-flex">
@@ -58,5 +58,5 @@
     </div>
     <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
 
-    <button type="submit" class="btn btn-primary float-end">Register</button>
+    <button id="submitbtn" type="submit" class="btn btn-primary float-end">Register</button>
 </form>
