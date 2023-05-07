@@ -1,59 +1,51 @@
-﻿using AngleSharp.Html.Dom;
-using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using PropertySearch.IntegrationTests.Extensions;
-using PropertySearch.IntegrationTests.Helpers;
+﻿using FluentAssertions;
 using PropertySearchApp;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Models.Identities;
-using PropertySearchApp.Persistence;
 using System.Net;
 
 namespace PropertySearch.IntegrationTests;
 
 [Collection(name: "web-application-factory")]
-public class IdentityControllerTests
+public class IdentityControllerTests : AthenticationTestsBase
 {
-    private readonly HttpClient _client;
-    private readonly CustomWebApplicationFactory<Startup> _factory;
-    public IdentityControllerTests(CustomWebApplicationFactory<Startup> factory)
+    public IdentityControllerTests(CustomWebApplicationFactory<Startup> factory) : base(factory)
+    { }
+
+    [Fact]
+    public async Task GetRegisterPage_ShouldReturnPage_WhenUrlIsCorrect()
     {
-        _factory = factory;
-        _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = true
-        });
+        // Arrange
+        string registerUrl = ApplicationRoutes.Identity.Register;
 
-        SeedData(_factory.Services);
+        //Act
+        var result = await GetPageAsync(registerUrl);
+        var registerPageResponseMessage = result.Item1;
+        var registerContent = result.Item2;
+
+        // Assert
+        registerPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-
-    private void SeedData(IServiceProvider services)
+    [Fact]
+    public async Task GetLoginPage_ShouldReturnPage_WhenUrlIsCorrect()
     {
-        using (var scope = services.CreateScope())
-        {
-            var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<ApplicationDbContext>();
+        // Arrange
+        string loginUrl = ApplicationRoutes.Identity.Login;
 
-            var roles = db.Roles.ToList();
-            if (roles.Count < 3)
-            {
-                db.Roles.Add(new IdentityRole<Guid> { Id = Guid.NewGuid(), Name = "user", NormalizedName = "USER", ConcurrencyStamp = Guid.NewGuid().ToString() });
-                db.Roles.Add(new IdentityRole<Guid> { Id = Guid.NewGuid(), Name = "admin", NormalizedName = "ADMIN", ConcurrencyStamp = Guid.NewGuid().ToString() });
-                db.Roles.Add(new IdentityRole<Guid> { Id = Guid.NewGuid(), Name = "landlord", NormalizedName = "LANDLORD", ConcurrencyStamp = Guid.NewGuid().ToString() });
+        //Act
+        var loginPage = await GetPageAsync(loginUrl);
+        var loginPageResponseMessage = loginPage.Item1;
+        var loginContent = loginPage.Item2;
 
-                db.SaveChanges();
-            }
-        }
+        // Assert
+        loginPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-
+    
     [Fact]
     public async Task RegisterUser_ShouldRegisterUser_WhenAllParametersAreValid()
     {
         // Arrange
         string url = ApplicationRoutes.Identity.Register;
-
         string password = "somestrongp4assword";
         var registrationData = new RegistrationFormViewModel
         {
@@ -65,23 +57,110 @@ public class IdentityControllerTests
         };
 
         //Act
-        var defaultPage = await _client.GetAsync(url);
-        var content = await HtmlHelpers.GetDocumentAsync(defaultPage);
+        var result = await GetPageAsync(url);
+        var pageResponseMessage = result.Item1;
+        var content = result.Item2;
 
-        var formData = new List<KeyValuePair<string, string>>
-        {
-            new KeyValuePair<string, string>("inputUsername", registrationData.Username),
-            new KeyValuePair<string, string>("inputEmail", registrationData.Email),
-            new KeyValuePair<string, string>("inputPassword", registrationData.Password),
-            new KeyValuePair<string, string>("repeatPassword", registrationData.ConfirmPassword)
-        };
-
-        var form = (IHtmlFormElement)content.QuerySelector("form[id='registration']");
-        var submitButton = (IHtmlButtonElement)content.QuerySelector("button[id='submitbtn']");
-        var response = await _client.SendAsync(form, submitButton, formData);
+        var response = await SendRegistrationFormAsync(registrationData, content);
 
         // Assert
-        defaultPage.StatusCode.Should().Be(HttpStatusCode.OK);
+        pageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+    
+    [Theory]
+    [InlineData(null, "email@example.com", "password", "password", false)]
+    [InlineData("usename", null, "password", "password", false)]
+    [InlineData("usename", "", "password", "password", false)]
+    [InlineData("usename", "invalid", "password", "password", false)]
+    [InlineData("usename", "email@example.com", null, "null", false)]
+    [InlineData("usename", "email@example.com", "", "", false)]
+    [InlineData("usename", "email@example.com", "inv", "inv", false)]
+    [InlineData("usename", "email@example.com", "valid", "N0tEqualnv", false)]
+    public async Task RegisterUser_ShouldNotRegisterUser_WhenParametersAreInvalid(
+        string? username, string? email, string? password, string? confirm, bool landlord)
+    {
+        // Arrange
+        string url = ApplicationRoutes.Identity.Register;
+        var registrationData = new RegistrationFormViewModel
+        {
+            Username = username,
+            Email = email,
+            Password = password,
+            ConfirmPassword = confirm,
+            IsLandlord = landlord
+        };
+
+        //Act
+        var result = await GetPageAsync(url);
+        var pageResponseMessage = result.Item1;
+        var content = result.Item2;
+
+        var response = await SendRegistrationFormAsync(registrationData, content);
+
+        // Assert
+        pageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().NotBe(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task LoginUser_ShouldLoginUser_WhenUserExists()
+    {
+        // Arrange
+        string registerUrl = ApplicationRoutes.Identity.Register, loginUrl = ApplicationRoutes.Identity.Login;
+        string password = "somestrongp4assword";
+        var registrationData = new RegistrationFormViewModel
+        {
+            Username = "username",
+            Email = "email@example.com",
+            Password = password,
+            ConfirmPassword = password,
+            IsLandlord = false
+        };
+        var loginData = new LoginViewModel
+        {
+            Username = "username",
+            Password = password
+        };
+
+        //Act
+        var result = await GetPageAsync(registerUrl);
+        var registerPageResponseMessage = result.Item1;
+        var registerContent = result.Item2;
+
+        var registerResponse = await SendRegistrationFormAsync(registrationData, registerContent);
+        
+        var loginPage = await GetPageAsync(loginUrl);
+        var loginPageResponseMessage = loginPage.Item1;
+        var loginContent = loginPage.Item2;
+        var loginResponse = await SendLoginFormAsync(loginData, loginContent);
+        
+        // Assert
+        registerPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+        loginPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+    [Fact]
+    public async Task LoginUser_ShouldNotLoginUser_WhenUserDoesNotExist()
+    {
+        // Arrange
+        string loginUrl = ApplicationRoutes.Identity.Login;
+        string password = "qwertyui1234567";
+        var loginData = new LoginViewModel
+        {
+            Username = "username1234567",
+            Password = password
+        };
+
+        //Act
+        var loginPage = await GetPageAsync(loginUrl);
+        var loginPageResponseMessage = loginPage.Item1;
+        var loginContent = loginPage.Item2;
+        var loginResponse = await SendLoginFormAsync(loginData, loginContent);
+
+        // Assert
+        loginPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

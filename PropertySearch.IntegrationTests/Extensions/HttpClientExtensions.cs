@@ -23,7 +23,7 @@ public static class HttpClientExtensions
         return client.SendAsync(form, submitButton, formValues);
     }
 
-    public static Task<HttpResponseMessage> SendAsync(
+    public static async Task<HttpResponseMessage> SendAsync(
         this HttpClient client,
         IHtmlFormElement form,
         IHtmlElement submitButton,
@@ -36,6 +36,11 @@ public static class HttpClientExtensions
         }
 
         var submit = form.GetSubmission(submitButton);
+        if(submit is null)
+        {
+            return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+        }
+
         var target = (Uri)submit.Target;
         if (submitButton.HasAttribute("formaction"))
         {
@@ -53,6 +58,6 @@ public static class HttpClientExtensions
             submission.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
 
-        return client.SendAsync(submission);
+        return await client.SendAsync(submission);
     }
 }
