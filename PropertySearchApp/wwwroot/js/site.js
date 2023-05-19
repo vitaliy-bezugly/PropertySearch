@@ -15,3 +15,11 @@ function validatePassword() {
 
 password.onchange = validatePassword;
 confirm_password.onkeyup = validatePassword;
+
+$(this).removeAttr('b-x9zjbty19p');
+document.getElementById('nav').removeAttribute('b-x9zjbty19p')
+document.getElementById('wrapper').removeAttribute('b-x9zjbty19p')
+document.getElementById('main').removeAttribute('b-x9zjbty19p')
+document.getElementById('container').removeAttribute('b-x9zjbty19p')
+document.getElementById('footer').removeAttribute('b-x9zjbty19p')
+document.getElementById('footer-menu').removeAttribute('b-x9zjbty19p')

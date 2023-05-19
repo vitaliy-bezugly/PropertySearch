@@ -125,7 +125,7 @@
         <br/>
         <footer id="footer">
             <div class="row">
-                <ul class="menu">
+                <ul id="footer-menu" class="menu">
                     <li>
                         <a class="menu__link" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
@@ -165,14 +165,5 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
-    <script type="text/javascript">
-        $(this).removeAttr('b-x9zjbty19p');
-        document.getElementById('nav').removeAttribute('b-x9zjbty19p')
-        document.getElementById('wrapper').removeAttribute('b-x9zjbty19p')
-        document.getElementById('main').removeAttribute('b-x9zjbty19p')
-        document.getElementById('container').removeAttribute('b-x9zjbty19p')
-        document.getElementById('footer').removeAttribute('b-x9zjbty19p')
-    </script>
 </body>
 </html>
