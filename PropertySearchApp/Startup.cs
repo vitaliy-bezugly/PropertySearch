@@ -1,3 +1,4 @@
+using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Installers.Extensions;
 
 namespace PropertySearchApp;
@@ -46,6 +47,8 @@ public class Startup
         
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseExceptionHandler("/" + ApplicationRoutes.Error.InternalServerError);
 
         app.MapControllerRoute(
             name: "default",
