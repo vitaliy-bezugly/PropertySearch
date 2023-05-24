@@ -35,11 +35,18 @@ public class AccommodationController : Controller
     [HttpGet, AllowAnonymous]
     public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
     {
-        var pageId = id == null ? 0 : id.Value;
-        var accommodations = (await GetAccommodationsWithLimits(pageId, 64, cancellationToken))
-            .Select(x => _mapper.Map<AccommodationViewModel>(x));
+        try
+        {
+            var pageId = id == null ? 0 : id.Value;
+            var accommodations = (await GetAccommodationsWithLimits(pageId, 64, cancellationToken))
+                .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
-        return View(accommodations);
+            return View(accommodations);
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
     }
     [HttpGet, Route(ApplicationRoutes.Accommodation.MyOffers)]
     public async Task<IActionResult> MyOffers([FromRoute] int? id, CancellationToken cancellationToken)

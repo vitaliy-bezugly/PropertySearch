@@ -23,4 +23,17 @@ public class ErrorController : Controller
         _logger.LogWarning("404 error has been invoked, origin path: " +  originalPath);
         return View();
     }
+    
+    [HttpGet, Route(ApplicationRoutes.Error.InternalServerError)]
+    public IActionResult ServerError()
+    {
+        string originalPath = "unknown";
+        if (HttpContext.Items.ContainsKey("originalPath"))
+        {
+            originalPath = HttpContext.Items["originalPath"] as string;
+        }
+
+        _logger.LogWarning("server error has been invoked, origin path: " +  originalPath);
+        return View();
+    }
 }
