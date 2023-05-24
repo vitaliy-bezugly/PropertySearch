@@ -9,7 +9,7 @@ public class LogEntry
     public string Comment { get; set; } = string.Empty;
     public string? Operation { get; set; }
     public string Parameters { get; set; } = string.Empty;
-    public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
+    public DateTime TimeStamp { get; set; } = DateTime.Now;
     
     public override string ToString()
     {
