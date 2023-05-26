@@ -49,7 +49,14 @@ public class LoggingFilter : IAsyncActionFilter
 
         // Log other information such as execution time, etc.
         log.WithExecutionTime(stopwatch.ElapsedMilliseconds);
-        
-        _logger.LogInformation(log.ToString());
+
+        if (context.HttpContext.Response.IsSuccessStatusCode())
+        {
+            _logger.LogInformation(log.ToString());
+        }
+        else
+        {
+            _logger.LogWarning(log.ToString());
+        }
     }
 }

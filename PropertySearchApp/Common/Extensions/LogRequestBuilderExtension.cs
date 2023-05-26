@@ -24,7 +24,7 @@ public static class LogRequestBuilderExtension
     
     public static LogRequest WithUnauthenticatedUser(this LogRequest logEntry)
     {
-        logEntry.Username = "Unauthenticated";
+        logEntry.Username = null;
         return logEntry;
     }
     
