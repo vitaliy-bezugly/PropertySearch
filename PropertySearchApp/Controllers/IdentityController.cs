@@ -51,6 +51,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [ValidateAntiForgeryToken, HttpPost, Route(ApplicationRoutes.Identity.Login)]
     public async Task<IActionResult> Login(LoginViewModel loginModel)
     {
@@ -75,6 +76,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [HttpGet, Route(ApplicationRoutes.Identity.Register)]
     public IActionResult Register()
     {
@@ -94,6 +96,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [ValidateAntiForgeryToken, HttpPost, Route(ApplicationRoutes.Identity.Register)]
     public async Task<IActionResult> Register(RegistrationFormViewModel registrationModel)
     {
@@ -118,6 +121,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [HttpPost, Authorize, Route(ApplicationRoutes.Identity.Logout)]
     public async Task<IActionResult> Logout()
     {
@@ -139,6 +143,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Details)]
     public async Task<IActionResult> Details([FromRoute] Guid id)
     {
@@ -165,6 +170,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Edit)]
     public async Task<IActionResult> Edit()
     {
@@ -192,6 +198,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [HttpPost, ValidateAntiForgeryToken, Authorize, Route(ApplicationRoutes.Identity.Edit)]
     public async Task<IActionResult> Edit(EditUserFieldsRequest request)
     {
@@ -242,6 +249,7 @@ public class IdentityController : Controller
             throw;
         }
     }
+    
     [HttpPost, Authorize, ValidateAntiForgeryToken, Route(ApplicationRoutes.Identity.ChangePassword)]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
     {
