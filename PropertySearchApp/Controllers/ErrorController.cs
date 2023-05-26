@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Common.Constants;
+using PropertySearchApp.Filters;
 
 namespace PropertySearchApp.Controllers;
 
+[ServiceFilter(typeof(LoggingFilter))]
 public class ErrorController : Controller
 {
     private readonly ILogger<ErrorController> _logger;

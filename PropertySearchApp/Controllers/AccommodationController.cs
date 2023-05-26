@@ -9,12 +9,14 @@ using PropertySearchApp.Controllers.Extensions;
 using System.Net;
 using PropertySearchApp.Common.Extensions;
 using PropertySearchApp.Common.Logging;
+using PropertySearchApp.Filters;
 using PropertySearchApp.Models.Accommodations;
 using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Controllers;
 
 [Authorize]
+[ServiceFilter(typeof(LoggingFilter))]
 public class AccommodationController : Controller
 {
     private readonly ILogger<AccommodationRepository> _logger;

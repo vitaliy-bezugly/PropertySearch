@@ -6,10 +6,12 @@ using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Controllers.Extensions;
 using PropertySearchApp.Common.Extensions;
 using PropertySearchApp.Common.Logging;
+using PropertySearchApp.Filters;
 
 namespace PropertySearchApp.Controllers;
 
 [Authorize]
+[ServiceFilter(typeof(LoggingFilter))]
 public class ContactController : Controller
 {
     private readonly IContactService _contactsService;

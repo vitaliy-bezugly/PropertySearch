@@ -8,13 +8,14 @@ using PropertySearchApp.Common.Extensions;
 using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Controllers.Extensions;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Extensions;
+using PropertySearchApp.Filters;
 using PropertySearchApp.Models.Contacts;
 using PropertySearchApp.Models.Identities;
 using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Controllers;
 
+[ServiceFilter(typeof(LoggingFilter))]
 public class IdentityController : Controller
 {
     private readonly IIdentityService _identityService;
