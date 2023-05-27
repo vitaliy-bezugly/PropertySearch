@@ -186,22 +186,53 @@ public class AccommodationService : IAccommodationService
 
     private async Task<OperationResult> ValidateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
-        var validationResult = await _accommodationValidator.ValidateAsync(accommodation, cancellationToken);
-        if (validationResult.IsValid == false)
+        try
         {
-            return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
-        }
+            var validationResult = await _accommodationValidator.ValidateAsync(accommodation, cancellationToken);
+            if (validationResult.IsValid == false)
+            {
+                return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
+            }
 
-        return new OperationResult();
+            return new OperationResult();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationService))
+                .WithMethod(nameof(ValidateAccommodationAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(AccommodationDomain).FullName, nameof(accommodation), accommodation.SerializeObject())
+                .ToString());
+            
+            throw;
+        }
     }
+    
     private async Task<OperationResult> ValidateLocationAsync(LocationDomain location, CancellationToken cancellationToken)
     {
-        var validationResult = await _locationValidator.ValidateAsync(location, cancellationToken);
-        if (validationResult.IsValid == false)
+        try
         {
-            return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
-        }
+            var validationResult = await _locationValidator.ValidateAsync(location, cancellationToken);
+            if (validationResult.IsValid == false)
+            {
+                return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
+            }
 
-        return new OperationResult();
+            return new OperationResult();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationService))
+                .WithMethod(nameof(ValidateLocationAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(LocationDomain).FullName, nameof(location), location.SerializeObject())
+                .ToString());
+            
+            throw;
+        }
     }
 }
