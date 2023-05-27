@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Models;
 using System.Diagnostics;
+using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
+using PropertySearchApp.Filters;
 
 namespace PropertySearchApp.Controllers;
 
+[ServiceFilter(typeof(LoggingFilter))]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -16,41 +20,105 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Index));
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Index))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult Privacy()
     {
-        _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Privacy));
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Privacy))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult Team()
     {
-        _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Team));
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Team))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult Contacts()
     {
-        _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(Contacts));
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Contacts))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult About()
     {
-        _logger.LogInformation("Request to: " + nameof(HomeController) + "; method: " + nameof(About));
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(About))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 }

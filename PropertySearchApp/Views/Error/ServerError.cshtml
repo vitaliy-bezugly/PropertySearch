@@ -1,0 +1,29 @@
+@{
+    ViewBag.Title = "Error";
+}
+
+<div class="container">
+    <div class="error-body">
+        <h1 class="error-header">
+            We're sorry, but something unexpected has occurred.
+        </h1>
+        <br />
+
+        <p>An unhandled exception has occurred while processing your request. Our team has been notified of this issue, and we're working diligently to resolve it. We apologize for any inconvenience this may have caused.</p>
+        <h4>In the meantime, you can try the following steps:</h4>
+        <ol>
+            <li>Refresh the page: Sometimes, a simple refresh can resolve temporary issues.</li>
+            <li>Clear your browser cache: Clearing the cache can help eliminate any stored data that might be causing conflicts.</li>
+            <li>Contact our support team: If the problem persists, please reach out to our support team. They'll be glad to assist you and provide further guidance.</li>
+        </ol>
+        
+        <p>We appreciate your patience and understanding as we work to fix this problem. Rest assured that we're committed to providing you with a seamless experience on our website.</p>
+        <p>Thank you for your cooperation.</p>
+        
+        <div class="custom-btn">
+            <form method="get" asp-controller="Home" asp-action="Index">
+                <button>Back to home</button>
+            </form>
+        </div>
+    </div>
+</div>

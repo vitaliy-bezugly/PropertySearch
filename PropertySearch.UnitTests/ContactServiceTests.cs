@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using PropertySearchApp.Common;
@@ -19,9 +20,10 @@ public class ContactServiceTests
     private readonly IUserReceiverRepository _userReceiverRepository = Substitute.For<IUserReceiverRepository>();
     private readonly IContactsRepository _contactsRepository = Substitute.For<IContactsRepository>();
     private readonly IMapper _mapper = Substitute.For<IMapper>();
+    private readonly ILogger<ContactService> _logger = Substitute.For<ILogger<ContactService>>();
     public ContactServiceTests()
     {
-        _sut = new ContactService(_userReceiverRepository, _contactsRepository, _mapper);
+        _sut = new ContactService(_userReceiverRepository, _contactsRepository, _mapper, _logger);
     }
 
     [Fact]

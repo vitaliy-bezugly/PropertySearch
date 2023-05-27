@@ -5,15 +5,17 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Controllers.Extensions;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Extensions;
+using PropertySearchApp.Filters;
 using PropertySearchApp.Models.Contacts;
 using PropertySearchApp.Models.Identities;
 using PropertySearchApp.Services.Abstract;
 
 namespace PropertySearchApp.Controllers;
 
+[ServiceFilter(typeof(LoggingFilter))]
 public class IdentityController : Controller
 {
     private readonly IIdentityService _identityService;
@@ -33,92 +35,249 @@ public class IdentityController : Controller
     [HttpGet, Route(ApplicationRoutes.Identity.Login)]
     public IActionResult Login()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Login))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [ValidateAntiForgeryToken, HttpPost, Route(ApplicationRoutes.Identity.Login)]
     public async Task<IActionResult> Login(LoginViewModel loginModel)
     {
-        if (ModelState.IsValid == false)
-            return View(loginModel);
+        try
+        {
+            if (ModelState.IsValid == false)
+                return View(loginModel);
 
-        var result = await _identityService.LoginAsync(loginModel.Username, loginModel.Password);
-        return HandleResult(result, loginModel);
+            var result = await _identityService.LoginAsync(loginModel.Username, loginModel.Password);
+            return HandleResult(result, loginModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Login))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithParameter(typeof(LoginViewModel).FullName, nameof(loginModel), loginModel.SerializeObject())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [HttpGet, Route(ApplicationRoutes.Identity.Register)]
     public IActionResult Register()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Register))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            throw;
+        }
     }
+    
     [ValidateAntiForgeryToken, HttpPost, Route(ApplicationRoutes.Identity.Register)]
     public async Task<IActionResult> Register(RegistrationFormViewModel registrationModel)
     {
-        if (ModelState.IsValid == false)
-            return View(registrationModel);
+        try
+        {
+            if (ModelState.IsValid == false)
+                return View(registrationModel);
 
-        var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
-        return HandleResult(result, registrationModel);
+            var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
+            return HandleResult(result, registrationModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Register))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithParameter(typeof(RegistrationFormViewModel).FullName, nameof(registrationModel), registrationModel.SerializeObject())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [HttpPost, Authorize, Route(ApplicationRoutes.Identity.Logout)]
     public async Task<IActionResult> Logout()
     {
-        await _identityService.SignOutAsync();
-        return RedirectToAction("Index", "Home");
+        try
+        {
+            await _identityService.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Logout))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Details)]
     public async Task<IActionResult> Details([FromRoute] Guid id)
     {
-        var user = await _identityService.GetUserByIdAsync(id);
-        if (user == null)
-            return NotFound();
+        try
+        {
+            var user = await _identityService.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound();
 
-        var viewModel = _mapper.Map<UserDetailsViewModel>(user);
-        viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
-        return View(viewModel);
+            var viewModel = _mapper.Map<UserDetailsViewModel>(user);
+            viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
+            return View(viewModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Details))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithParameter(typeof(Guid).FullName, nameof(id), id.ToString())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Edit)]
     public async Task<IActionResult> Edit()
     {
-        Guid currentUserId = _httpContextAccessor.GetUserId();
-        var user = await _identityService.GetUserByIdAsync(currentUserId);
+        try
+        {
+            Guid currentUserId = _httpContextAccessor.GetUserId();
+            var user = await _identityService.GetUserByIdAsync(currentUserId);
         
-        var request = _mapper.Map<EditUserFieldsRequest>(user);
+            var request = _mapper.Map<EditUserFieldsRequest>(user);
         
-        request.Contacts = (await _contactsService.GetUserContactsAsync(currentUserId)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
+            request.Contacts = (await _contactsService.GetUserContactsAsync(currentUserId)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
         
-        return user == null ? Forbid() : View(request);
+            return user == null ? Forbid() : View(request);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Edit))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [HttpPost, ValidateAntiForgeryToken, Authorize, Route(ApplicationRoutes.Identity.Edit)]
     public async Task<IActionResult> Edit(EditUserFieldsRequest request)
     {
-        if (ModelState.IsValid == false)
-            return View(request);
+        try
+        {
+            if (ModelState.IsValid == false)
+                return View(request);
 
-        Guid userId = _httpContextAccessor.GetUserId();
+            Guid userId = _httpContextAccessor.GetUserId();
 
-        var result = await _identityService.UpdateUserFieldsAsync(userId, request.UserName, request.Information, request.PasswordToCompare);
-        return result.ToResponse("Profile was updated successfully!", TempData, 
-            () => RedirectToAction(nameof(Edit), "Identity"), 
-            () => View(request));
+            var result = await _identityService.UpdateUserFieldsAsync(userId, request.UserName, request.Information, request.PasswordToCompare);
+            return result.ToResponse("Profile was updated successfully!", TempData, 
+                () => RedirectToAction(nameof(Edit), "Identity"), 
+                () => View(request));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(Edit))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithParameter(typeof(EditUserFieldsRequest).FullName, nameof(request), request.SerializeObject())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.ChangePassword)]
     public IActionResult ChangePassword()
     {
-        var viewModel = new ChangePasswordViewModel();
-        return View(viewModel);
+        try
+        {
+            var viewModel = new ChangePasswordViewModel();
+            return View(viewModel);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(ChangePassword))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
+    
     [HttpPost, Authorize, ValidateAntiForgeryToken, Route(ApplicationRoutes.Identity.ChangePassword)]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
     {
-        if(ModelState.IsValid == false)
-            return View(viewModel);
+        try
+        {
+            if(ModelState.IsValid == false)
+                return View(viewModel);
 
-        Guid userId = _httpContextAccessor.GetUserId();
+            Guid userId = _httpContextAccessor.GetUserId();
 
-        var result = await _identityService.ChangePasswordAsync(userId, viewModel.CurrentPassword, viewModel.NewPassword);
-        return result.ToResponse("Password has been changed successfully!", TempData, 
-            () => RedirectToAction(nameof(ChangePassword), "Identity"), 
-            () => View(viewModel));
+            var result = await _identityService.ChangePasswordAsync(userId, viewModel.CurrentPassword, viewModel.NewPassword);
+            return result.ToResponse("Password has been changed successfully!", TempData, 
+                () => RedirectToAction(nameof(ChangePassword), "Identity"), 
+                () => View(viewModel));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(ChangePassword))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithParameter(typeof(ChangePasswordViewModel).FullName, nameof(viewModel), viewModel.SerializeObject())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     private IActionResult HandleResult<T>(OperationResult result, T model)

@@ -2,6 +2,8 @@ using System.Net;
 using IPinfo;
 using IPinfo.Models;
 using Newtonsoft.Json;
+using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Domain;
 using PropertySearchApp.Models.ExternalAPIs;
 using PropertySearchApp.Services.Abstract;
@@ -20,29 +22,44 @@ public class IpInfoLocationLoadingService : ILocationLoadingService
 
     public async Task<LocationDomain> GetLocationByUrlAsync(IPAddress ipAddress, CancellationToken cancellationToken)
     {
-        // if ipAddress is local
-        if (ipAddress.ToString() == "::1")
+        try
         {
-            ipAddress = await GetPublicIpAddressAsync(cancellationToken);
+            // if ipAddress is local
+            if (ipAddress.ToString() == "::1")
+            {
+                ipAddress = await GetPublicIpAddressAsync(cancellationToken);
+            }
+
+            if(ipAddress.Equals(IPAddress.Any))
+            {
+                return new LocationDomain();
+            }
+
+            _logger.LogInformation("Client ip address: " + ipAddress.ToString());
+            // making API call
+            IPResponse apiResponse = await _client.IPApi.GetDetailsAsync(ipAddress, cancellationToken);
+
+            return new LocationDomain
+            {
+                Id = Guid.Empty,
+                Country = apiResponse.CountryName,
+                Region = apiResponse.Region,
+                City = apiResponse.City,
+                Address = string.Empty
+            };
         }
-
-        if(ipAddress.Equals(IPAddress.Any))
+        catch (Exception e)
         {
-            return new LocationDomain();
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IpInfoLocationLoadingService))
+                .WithMethod(nameof(GetLocationByUrlAsync))
+                .WithOperation("Get")
+                .WithComment(e.Message)
+                .WithParameter(typeof(IPAddress).FullName, nameof(ipAddress), ipAddress.ToString())
+                .ToString());
+            
+            throw;
         }
-
-        _logger.LogInformation("Client ip address: " + ipAddress.ToString());
-        // making API call
-        IPResponse apiResponse = await _client.IPApi.GetDetailsAsync(ipAddress, cancellationToken);
-
-        return new LocationDomain
-        {
-            Id = Guid.Empty,
-            Country = apiResponse.CountryName,
-            Region = apiResponse.Region,
-            City = apiResponse.City,
-            Address = string.Empty
-        };
     }
 
     private async Task<IPAddress> GetPublicIpAddressAsync(CancellationToken cancellationToken)
@@ -73,6 +90,14 @@ public class IpInfoLocationLoadingService : ILocationLoadingService
             {
                 return IPAddress.Any;
             }
+            
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IpInfoLocationLoadingService))
+                .WithMethod(nameof(GetPublicIpAddressAsync))
+                .WithOperation("Get")
+                .WithComment(e.Message)
+                .WithNoParameters()
+                .ToString());
 
             throw;
         }

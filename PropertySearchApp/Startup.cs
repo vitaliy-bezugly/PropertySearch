@@ -1,3 +1,5 @@
+using PropertySearchApp.Common.Constants;
+using PropertySearchApp.Extensions;
 using PropertySearchApp.Installers.Extensions;
 
 namespace PropertySearchApp;
@@ -28,13 +30,12 @@ public class Startup
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
-            app.UseExceptionHandler("/Home/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-
+        
         app.Configure404Error();
-
+        
         // For ip address getting
         app.UseForwardedHeaders();
         
@@ -46,13 +47,17 @@ public class Startup
         
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
+        app.UseCors(Policy.Name);
+
         app.MapRazorPages();
         
+        app.UseExceptionHandler("/" + ApplicationRoutes.Error.InternalServerError);
+
         app.Run();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using PropertySearchApp.Common.Constants;
 
-namespace PropertySearchApp;
+namespace PropertySearchApp.Extensions;
 
 public static class ConfigurationExtensions
 {
