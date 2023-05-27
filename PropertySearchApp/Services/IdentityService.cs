@@ -115,7 +115,6 @@ public class IdentityService : IIdentityService
     {
         try
         {
-            roleName = "notexistingrole";
             var role = await _roleRepository.FindByNameAsync(roleName);
             if (role is null)
             {
