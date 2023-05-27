@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Repositories;
 using PropertySearchApp.Services.Abstract;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Controllers.Extensions;
@@ -143,6 +142,7 @@ public class AccommodationController : Controller
             throw;
         }
     }
+    
     [HttpPost, ValidateAntiForgeryToken, Route(ApplicationRoutes.Accommodation.Create)]
     public async Task<IActionResult> Create(CreateAccommodationViewModel viewModel, CancellationToken cancellationToken)
     {

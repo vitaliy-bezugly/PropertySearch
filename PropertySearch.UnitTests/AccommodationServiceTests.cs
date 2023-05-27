@@ -26,6 +26,7 @@ public class AccommodationServiceTests
     private readonly ILogger<UserValidatorService> _logger = Substitute.For<ILogger<UserValidatorService>>();
     private readonly IValidator<AccommodationDomain> _accommodationValidator = new AccommodationDomainValidator();
     private readonly IValidator<LocationDomain> _locationValidator = new LocationDomainValidator();
+    private readonly ILogger<AccommodationService> _accommodationLogger = Substitute.For<ILogger<AccommodationService>>();
 
     public AccommodationServiceTests()
     {
@@ -34,7 +35,8 @@ public class AccommodationServiceTests
             _mapper, 
             _userValidator,
             _accommodationValidator,
-            _locationValidator);
+            _locationValidator,
+            _accommodationLogger);
     }
 
     [Fact]

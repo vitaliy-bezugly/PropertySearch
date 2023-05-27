@@ -19,6 +19,14 @@ public class MVCInstaller : IInstaller
 
         services.ConfigureApplicationCookie(options => options.LoginPath = "/" + ApplicationRoutes.Identity.Login);
 
-        logger.LogInformation("MVC has been successfully installed");
+        services.AddCors(options =>
+        {
+            options.AddPolicy(Policy.Name, policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
     }
 }
