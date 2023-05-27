@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PropertySearchApp.Models;
 using System.Diagnostics;
+using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Filters;
 
 namespace PropertySearchApp.Controllers;
@@ -18,31 +20,106 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Index))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult Privacy()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Privacy))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult Team()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Team))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult Contacts()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(Contacts))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [HttpGet]
     public IActionResult About()
     {
-        return View();
+        try
+        {
+            return View();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(HomeController))
+                .WithMethod(nameof(About))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
