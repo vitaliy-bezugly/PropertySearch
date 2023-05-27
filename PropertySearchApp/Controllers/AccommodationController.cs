@@ -19,13 +19,13 @@ namespace PropertySearchApp.Controllers;
 [ServiceFilter(typeof(LoggingFilter))]
 public class AccommodationController : Controller
 {
-    private readonly ILogger<AccommodationRepository> _logger;
+    private readonly ILogger<AccommodationController> _logger;
     private readonly IMapper _mapper;
     private readonly IAccommodationService _accommodationService;
     private readonly IIdentityService _identityService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILocationLoadingService _locationService;
-    public AccommodationController(ILogger<AccommodationRepository> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IIdentityService identityService, ILocationLoadingService locationService)
+    public AccommodationController(ILogger<AccommodationController> logger, IAccommodationService accommodationService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IIdentityService identityService, ILocationLoadingService locationService)
     {
         _logger = logger;
         _accommodationService = accommodationService;

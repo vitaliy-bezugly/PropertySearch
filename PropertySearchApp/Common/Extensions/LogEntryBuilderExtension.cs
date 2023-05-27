@@ -25,6 +25,12 @@ public static class LogEntryBuilder
         logEntry.Operation = operation;
         return logEntry;
     }
+
+    public static LogEntry WithUnknownOperation(this LogEntry logEntry)
+    {
+        logEntry.Operation = "Unknown";
+        return logEntry;
+    }
     
     public static LogEntry WithParameter(this LogEntry logEntry, string parameterType, string parameterName, string parameterValue)
     {
