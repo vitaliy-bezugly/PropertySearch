@@ -54,6 +54,10 @@ public class LoggingFilter : IAsyncActionFilter
         {
             _logger.LogInformation(log.ToString());
         }
+        else if (context.HttpContext.Response.IsInternalErrorStatusCode())
+        {
+            _logger.LogError(log.ToString());
+        }
         else
         {
             _logger.LogWarning(log.ToString());

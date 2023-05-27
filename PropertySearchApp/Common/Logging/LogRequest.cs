@@ -9,6 +9,7 @@ public class LogRequest
     public string? Username { get; set; }
     public int StatusCode { get; set; }
     public long ExecutionTimeInMs { get; set; }
+    public DateTime TimeStamp { get; set; } = DateTime.Now;
 
     public override string ToString()
     {
