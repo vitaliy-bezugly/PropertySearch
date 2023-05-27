@@ -9,6 +9,6 @@ public static class HttpResponseExtension
     
     public static bool IsInternalErrorStatusCode(this HttpResponse response)
     {
-        return ((response.StatusCode >= 500) && (response.StatusCode <= 599))  || response.StatusCode == StatusCodes.Status405MethodNotAllowed;
+        return ((response.StatusCode >= 500) && (response.StatusCode <= 599));
     }
 }
