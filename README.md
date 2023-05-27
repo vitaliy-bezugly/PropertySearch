@@ -29,7 +29,7 @@ The Home Rental Offer Web Application is a useful tool for anyone looking to cre
   </ol>
   
 ```
-git clone https://github.com/VitaliyMinaev/PropertySearch.git
+git clone https://github.com/vitaliy-bezugly/PropertySearch.git
 ```
 
 <ol start="3">
@@ -47,7 +47,7 @@ dotnet run
 
 ## 👨‍💻 Authors
 
-- [@VitaliyMinaev](https://github.com/VitaliyMinaev)
+- [@Vitaliy Bezugly](https://github.com/vitaliy-bezugly)
 - [@Brannmarkt](https://github.com/Brannmarkt)
 - [@Alzgaymer](https://github.com/Alzgaymer)
 - [@DmytroHerasymchuk](https://github.com/DmytroHerasymchuk)
