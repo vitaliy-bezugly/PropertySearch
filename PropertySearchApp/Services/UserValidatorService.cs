@@ -1,5 +1,7 @@
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
+using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Repositories.Abstract;
 using PropertySearchApp.Services.Abstract;
 
@@ -17,27 +19,44 @@ public class UserValidatorService : IUserValidatorService
 
     public async Task<OperationResult> ValidateAsync(Guid userId, Guid accommodationId, bool validateAccess)
     {
-        var user = validateAccess == true ? await _userReceiver.GetByIdWithAccommodationsAsync(userId) :
+        try
+        {
+            var user = validateAccess == true ? await _userReceiver.GetByIdWithAccommodationsAsync(userId) :
                 await _userReceiver.GetByIdAsync(userId);
         
-        if (user == null)
-        {
-            _logger.LogWarning("Can not validate not existing user");
-            return new OperationResult(ErrorMessages.User.NotFound);
-        }
+            if (user == null)
+            {
+                _logger.LogWarning("Can not validate not existing user");
+                return new OperationResult(ErrorMessages.User.NotFound);
+            }
 
-        if (user.IsLandlord == false)
-        {
-            _logger.LogWarning("User is not a landlord");
-            return new OperationResult(ErrorMessages.User.NotLandlord);
-        }
-        else if (validateAccess == true && user.Accommodations.Any(x => x.Id == accommodationId) == false)
-        {
-            _logger.LogWarning("Access error");
-            return new OperationResult(ErrorMessages.User.HasNoAccess);
-        }
+            if (user.IsLandlord == false)
+            {
+                _logger.LogWarning("User is not a landlord");
+                return new OperationResult(ErrorMessages.User.NotLandlord);
+            }
+            else if (validateAccess == true && user.Accommodations.Any(x => x.Id == accommodationId) == false)
+            {
+                _logger.LogWarning("Access error");
+                return new OperationResult(ErrorMessages.User.HasNoAccess);
+            }
 
-        // success
-        return new OperationResult();
+            // success
+            return new OperationResult();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(UserValidatorService))
+                .WithMethod(nameof(ValidateAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .WithParameter(typeof(bool).Name, nameof(validateAccess), validateAccess.ToString())
+                .ToString());
+            
+            throw;
+        }
     }
 }
