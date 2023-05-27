@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Exceptions;
+using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Persistence;
 using PropertySearchApp.Repositories.Abstract;
@@ -19,80 +21,193 @@ public class AccommodationRepository : IAccommodationRepository
     }
     public async Task<IEnumerable<AccommodationEntity>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations
-            .Include(x => x.Location)
-            .AsNoTracking()
-            .OrderBy(x => x.Id)
-            .Skip(startAt)
-            .Take(countOfItems)
-            .ToListAsync(cancellationToken);
+        try
+        {
+            return await _context.Accommodations
+                .Include(x => x.Location)
+                .AsNoTracking()
+                .OrderBy(x => x.Id)
+                .Skip(startAt)
+                .Take(countOfItems)
+                .ToListAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(GetWithLimitsAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(int).Name, nameof(startAt), startAt.ToString())
+                .WithParameter(typeof(int).Name, nameof(countOfItems), countOfItems.ToString())
+                .ToString());
+            
+            throw;
+        }
     }
+    
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().ToListAsync(cancellationToken);
+        try
+        {
+            return await _context.Accommodations.Include(x => x.Location).AsNoTracking().ToListAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(GetAllAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithNoParameters()
+                .ToString());
+            
+            throw;
+        }
     }
+    
     public async Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+        try
+        {
+            return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(GetAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .ToString());
+            
+            throw;
+        }
     }
+   
     public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
     {
-        ValidateAccommodationFieldsIfInvalidThrowException(accommodation);
-        
-        await _context.Accommodations.AddAsync(accommodation, cancellationToken);
-        var result = await _context.SaveChangesAsync(cancellationToken);
-        if (result > 0) /* Can not add accommodation */
+        try
         {
-            return true;
-        }
+            ValidateAccommodationFieldsIfInvalidThrowException(accommodation);
         
-        _logger.LogWarning($"Can not add accommodation with title: {accommodation.Title}", accommodation);
-        return false;
+            await _context.Accommodations.AddAsync(accommodation, cancellationToken);
+            var result = await _context.SaveChangesAsync(cancellationToken);
+            if (result > 0) /* Can not add accommodation */
+            {
+                return true;
+            }
+        
+            _logger.LogWarning($"Can not add accommodation with title: {accommodation.Title}", accommodation);
+            return false;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(CreateAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(AccommodationEntity).Name, nameof(accommodation), accommodation.SerializeObject())
+                .ToString());
+            
+            throw;
+        }
     }
+    
     public async Task<OperationResult> UpdateAsync(AccommodationEntity destination, CancellationToken cancellationToken)
     {
-        ValidateAccommodationFieldsIfInvalidThrowException(destination);
-
-        var source = await _context.Accommodations.Include(x => x.Location).FirstOrDefaultAsync(x => x.Id == destination.Id, cancellationToken);
-        if (source == null)
+        try
         {
-            _logger.LogWarning("Can not update accommodation");
-            return new OperationResult(ErrorMessages.Accommodation.NotFound);
+            ValidateAccommodationFieldsIfInvalidThrowException(destination);
+
+            var source = await _context.Accommodations.Include(x => x.Location).FirstOrDefaultAsync(x => x.Id == destination.Id, cancellationToken);
+            if (source == null)
+            {
+                _logger.LogWarning("Can not update accommodation");
+                return new OperationResult(ErrorMessages.Accommodation.NotFound);
+            }
+
+            UpdateFields(source, destination);
+
+            var result = await _context.SaveChangesAsync(cancellationToken);
+            return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,
+                ErrorMessages.Accommodation.CanNotUpdate);
         }
-
-        UpdateFields(source, destination);
-
-        var result = await _context.SaveChangesAsync(cancellationToken);
-        return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,
-            ErrorMessages.Accommodation.CanNotUpdate);
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(UpdateAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(AccommodationEntity).Name, nameof(destination), destination.SerializeObject())
+                .ToString());
+            
+            throw;
+        }
     }
+    
     public async Task<OperationResult> DeleteAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
-        var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
-        if (exists == null)
+        try
         {
-            _logger.LogWarning( "Can not delete accommodation");
-            return new OperationResult(ErrorMessages.Accommodation.NotFound);
-        }
+            var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
+            if (exists == null)
+            {
+                _logger.LogWarning( "Can not delete accommodation");
+                return new OperationResult(ErrorMessages.Accommodation.NotFound);
+            }
 
-        _context.Accommodations.Remove(exists);
-        var result = await _context.SaveChangesAsync(cancellationToken);
-        return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result, ErrorMessages.Accommodation.CanNotDelete);
+            _context.Accommodations.Remove(exists);
+            var result = await _context.SaveChangesAsync(cancellationToken);
+            return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result, ErrorMessages.Accommodation.CanNotDelete);
+
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(DeleteAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .ToString());
+            
+            throw;
+        }
     }
 
-    private static void UpdateFields(AccommodationEntity source, AccommodationEntity destination)
+    private void UpdateFields(AccommodationEntity source, AccommodationEntity destination)
     {
-        source.Title = destination.Title;
-        source.Description = destination.Description;
-        source.Price = destination.Price;
-        source.PhotoUri = destination.PhotoUri;
-
-        if (destination.Location is not null)
+        try
         {
-            source.Location.Country = destination.Location.Country;
-            source.Location.City = destination.Location.City;
-            source.Location.Region = destination.Location.Region;
-            source.Location.Address = destination.Location.Address;
+            source.Title = destination.Title;
+            source.Description = destination.Description;
+            source.Price = destination.Price;
+            source.PhotoUri = destination.PhotoUri;
+
+            if (destination.Location is not null)
+            {
+                source.Location.Country = destination.Location.Country;
+                source.Location.City = destination.Location.City;
+                source.Location.Region = destination.Location.Region;
+                source.Location.Address = destination.Location.Address;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(UpdateFields))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(AccommodationEntity).Name, nameof(source), source.SerializeObject())
+                .WithParameter(typeof(AccommodationEntity).Name, nameof(destination), destination.SerializeObject())
+                .ToString());
+            
+            throw;
         }
     }
     private void ValidateAccommodationFieldsIfInvalidThrowException(AccommodationEntity accommodation)
@@ -103,13 +218,29 @@ public class AccommodationRepository : IAccommodationRepository
 
     private OperationResult ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(int entriesNumber, string errorMessage)
     {
-        if (entriesNumber > 0)
+        try
         {
-            return new OperationResult();
-        }
+            if (entriesNumber > 0)
+            {
+                return new OperationResult();
+            }
 
-        var error = new InternalDatabaseException(new[] { errorMessage });
-        _logger.LogWarning(error, "Internal database error. Can not complete operation");
-        return new OperationResult(errorMessage);
+            var error = new InternalDatabaseException(new[] { errorMessage });
+            _logger.LogWarning(error, "Internal database error. Can not complete operation");
+            return new OperationResult(errorMessage);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(AccommodationRepository))
+                .WithMethod(nameof(CreateAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(int).Name, nameof(entriesNumber), entriesNumber.ToString())
+                .WithParameter(typeof(string).Name, nameof(errorMessage), errorMessage)
+                .ToString());
+            
+            throw;
+        }
     }
 }
