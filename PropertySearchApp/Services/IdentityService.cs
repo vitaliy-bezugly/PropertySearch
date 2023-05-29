@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Exceptions;
@@ -22,7 +23,9 @@ public class IdentityService : IIdentityService
     private readonly IUserRepository _userRepository;
     private readonly IUserReceiverRepository _userReceiverRepository;
     private readonly IUserTokenProvider _tokenProvider;
-    public IdentityService(IUserRepository userRepository, ISignInService signInService, IRoleRepository roleRepository, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository, IUserTokenProvider tokenProvider)
+    private readonly IEmailSender _emailSender;
+    private readonly IHtmlMessageBuilder _htmlMessageBuilder;
+    public IdentityService(IUserRepository userRepository, ISignInService signInService, IRoleRepository roleRepository, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository, IUserTokenProvider tokenProvider, IEmailSender emailSender, IHtmlMessageBuilder htmlMessageBuilder)
     {
         _userRepository = userRepository;
         _signInService = signInService;
@@ -31,6 +34,8 @@ public class IdentityService : IIdentityService
         _mapper = mapper;
         _userReceiverRepository = userReceiverRepository;
         _tokenProvider = tokenProvider;
+        _emailSender = emailSender;
+        _htmlMessageBuilder = htmlMessageBuilder;
     }
 
     public async Task<OperationResult> RegisterAsync(UserDomain user)
@@ -50,13 +55,8 @@ public class IdentityService : IIdentityService
             {
                 await SetRolesAsync(userEntity);
 
-                var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(userEntity);
-                if (string.IsNullOrEmpty(token) == false)
-                {
-                    // TODO: send email with token
-                    throw new NotImplementedException();
-                }
-                
+                await BuildTokenAndSendConfirmationEmailAsync(userEntity);
+
                 // Set cookies
                 await _signInService.SignInAsync(userEntity, false);
                 return new OperationResult();
@@ -352,6 +352,16 @@ public class IdentityService : IIdentityService
                 .ToString());
             
             throw;
+        }
+    }
+    
+    private async Task BuildTokenAndSendConfirmationEmailAsync(UserEntity user)
+    {
+        var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
+        if (string.IsNullOrEmpty(token) == false)
+        {
+            string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
+            await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
         }
     }
 }
