@@ -42,6 +42,7 @@ public class IdentityService : IIdentityService
             }
             
             var userEntity = _mapper.Map<UserEntity>(user);
+            
             var result = await _userRepository.CreateAsync(userEntity, user.Password);
             if (result.Succeeded)
             {

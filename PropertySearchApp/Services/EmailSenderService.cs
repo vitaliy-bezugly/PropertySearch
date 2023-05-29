@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
+using PropertySearchApp.Common.Extensions;
+using PropertySearchApp.Common.Logging;
 using PropertySearchApp.Common.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -20,11 +22,29 @@ public class EmailSenderService : IEmailSender
 
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        if (string.IsNullOrEmpty(Options.SendGridKey))
+        try
         {
-            throw new Exception("Null SendGridKey");
+            if (string.IsNullOrEmpty(Options.SendGridKey))
+            {
+                throw new Exception("Null SendGridKey");
+            }
+        
+            await Execute(Options.SendGridKey, subject, message, toEmail);
         }
-        await Execute(Options.SendGridKey, subject, message, toEmail);
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(EmailSenderService))
+                .WithMethod(nameof(SendEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(string).Name, nameof(toEmail), toEmail)
+                .WithParameter(typeof(string).Name, nameof(subject), subject)
+                .WithParameter(typeof(string).Name, nameof(message), message)
+                .ToString());
+            
+            throw;
+        }
     }
 
     private async Task Execute(string apiKey, string subject, string message, string toEmail)
@@ -32,11 +52,12 @@ public class EmailSenderService : IEmailSender
         var client = new SendGridClient(apiKey);
         var msg = new SendGridMessage()
         {
-            From = new EmailAddress("Joe@contoso.com", "Password Recovery"),
+            From = new EmailAddress("bezuglivita123@gmail.com", "Property Search Application"),
             Subject = subject,
             PlainTextContent = message,
             HtmlContent = message
         };
+        
         msg.AddTo(new EmailAddress(toEmail));
 
         // Disable click tracking.
