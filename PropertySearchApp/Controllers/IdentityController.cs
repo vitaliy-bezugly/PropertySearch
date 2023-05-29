@@ -280,6 +280,35 @@ public class IdentityController : Controller
         }
     }
 
+    [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Identity.ConfirmEmail)]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailQuery query)
+    {
+        try
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest();
+            
+            OperationResult result = await _identityService.ConfirmEmailAsync(query.UserId, query.Token);
+            if (result.Succeeded)
+                return View(true);
+            
+            _logger.LogWarning($"Email confirmation failed, reason: {result.ErrorMessage}");
+            return View(false);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(ConfirmEmail))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithParameter(typeof(ConfirmEmailQuery).FullName, nameof(query), query.SerializeObject())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
+    }
+
     private IActionResult HandleResult<T>(OperationResult result, T model)
     {
         if (result.Succeeded)
@@ -288,6 +317,7 @@ public class IdentityController : Controller
         AddErrorsToModelState(ModelState, result);
         return View(model);
     }
+    
     private void AddErrorsToModelState(ModelStateDictionary modelState, OperationResult result)
     {
         modelState.AddModelError(string.Empty, result.ErrorMessage);

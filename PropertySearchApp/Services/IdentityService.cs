@@ -53,7 +53,8 @@ public class IdentityService : IIdentityService
                 var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(userEntity);
                 if (string.IsNullOrEmpty(token) == false)
                 {
-                    
+                    // TODO: send email with token
+                    throw new NotImplementedException();
                 }
                 
                 // Set cookies
@@ -241,6 +242,36 @@ public class IdentityService : IIdentityService
                 .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
                 .WithParameter(typeof(string).Name, nameof(currentPassword), currentPassword)
                 .WithParameter(typeof(string).Name, nameof(newPassword), newPassword)
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    public async Task<OperationResult> ConfirmEmailAsync(Guid userId, string token)
+    {
+        try
+        {
+            UserEntity? user = await _userReceiverRepository.GetByIdAsync(userId);
+            if (user is null)
+                return new OperationResult(ErrorMessages.User.NotFound);
+        
+            IdentityResult result = await _userRepository.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+                return new OperationResult();
+
+            return HandleErrors(result.Errors, "Something goes wrong while email confirmation");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(ConfirmEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(typeof(string).Name, nameof(token), token)
                 .ToString());
             
             throw;

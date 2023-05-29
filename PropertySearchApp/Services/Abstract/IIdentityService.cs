@@ -11,4 +11,5 @@ public interface IIdentityService
     Task<OperationResult> LoginAsync(string username, string password);
     Task<OperationResult> UpdateUserFieldsAsync(Guid userId, string newUsername, string newInformation, string password);
     Task<OperationResult> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword);
+    Task<OperationResult> ConfirmEmailAsync(Guid userId, string token);
 }
