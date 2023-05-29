@@ -22,20 +22,44 @@ public class EmailSenderService : IEmailSender
 
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
+        if (string.IsNullOrEmpty(Options.SendGridKey))
+        {
+            throw new Exception("Null SendGridKey");
+        }
+        
+        await Execute(Options.SendGridKey, subject, message, toEmail);
+    }
+
+    private async Task Execute(string apiKey, string subject, string message, string toEmail)
+    {
         try
         {
-            if (string.IsNullOrEmpty(Options.SendGridKey))
+            var client = new SendGridClient(apiKey);
+            var msg = new SendGridMessage()
             {
-                throw new Exception("Null SendGridKey");
-            }
+                From = new EmailAddress("bezuglivita123@gmail.com", "Property Search Application"),
+                Subject = subject,
+                PlainTextContent = message,
+                HtmlContent = message
+            };
         
-            await Execute(Options.SendGridKey, subject, message, toEmail);
+            msg.AddTo(new EmailAddress(toEmail));
+
+            // Disable click tracking.
+            // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
+            msg.SetClickTracking(false, false);
+            var response = await client.SendEmailAsync(msg);
+        
+            if(response.IsSuccessStatusCode)
+                _logger.LogInformation($"Email to {toEmail} queued successfully!");
+            else
+                _logger.LogInformation( $"Failure Email to {toEmail}");
         }
         catch (Exception e)
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(EmailSenderService))
-                .WithMethod(nameof(SendEmailAsync))
+                .WithMethod(nameof(Execute))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
                 .WithParameter(typeof(string).Name, nameof(toEmail), toEmail)
@@ -45,29 +69,5 @@ public class EmailSenderService : IEmailSender
             
             throw;
         }
-    }
-
-    private async Task Execute(string apiKey, string subject, string message, string toEmail)
-    {
-        var client = new SendGridClient(apiKey);
-        var msg = new SendGridMessage()
-        {
-            From = new EmailAddress("bezuglivita123@gmail.com", "Property Search Application"),
-            Subject = subject,
-            PlainTextContent = message,
-            HtmlContent = message
-        };
-        
-        msg.AddTo(new EmailAddress(toEmail));
-
-        // Disable click tracking.
-        // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
-        msg.SetClickTracking(false, false);
-        var response = await client.SendEmailAsync(msg);
-        
-        if(response.IsSuccessStatusCode)
-            _logger.LogInformation($"Email to {toEmail} queued successfully!");
-        else
-            _logger.LogInformation( $"Failure Email to {toEmail}");
     }
 }

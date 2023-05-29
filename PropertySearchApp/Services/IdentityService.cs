@@ -21,7 +21,8 @@ public class IdentityService : IIdentityService
     private readonly ILogger<IdentityService> _logger;
     private readonly IUserRepository _userRepository;
     private readonly IUserReceiverRepository _userReceiverRepository;
-    public IdentityService(IUserRepository userRepository, ISignInService signInService, IRoleRepository roleRepository, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository)
+    private readonly IUserTokenProvider _tokenProvider;
+    public IdentityService(IUserRepository userRepository, ISignInService signInService, IRoleRepository roleRepository, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository, IUserTokenProvider tokenProvider)
     {
         _userRepository = userRepository;
         _signInService = signInService;
@@ -29,6 +30,7 @@ public class IdentityService : IIdentityService
         _logger = logger;
         _mapper = mapper;
         _userReceiverRepository = userReceiverRepository;
+        _tokenProvider = tokenProvider;
     }
 
     public async Task<OperationResult> RegisterAsync(UserDomain user)
@@ -48,6 +50,12 @@ public class IdentityService : IIdentityService
             {
                 await SetRolesAsync(userEntity);
 
+                var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(userEntity);
+                if (string.IsNullOrEmpty(token) == false)
+                {
+                    
+                }
+                
                 // Set cookies
                 await _signInService.SignInAsync(userEntity, false);
                 return new OperationResult();

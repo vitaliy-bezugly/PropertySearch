@@ -26,7 +26,8 @@ public class DatabaseInstaller : IInstaller
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
         }).AddRoles<IdentityRole<Guid>>()
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
     }
     private string GetConnectionString(IConfiguration configuration, ILogger<Startup> logger)
     {

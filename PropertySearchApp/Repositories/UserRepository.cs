@@ -7,7 +7,7 @@ using PropertySearchApp.Repositories.Abstract;
 
 namespace PropertySearchApp.Repositories;
 
-public class UserRepository : IUserRepository, IUserReceiverRepository
+public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTokenProvider
 {
     private readonly UserManager<UserEntity> _userManager;
     private readonly ILogger<UserRepository> _logger;
@@ -126,6 +126,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
             throw;
         }
     }
+    
     public async Task<UserEntity?> GetByIdWithAccommodationsAsync(Guid userId)
     {
         try
@@ -145,6 +146,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
             throw;
         }
     }
+    
     public async Task<UserEntity?> GetByIdWithContactsAsync(Guid userId)
     {
         try
@@ -188,6 +190,26 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
                 .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
                 .WithParameter(typeof(string).Name, nameof(newUsername), newUsername)
                 .WithParameter(typeof(string).Name, nameof(newInformation), newInformation)
+                .ToString());
+            
+            throw;
+        }
+    }
+    
+    public async Task<string> GenerateEmailConfirmationTokenAsync(UserEntity user)
+    {
+        try
+        {
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(UserRepository))
+                .WithMethod(nameof(GenerateEmailConfirmationTokenAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithNoParameters()
                 .ToString());
             
             throw;
