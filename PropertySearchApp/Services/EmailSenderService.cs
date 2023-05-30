@@ -49,7 +49,9 @@ public class EmailSenderService : IEmailSender
             // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
             msg.SetClickTracking(false, false);
             var response = await client.SendEmailAsync(msg);
-        
+            
+            _logger.LogInformation($"Response for send email: {response.SerializeObject()}");
+            
             if(response.IsSuccessStatusCode)
                 _logger.LogInformation($"Email to {toEmail} queued successfully!");
             else
@@ -57,7 +59,8 @@ public class EmailSenderService : IEmailSender
         }
         catch (Exception e)
         {
-            _logger.LogError(new LogEntry()
+            _logger.LogWarning( $"Failure Email to {toEmail}");
+            _logger.LogCritical(new LogEntry()
                 .WithClass(nameof(EmailSenderService))
                 .WithMethod(nameof(Execute))
                 .WithUnknownOperation()
@@ -66,7 +69,7 @@ public class EmailSenderService : IEmailSender
                 .WithParameter(typeof(string).Name, nameof(subject), subject)
                 .WithParameter(typeof(string).Name, nameof(message), message)
                 .ToString());
-            
+
             throw;
         }
     }

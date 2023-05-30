@@ -359,11 +359,25 @@ public class IdentityService : IIdentityService
     
     private async Task BuildTokenAndSendConfirmationEmailAsync(UserEntity user)
     {
-        var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
-        if (string.IsNullOrEmpty(token) == false)
+        try
         {
-            string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
-            await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
+            var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
+            if (string.IsNullOrEmpty(token) == false)
+            {
+                string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
+                await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical("Can not send email to user");
+            _logger.LogCritical(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(BuildTokenAndSendConfirmationEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
+                .ToString());
         }
     }
 }
