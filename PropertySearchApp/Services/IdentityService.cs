@@ -261,7 +261,8 @@ public class IdentityService : IIdentityService
 
             if (result.Succeeded)
                 return new OperationResult();
-
+            
+            _logger.LogWarning($"Can not confirm email with token: {token}");
             return HandleErrors(result.Errors, "Something goes wrong while email confirmation");
         }
         catch (Exception e)

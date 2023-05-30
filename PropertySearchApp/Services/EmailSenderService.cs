@@ -53,7 +53,7 @@ public class EmailSenderService : IEmailSender
             if(response.IsSuccessStatusCode)
                 _logger.LogInformation($"Email to {toEmail} queued successfully!");
             else
-                _logger.LogInformation( $"Failure Email to {toEmail}");
+                _logger.LogWarning( $"Failure Email to {toEmail}");
         }
         catch (Exception e)
         {
