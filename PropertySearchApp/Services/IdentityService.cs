@@ -255,7 +255,8 @@ public class IdentityService : IIdentityService
             UserEntity? user = await _userReceiverRepository.GetByIdAsync(userId);
             if (user is null)
                 return new OperationResult(ErrorMessages.User.NotFound);
-        
+
+            token = token.Replace(' ', '+');
             IdentityResult result = await _userRepository.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded)
