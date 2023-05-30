@@ -8,13 +8,24 @@
 <div class="email-confirmation">
     @if (Model == true)
     {
-        <h3>Your email address has been successfully confirmed. Thank you for verifying your account with us.</h3>
+        <h3>
+            <i class='bx bx-badge-check'></i>
+            Your email address has been successfully confirmed.
+        </h3>
+        <br/>
+        
+        <h5>Thank you for verifying your account with us.</h5>
         <p>From now on, you will receive all important updates, notifications, and newsletters directly to this email address. If you have any questions or need further assistance, please don't hesitate to contact our support team.</p>
         <p>Thank you for choosing our service. We look forward to serving you!</p>
     }
     else
     {
-        <h3>Unsuccessful Email Confirmation</h3>
+        <h3>
+            <i class='bx bx-error-circle'></i>
+            Unsuccessful Email Confirmation
+        </h3>
+        <br/>
+        
         <p>We regret to inform you that we were unable to confirm your email address. Please make sure that you followed the verification link correctly.</p>
         <p>If you continue to experience issues, please contact our support team for further assistance. We apologize for any inconvenience this may cause and appreciate your patience.</p>
         <p>Thank you for your understanding.</p>

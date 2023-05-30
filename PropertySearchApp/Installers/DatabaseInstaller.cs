@@ -18,8 +18,8 @@ public class DatabaseInstaller : IInstaller
 
         services.AddDefaultIdentity<UserEntity>(options =>
         {
-            options.SignIn.RequireConfirmedAccount = true;
-            options.SignIn.RequireConfirmedEmail = true;
+            options.SignIn.RequireConfirmedAccount = false;
+            options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
 
             options.Password.RequireLowercase = false;
