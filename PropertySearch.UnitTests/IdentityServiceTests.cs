@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -23,10 +24,21 @@ public class IdentityServiceTests
     private readonly IMapper _mapper = Substitute.For<IMapper>();
     private readonly IUserReceiverRepository _userReceiver = Substitute.For<IUserReceiverRepository>();
     private readonly ILogger<IdentityService> _logger = Substitute.For<ILogger<IdentityService>>();
-
+    private readonly IUserTokenProvider _tokenProvider = Substitute.For<IUserTokenProvider>();
+    private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
+    private readonly IHtmlMessageBuilder _htmlMessageBuilder = Substitute.For<IHtmlMessageBuilder>();
     public IdentityServiceTests()
     {
-        _sut = new IdentityService(_userRepository, _signInService, _roleRepository, _logger, _mapper, _userReceiver);
+        var tokenProvider = 
+        _sut = new IdentityService(_userRepository, 
+            _signInService, 
+            _roleRepository, 
+            _logger, 
+            _mapper, 
+            _userReceiver,
+            _tokenProvider,
+            _emailSender,
+            _htmlMessageBuilder);
     }
 
     [Fact]
