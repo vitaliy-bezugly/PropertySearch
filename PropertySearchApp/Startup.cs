@@ -56,6 +56,7 @@ public class Startup
 
         app.MapRazorPages();
         
+        // views -> error -> servererror.cshtml
         app.UseExceptionHandler("/" + ApplicationRoutes.Error.InternalServerError);
 
         app.Run();
