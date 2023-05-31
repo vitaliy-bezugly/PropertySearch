@@ -1,0 +1,46 @@
+@model bool
+
+@{
+    ViewData["Title"] = "Confirm email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="email-confirmation">
+    @if (Model == true)
+    {
+        <h3>
+            <i class='bx bx-badge-check'></i>
+            Your email address has been successfully confirmed.
+        </h3>
+        <br/>
+        
+        <h5>Thank you for verifying your account with us.</h5>
+        <p>From now on, you will receive all important updates, notifications, and newsletters directly to this email address. If you have any questions or need further assistance, please don't hesitate to contact our support team.</p>
+        <p>Thank you for choosing our service. We look forward to serving you!</p>
+    }
+    else
+    {
+        <h3>
+            <i class='bx bx-error-circle'></i>
+            Your email isn't confirm yet!
+        </h3>
+        <br/>
+        
+        <p>Thank you for signing up! Please click the button below to send confirmation email: </p>
+        <form method="post" asp-controller="Identity" asp-action="SendConfirmationEmail">
+            <div class="custom-btn">
+                <button type="submit" style="min-width: 230px">Send Confirmation Email</button>
+            </div>
+        </form>
+        <br/>
+        
+        <p>If you do not receive it try the next steps: </p>
+        <ol>
+            <li>Check your Spam or Junk folder: Sometimes, automated emails can end up in these folders. Kindly search for an email from our service provider in your email account and ensure it hasn't been mistakenly marked as spam.</li>
+            <li>Wait a few minutes: Occasionally, there may be a slight delay in email delivery. Please allow some time and check your inbox again.</li>
+            <li>Verify the email address provided: Double-check the email address you entered during the sign-up process to ensure it is correct. If there was a typo, please let us know, and we will update it accordingly.</li>
+        </ol>
+        
+        <p>If none of these steps resolve the issue, please reply to this email or contact our support team. Our dedicated team will investigate the matter further and provide a solution as soon as possible.</p>
+    }
+</div>

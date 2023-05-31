@@ -3,12 +3,19 @@
 }
 
 <div class="container home">
+    @if (TempData["alert-success"] is not null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["alert-success"]
+        </div>
+    }
+    
     <div class="row">
         <div class="col-md-6 mt-3">
             <h1 style="font-weight:900">
                 Your comfort is our goal
             </h1>
-            <br />
+            <br/>
             <p class="text-gray">
                 The Home Rental Offer Web Application is a useful tool for anyone looking to create and manage their home rental offers.
             </p>

@@ -30,8 +30,8 @@ body {
 
 /* header nav */
 header nav {
-    padding-left: 60px; 
-    padding-right: 25px;
+    padding-left: 45px; 
+    padding-right: 45px;
 }
 @media (max-width: 796px) {
     header nav {

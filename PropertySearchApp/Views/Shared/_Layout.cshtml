@@ -15,8 +15,8 @@
     <link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/accommodation.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/PropertySearchApp.styles.css" asp-append-version="true" />    
     <link rel="stylesheet" href="~/css/error.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/email-confirmation.css" asp-append-version="true" />
 
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -47,12 +47,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">
-                                    <i class='bx bx-lock-alt'></i>
-                                    Privacy
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Home" asp-action="Contacts">
                                     <i class='bx bxs-contact' ></i>
                                     Contacts
@@ -62,7 +56,7 @@
                                 <a class="nav-link text-dark" asp-controller="Home" asp-action="About">
                                     <i class='bx bx-cube-alt'></i>
                                     About
-                               </a>
+                                </a>
                             </li>
                             @if (User?.Identity?.IsAuthenticated == true)
                             {
@@ -74,43 +68,36 @@
                                 </li>
                             }
                         </ul>
-
-                        @if (User?.Identity?.IsAuthenticated == false)
+                        
+                        @if (User?.Identity?.IsAuthenticated == true)
                         {
-                            <ul class="nav navbar-nav navbar-right">
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Register">Register</a>
-                                </li>
-                            </ul>
+                            <div class="dropdown">
+                                <button class="bg-transparent" style="border: 0px solid white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img class="img-margin" height="25" width="25" src="/images/user-icon.png">
+                                    <span class="text fs-6">@User?.FindFirst(ClaimTypes.Name)?.Value</span>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item mt-1" asp-controller="Identity" asp-action="Details" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value" style="text-decoration:none;">
+                                        <span>Profile Details</span>
+                                    </a>
+                                    <a class="dropdown-item mt-1" asp-controller="Identity" asp-action="ChangePassword" style="text-decoration:none;">
+                                        <span>Change password</span>
+                                    </a>
+                                    <a class="dropdown-item mt-1" asp-controller="Identity" asp-action="ConfirmEmail" style="text-decoration:none;">
+                                        <span>Confirm email</span>
+                                    </a>
+                                    <form class="dropdown-item" method="post" asp-controller="Identity" asp-action="Logout">
+                                        <button type="submit" class="bg-transparent" style="border: 0px solid white">
+                                            <span>Logout</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         }
                         else
                         {
-                            <ul class="nav navbar-nav navbar-right">
-                                <li class="nav-item d-flex">
-                                    <div class="dropdown">
-                                        <button class="bg-transparent" style="border: 0px solid white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <img class="img-margin" height="30" width="30" src="/images/user-icon.png">
-                                            <span class="text fs-6">@User?.FindFirst(ClaimTypes.Name)?.Value</span>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item mt-1" asp-controller="Identity" asp-action="Details" asp-route-id="@User?.FindFirst(ClaimTypes.NameIdentifier)?.Value" style="text-decoration:none;">
-                                                <span>Profile Details</span>
-                                            </a>
-                                            <a class="dropdown-item mt-1" asp-controller="Identity" asp-action="ChangePassword" style="text-decoration:none;">
-                                                <span>Change password</span>
-                                            </a>
-                                            <form class="dropdown-item" method="post" asp-controller="Identity" asp-action="Logout">
-                                                <button type="submit" class="bg-transparent" style="border: 0px solid white">
-                                                    <span>Logout</span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Login">Login</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Identity" asp-action="Register">Register</a>
                         }
                     </div>
                 </div>
@@ -152,7 +139,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="social-media float-end">
-                        <a href="https://github.com/VitaliyMinaev/PropertySearch"><i class='bx bxl-github'></i></a>
+                        <a href="https://github.com/vitaliy-bezugly/PropertySearch"><i class='bx bxl-github'></i></a>
                         <a href="mailto:vitalii.minaev.dev@gmail.com"><i class='bx bxl-gmail'></i></a>
                         <a href="https://t.me/NeIsk4a"><i class='bx bxl-telegram'></i></a>
                     </div>
@@ -164,15 +151,6 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script type="text/javascript">
-        $(this).removeAttr('b-x9zjbty19p');
-        document.getElementById('nav').removeAttribute('b-x9zjbty19p')
-        document.getElementById('wrapper').removeAttribute('b-x9zjbty19p')
-        document.getElementById('main').removeAttribute('b-x9zjbty19p')
-        document.getElementById('container').removeAttribute('b-x9zjbty19p')
-        document.getElementById('footer').removeAttribute('b-x9zjbty19p')
-        document.getElementById('footer-menu').removeAttribute('b-x9zjbty19p')
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

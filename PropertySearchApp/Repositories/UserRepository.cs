@@ -7,7 +7,7 @@ using PropertySearchApp.Repositories.Abstract;
 
 namespace PropertySearchApp.Repositories;
 
-public class UserRepository : IUserRepository, IUserReceiverRepository
+public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTokenProvider
 {
     private readonly UserManager<UserEntity> _userManager;
     private readonly ILogger<UserRepository> _logger;
@@ -126,6 +126,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
             throw;
         }
     }
+    
     public async Task<UserEntity?> GetByIdWithAccommodationsAsync(Guid userId)
     {
         try
@@ -145,6 +146,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
             throw;
         }
     }
+    
     public async Task<UserEntity?> GetByIdWithContactsAsync(Guid userId)
     {
         try
@@ -194,6 +196,49 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
         }
     }
     
+    public async Task<string> GenerateEmailConfirmationTokenAsync(UserEntity user)
+    {
+        try
+        {
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            return token;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(UserRepository))
+                .WithMethod(nameof(GenerateEmailConfirmationTokenAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithNoParameters()
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    public async Task<IdentityResult> ConfirmEmailAsync(UserEntity user, string token)
+    {
+        try
+        {
+            var identityResult = await _userManager.ConfirmEmailAsync(user, token);
+            return identityResult;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(UserRepository))
+                .WithMethod(nameof(ConfirmEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
+                .WithParameter(typeof(string).Name, nameof(token), token)
+                .ToString());
+            
+            throw;
+        }
+    }
+
     public async Task<IdentityResult> ChangePasswordAsync(UserEntity user, string currentPassword, string newPassword)
     {
         try
@@ -218,7 +263,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository
 
     private void ValidateUserIfInvalidThrowException(UserEntity user)
     {
-        if (user == null)
+        if (user is null)
         {
             ThrowArgumentException<ArgumentNullException>($"{nameof(user)} can not be null");
         }

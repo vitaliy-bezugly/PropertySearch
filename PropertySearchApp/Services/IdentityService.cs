@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Common.Exceptions;
@@ -21,7 +22,10 @@ public class IdentityService : IIdentityService
     private readonly ILogger<IdentityService> _logger;
     private readonly IUserRepository _userRepository;
     private readonly IUserReceiverRepository _userReceiverRepository;
-    public IdentityService(IUserRepository userRepository, ISignInService signInService, IRoleRepository roleRepository, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository)
+    private readonly IUserTokenProvider _tokenProvider;
+    private readonly IEmailSender _emailSender;
+    private readonly IHtmlMessageBuilder _htmlMessageBuilder;
+    public IdentityService(IUserRepository userRepository, ISignInService signInService, IRoleRepository roleRepository, ILogger<IdentityService> logger, IMapper mapper, IUserReceiverRepository userReceiverRepository, IUserTokenProvider tokenProvider, IEmailSender emailSender, IHtmlMessageBuilder htmlMessageBuilder)
     {
         _userRepository = userRepository;
         _signInService = signInService;
@@ -29,6 +33,9 @@ public class IdentityService : IIdentityService
         _logger = logger;
         _mapper = mapper;
         _userReceiverRepository = userReceiverRepository;
+        _tokenProvider = tokenProvider;
+        _emailSender = emailSender;
+        _htmlMessageBuilder = htmlMessageBuilder;
     }
 
     public async Task<OperationResult> RegisterAsync(UserDomain user)
@@ -40,12 +47,15 @@ public class IdentityService : IIdentityService
             {
                 return new OperationResult(ErrorMessages.User.SameEmail);
             }
-            
+
             var userEntity = _mapper.Map<UserEntity>(user);
+
             var result = await _userRepository.CreateAsync(userEntity, user.Password);
             if (result.Succeeded)
             {
                 await SetRolesAsync(userEntity);
+
+                SendConfirmationEmailAsync(userEntity);
 
                 // Set cookies
                 await _signInService.SignInAsync(userEntity, false);
@@ -63,7 +73,7 @@ public class IdentityService : IIdentityService
                 .WithComment(e.Message)
                 .WithParameter(typeof(UserDomain).FullName, nameof(user), user.SerializeObject())
                 .ToString());
-            
+
             throw;
         }
     }
@@ -235,6 +245,99 @@ public class IdentityService : IIdentityService
                 .ToString());
             
             throw;
+        }
+    }
+
+    public async Task<OperationResult> ConfirmEmailAsync(Guid userId, string token)
+    {
+        try
+        {
+            UserEntity? user = await _userReceiverRepository.GetByIdAsync(userId);
+            if (user is null)
+                return new OperationResult(ErrorMessages.User.NotFound);
+
+            token = token.Replace(' ', '+');
+            IdentityResult result = await _userRepository.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+                return new OperationResult();
+            
+            _logger.LogWarning($"Can not confirm email with token: {token}");
+            return HandleErrors(result.Errors, "Something goes wrong while email confirmation");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(ConfirmEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(typeof(string).Name, nameof(token), token)
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    public async Task<bool> IsEmailConfirmedAsync(Guid userId)
+    {
+        try
+        {
+            var user = await _userReceiverRepository.GetByIdAsync(userId);
+            if (user is null)
+                throw new UserNotFoundException();
+
+            return user.EmailConfirmed;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(IsEmailConfirmedAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    public async Task SendConfirmationEmailAsync(Guid userId)
+    {
+        var user = await _userReceiverRepository.GetByIdAsync(userId);
+        if (user is null)
+            throw new UserNotFoundException();
+
+        await SendConfirmationEmailAsync(user);
+    }
+    
+    private async Task SendConfirmationEmailAsync(UserEntity user)
+    {
+        try
+        {
+            var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
+            if (string.IsNullOrEmpty(token) == false)
+            {
+                string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
+                await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
+            }
+            else
+            {
+                throw new InvalidOperationException("For some reason we can not create confirmation token");
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical("Can not send email to user");
+            _logger.LogCritical(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(SendConfirmationEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
+                .ToString());
         }
     }
 

@@ -62,7 +62,7 @@ public class IdentityController : Controller
                 return View(loginModel);
 
             var result = await _identityService.LoginAsync(loginModel.Username, loginModel.Password);
-            return HandleResult(result, loginModel);
+            return HandleResult(result, loginModel, null);
         }
         catch (Exception e)
         {
@@ -107,7 +107,7 @@ public class IdentityController : Controller
                 return View(registrationModel);
 
             var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
-            return HandleResult(result, registrationModel);
+            return HandleResult(result, registrationModel, "You have successfully created an account! Check your email to confirm.");
         }
         catch (Exception e)
         {
@@ -280,14 +280,82 @@ public class IdentityController : Controller
         }
     }
 
-    private IActionResult HandleResult<T>(OperationResult result, T model)
+    [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Identity.EmailConfirmationResult)]
+    public async Task<IActionResult> EmailConfirmationResult([FromQuery] ConfirmEmailQuery query)
+    {
+        try
+        {
+            if (ModelState.IsValid == false)
+                return BadRequest();
+            
+            OperationResult result = await _identityService.ConfirmEmailAsync(query.UserId, query.Token);
+            if (result.Succeeded)
+                return View(true);
+            
+            _logger.LogWarning($"Email confirmation failed, reason: {result.ErrorMessage}");
+            return View(false);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(EmailConfirmationResult))
+                .WithOperation(nameof(HttpGetAttribute))
+                .WithParameter(typeof(ConfirmEmailQuery).FullName, nameof(query), query.SerializeObject())
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    [HttpGet, Authorize, Route(ApplicationRoutes.Identity.ConfirmEmail)]
+    public async Task<IActionResult> ConfirmEmail()
+    {
+        try
+        {
+            Guid userId = _httpContextAccessor.GetUserId();
+            var emailConfirmed = await _identityService.IsEmailConfirmedAsync(userId);
+            return View(emailConfirmed);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(ConfirmEmail))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    [HttpPost, Authorize, Route(ApplicationRoutes.Identity.SendConfirmationEmail)]
+    public async Task<IActionResult> SendConfirmationEmail()
+    {
+        Guid userId = _httpContextAccessor.GetUserId();
+        
+        await _identityService.SendConfirmationEmailAsync(userId);
+        
+        TempData[Alerts.Success] = "Confirmation email has been sent";
+        return RedirectToAction("Index", "Home");
+    }
+
+    private IActionResult HandleResult<T>(OperationResult result, T model, string? successMessage)
     {
         if (result.Succeeded)
+        {
+            if(String.IsNullOrEmpty(successMessage) == false)
+                TempData[Alerts.Success] = successMessage;
             return RedirectToAction("Index", "Home");
-
+        }
+        
         AddErrorsToModelState(ModelState, result);
         return View(model);
     }
+    
     private void AddErrorsToModelState(ModelStateDictionary modelState, OperationResult result)
     {
         modelState.AddModelError(string.Empty, result.ErrorMessage);

@@ -1,0 +1,22 @@
+/* email-confirmation */
+.email-confirmation {
+    font-family: Sen, Roboto, sans-serif;
+}
+
+.email-confirmation h3 {
+    font-weight: 600;
+}
+
+.email-confirmation h3 i {
+    font-size: 32px;
+    position: relative;
+    top: 3px;
+}
+
+.email-confirmation h3 i.bx-badge-check {
+    color:limegreen;
+}
+
+.email-confirmation h3 i.bx-error-circle {
+    color: crimson;
+}

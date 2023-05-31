@@ -19,6 +19,9 @@ public static class ApplicationRoutes
         public const string Details = Base + "/" + nameof(Details) + "/{id}";
         public const string Edit = Base + "/" + nameof(Edit);
         public const string ChangePassword = Base + "/" + nameof(ChangePassword);
+        public const string EmailConfirmationResult = Base + "/" + nameof(EmailConfirmationResult);
+        public const string ConfirmEmail = Base + "/" + nameof(ConfirmEmail);
+        public const string SendConfirmationEmail = Base + "/" + nameof(SendConfirmationEmail);
     }
     public static class Accommodation
     {
