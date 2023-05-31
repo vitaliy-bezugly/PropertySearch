@@ -55,7 +55,7 @@ public class IdentityService : IIdentityService
             {
                 await SetRolesAsync(userEntity);
 
-                await SendConfirmationEmailAsync(userEntity);
+                SendConfirmationEmailAsync(userEntity);
 
                 // Set cookies
                 await _signInService.SignInAsync(userEntity, false);
