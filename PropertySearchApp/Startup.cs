@@ -4,9 +4,6 @@ using PropertySearchApp.Installers.Extensions;
 
 namespace PropertySearchApp;
 
-/// <summary>
-/// The class responsible for setting up and running the application
-/// </summary>
 public class Startup
 {
     private readonly ILogger<Startup> _logger;
