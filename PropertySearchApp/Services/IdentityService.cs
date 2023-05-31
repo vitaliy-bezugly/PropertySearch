@@ -47,15 +47,15 @@ public class IdentityService : IIdentityService
             {
                 return new OperationResult(ErrorMessages.User.SameEmail);
             }
-            
+
             var userEntity = _mapper.Map<UserEntity>(user);
-            
+
             var result = await _userRepository.CreateAsync(userEntity, user.Password);
             if (result.Succeeded)
             {
                 await SetRolesAsync(userEntity);
 
-                await BuildTokenAndSendConfirmationEmailAsync(userEntity);
+                await SendConfirmationEmailAsync(userEntity);
 
                 // Set cookies
                 await _signInService.SignInAsync(userEntity, false);
@@ -73,7 +73,7 @@ public class IdentityService : IIdentityService
                 .WithComment(e.Message)
                 .WithParameter(typeof(UserDomain).FullName, nameof(user), user.SerializeObject())
                 .ToString());
-            
+
             throw;
         }
     }
@@ -280,6 +280,67 @@ public class IdentityService : IIdentityService
         }
     }
 
+    public async Task<bool> IsEmailConfirmedAsync(Guid userId)
+    {
+        try
+        {
+            var user = await _userReceiverRepository.GetByIdAsync(userId);
+            if (user is null)
+                throw new UserNotFoundException();
+
+            return user.EmailConfirmed;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(IsEmailConfirmedAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    public async Task SendConfirmationEmailAsync(Guid userId)
+    {
+        var user = await _userReceiverRepository.GetByIdAsync(userId);
+        if (user is null)
+            throw new UserNotFoundException();
+
+        await SendConfirmationEmailAsync(user);
+    }
+    
+    private async Task SendConfirmationEmailAsync(UserEntity user)
+    {
+        try
+        {
+            var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
+            if (string.IsNullOrEmpty(token) == false)
+            {
+                string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
+                await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
+            }
+            else
+            {
+                throw new InvalidOperationException("For some reason we can not create confirmation token");
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical("Can not send email to user");
+            _logger.LogCritical(new LogEntry()
+                .WithClass(nameof(IdentityService))
+                .WithMethod(nameof(SendConfirmationEmailAsync))
+                .WithUnknownOperation()
+                .WithComment(e.Message)
+                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
+                .ToString());
+        }
+    }
+
     private OperationResult HandleErrors(IEnumerable<IdentityError> errors, string errorMessageForLogger)
     {
         try
@@ -354,30 +415,6 @@ public class IdentityService : IIdentityService
                 .ToString());
             
             throw;
-        }
-    }
-    
-    private async Task BuildTokenAndSendConfirmationEmailAsync(UserEntity user)
-    {
-        try
-        {
-            var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
-            if (string.IsNullOrEmpty(token) == false)
-            {
-                string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
-                await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.LogCritical("Can not send email to user");
-            _logger.LogCritical(new LogEntry()
-                .WithClass(nameof(IdentityService))
-                .WithMethod(nameof(BuildTokenAndSendConfirmationEmailAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .ToString());
         }
     }
 }

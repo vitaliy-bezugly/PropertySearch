@@ -280,8 +280,8 @@ public class IdentityController : Controller
         }
     }
 
-    [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Identity.ConfirmEmail)]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailQuery query)
+    [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Identity.EmailConfirmationResult)]
+    public async Task<IActionResult> EmailConfirmationResult([FromQuery] ConfirmEmailQuery query)
     {
         try
         {
@@ -299,14 +299,48 @@ public class IdentityController : Controller
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(IdentityController))
-                .WithMethod(nameof(ConfirmEmail))
-                .WithOperation(nameof(HttpPostAttribute))
+                .WithMethod(nameof(EmailConfirmationResult))
+                .WithOperation(nameof(HttpGetAttribute))
                 .WithParameter(typeof(ConfirmEmailQuery).FullName, nameof(query), query.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
             throw;
         }
+    }
+
+    [HttpGet, Authorize, Route(ApplicationRoutes.Identity.ConfirmEmail)]
+    public async Task<IActionResult> ConfirmEmail()
+    {
+        try
+        {
+            Guid userId = _httpContextAccessor.GetUserId();
+            var emailConfirmed = await _identityService.IsEmailConfirmedAsync(userId);
+            return View(emailConfirmed);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(new LogEntry()
+                .WithClass(nameof(IdentityController))
+                .WithMethod(nameof(ConfirmEmail))
+                .WithOperation(nameof(HttpPostAttribute))
+                .WithNoParameters()
+                .WithComment(e.Message)
+                .ToString());
+            
+            throw;
+        }
+    }
+
+    [HttpPost, Authorize, Route(ApplicationRoutes.Identity.SendConfirmationEmail)]
+    public async Task<IActionResult> SendConfirmationEmail()
+    {
+        Guid userId = _httpContextAccessor.GetUserId();
+        
+        await _identityService.SendConfirmationEmailAsync(userId);
+        
+        TempData[Alerts.Success] = "Confirmation email has been sent";
+        return RedirectToAction("Index", "Home");
     }
 
     private IActionResult HandleResult<T>(OperationResult result, T model, string? successMessage)

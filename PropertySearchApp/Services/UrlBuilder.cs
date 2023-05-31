@@ -19,7 +19,7 @@ public class UrlBuilder
             throw new InvalidOperationException("Can not build url. HttpContext is null");
         
         var baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
-        baseUrl += $"/{ApplicationRoutes.Identity.ConfirmEmail}";
+        baseUrl += $"/{ApplicationRoutes.Identity.EmailConfirmationResult}";
 
         string emailConfirmationUrl = baseUrl + "?" + BuildQueryBasedOnUserIdAndToken(userId, token);
         _logger.LogInformation($"Email confirmation URL: {emailConfirmationUrl}");

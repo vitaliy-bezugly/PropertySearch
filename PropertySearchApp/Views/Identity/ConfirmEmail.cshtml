@@ -1,7 +1,7 @@
 @model bool
 
 @{
-    ViewData["Title"] = "Email confirmation";
+    ViewData["Title"] = "Confirm email";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -22,12 +22,25 @@
     {
         <h3>
             <i class='bx bx-error-circle'></i>
-            Unsuccessful Email Confirmation
+            Your email isn't confirm yet!
         </h3>
         <br/>
         
-        <p>We regret to inform you that we were unable to confirm your email address. Please make sure that you followed the verification link correctly.</p>
-        <p>If you continue to experience issues, please contact our support team for further assistance. We apologize for any inconvenience this may cause and appreciate your patience.</p>
-        <p>Thank you for your understanding.</p>
+        <p>Thank you for signing up! Please click the button below to send confirmation email: </p>
+        <form method="post" asp-controller="Identity" asp-action="SendConfirmationEmail">
+            <div class="custom-btn">
+                <button type="submit" style="min-width: 230px">Send Confirmation Email</button>
+            </div>
+        </form>
+        <br/>
+        
+        <p>If you do not receive it try the next steps: </p>
+        <ol>
+            <li>Check your Spam or Junk folder: Sometimes, automated emails can end up in these folders. Kindly search for an email from our service provider in your email account and ensure it hasn't been mistakenly marked as spam.</li>
+            <li>Wait a few minutes: Occasionally, there may be a slight delay in email delivery. Please allow some time and check your inbox again.</li>
+            <li>Verify the email address provided: Double-check the email address you entered during the sign-up process to ensure it is correct. If there was a typo, please let us know, and we will update it accordingly.</li>
+        </ol>
+        
+        <p>If none of these steps resolve the issue, please reply to this email or contact our support team. Our dedicated team will investigate the matter further and provide a solution as soon as possible.</p>
     }
 </div>
