@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Installers.Abstract;
 
 namespace PropertySearchApp.Installers;
 
-public class MVCInstaller : IInstaller
+public class MvcInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
@@ -28,5 +29,13 @@ public class MVCInstaller : IInstaller
                     .AllowAnyHeader();
             });
         });
+        
+        // email sending features
+        services.ConfigureApplicationCookie(o => {
+            o.ExpireTimeSpan = TimeSpan.FromDays(5);
+            o.SlidingExpiration = true;
+        });
+        services.Configure<DataProtectionTokenProviderOptions>(o =>
+            o.TokenLifespan = TimeSpan.FromHours(3));
     }
 }
