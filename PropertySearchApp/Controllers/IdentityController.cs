@@ -62,7 +62,7 @@ public class IdentityController : Controller
                 return View(loginModel);
 
             var result = await _identityService.LoginAsync(loginModel.Username, loginModel.Password);
-            return HandleResult(result, loginModel);
+            return HandleResult(result, loginModel, null);
         }
         catch (Exception e)
         {
@@ -107,7 +107,7 @@ public class IdentityController : Controller
                 return View(registrationModel);
 
             var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
-            return HandleResult(result, registrationModel);
+            return HandleResult(result, registrationModel, "You have successfully created an account! Check your email to confirm.");
         }
         catch (Exception e)
         {
@@ -309,11 +309,15 @@ public class IdentityController : Controller
         }
     }
 
-    private IActionResult HandleResult<T>(OperationResult result, T model)
+    private IActionResult HandleResult<T>(OperationResult result, T model, string? successMessage)
     {
         if (result.Succeeded)
+        {
+            if(String.IsNullOrEmpty(successMessage) == false)
+                TempData[Alerts.Success] = successMessage;
             return RedirectToAction("Index", "Home");
-
+        }
+        
         AddErrorsToModelState(ModelState, result);
         return View(model);
     }
