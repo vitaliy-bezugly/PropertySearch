@@ -10,20 +10,18 @@ namespace PropertySearchApp;
 public class Startup
 {
     private readonly ILogger<Startup> _logger;
-    public IConfiguration Configuration
-    {
-        get;
-    }
+    private readonly IConfiguration _configuration;
+    
     public Startup(IConfiguration configuration, ILogger<Startup> logger)
     {
-        Configuration = configuration;
+        _configuration = configuration;
         _logger = logger;
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
         // install services via reflection 
-        services.InstallServicesInAssembly(Configuration, _logger);
+        services.InstallServicesInAssembly(_configuration, _logger);
     }
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
