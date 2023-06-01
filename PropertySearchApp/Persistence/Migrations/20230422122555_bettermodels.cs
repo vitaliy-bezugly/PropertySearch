@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace PropertySearchApp.Migrations
+namespace PropertySearchApp.Persistence.Migrations
 {
     public partial class bettermodels : Migration
     {
