@@ -186,10 +186,13 @@ public class AccommodationRepository : IAccommodationRepository
             source.Title = destination.Title;
             source.Description = destination.Description;
             source.Price = destination.Price;
-            source.PhotoUri = destination.PhotoUri;
+            source.Pictures = destination.Pictures;
 
             if (destination.Location is not null)
             {
+                if (source.Location is null)
+                    source.Location = new LocationEntity();
+                
                 source.Location.Country = destination.Location.Country;
                 source.Location.City = destination.Location.City;
                 source.Location.Region = destination.Location.Region;
