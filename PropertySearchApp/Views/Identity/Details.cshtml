@@ -1,6 +1,6 @@
 ﻿@using System.Security.Claims;
 @using PropertySearchApp.Models.Identities;
-@model UserDetailsViewModel
+@model UserViewModel
 
 @{
     ViewData["Title"] = "Identity Details";
@@ -36,7 +36,7 @@
 
         <div class="form-group">
             <label>Username</label>
-            <input type="text" class="form-control" asp-for="UserName" readonly>
+            <input type="text" class="form-control" asp-for="Username" readonly>
         </div>
         <div class="form-group">
             <label>Email address</label>

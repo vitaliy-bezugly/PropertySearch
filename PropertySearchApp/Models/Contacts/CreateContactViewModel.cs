@@ -1,11 +1,11 @@
-﻿using PropertySearchApp.Common.Mappings;
-using PropertySearchApp.Domain;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PropertySearchApp.Models.Contacts;
 
-public class ContactViewModel : IMapFrom<ContactDomain>
+public class CreateContactViewModel
 {
-    public Guid Id { get; set; }
+    [Required]
     public string ContactType { get; set; } = String.Empty;
+    [Required]
     public string Content { get; set; } = String.Empty;
 }

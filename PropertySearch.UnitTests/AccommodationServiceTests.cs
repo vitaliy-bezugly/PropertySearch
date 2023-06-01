@@ -7,7 +7,7 @@ using NSubstitute.ReturnsExtensions;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Domain;
-using PropertySearchApp.Domain.Validations;
+using PropertySearchApp.Domain.Validators;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Repositories.Abstract;
 using PropertySearchApp.Services;

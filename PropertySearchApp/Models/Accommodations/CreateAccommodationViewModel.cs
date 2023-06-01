@@ -10,7 +10,7 @@ public class CreateAccommodationViewModel
     public string? Description { get; set; }
     [Range(0, int.MaxValue)]
     public int Price { get; set; }
-    public string? PhotoUri { get; set; }
+    public List<IFormFile>? Pictures { get; set; } = null!;
     [Required]
     public LocationViewModel Location { get; set; }
 

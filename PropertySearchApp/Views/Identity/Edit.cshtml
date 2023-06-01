@@ -1,6 +1,6 @@
 ﻿@using System.Security.Claims;
 @using PropertySearchApp.Models.Identities;
-@model EditUserFieldsRequest
+@model UpdateUserViewModel
 
 @{
     ViewData["Title"] = "Edit profile";
@@ -30,8 +30,8 @@
         <form method="post" asp-controller="Identity" asp-action="Edit" class="mt-1">
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" class="form-control" asp-for="UserName" required>
-                <span asp-validation-for="UserName" class="text-danger"></span>
+                <input type="text" class="form-control" asp-for="Username" required>
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
 
             <div class="form-group">

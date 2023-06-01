@@ -2,7 +2,7 @@ using Microsoft.Build.Framework;
 
 namespace PropertySearchApp.Models.Identities;
 
-public class ConfirmEmailQuery
+public class ConfirmEmailViewModel
 {
     [Required]
     public Guid UserId { get; set; }

@@ -106,7 +106,12 @@ public class IdentityController : Controller
             if (ModelState.IsValid == false)
                 return View(registrationModel);
 
-            var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
+            var user = new UserDomain
+            {
+                Email = registrationModel.Email, Username = registrationModel.Username,
+                Password = registrationModel.Password, IsLandlord = registrationModel.IsLandlord
+            };
+            var result = await _identityService.RegisterAsync(user);
             return HandleResult(result, registrationModel, "You have successfully created an account! Check your email to confirm.");
         }
         catch (Exception e)
@@ -154,7 +159,7 @@ public class IdentityController : Controller
             if (user == null)
                 return NotFound();
 
-            var viewModel = _mapper.Map<UserDetailsViewModel>(user);
+            var viewModel = _mapper.Map<UserViewModel>(user);
             viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
             return View(viewModel);
         }
@@ -180,7 +185,7 @@ public class IdentityController : Controller
             Guid currentUserId = _httpContextAccessor.GetUserId();
             var user = await _identityService.GetUserByIdAsync(currentUserId);
         
-            var request = _mapper.Map<EditUserFieldsRequest>(user);
+            var request = _mapper.Map<UpdateUserViewModel>(user);
         
             request.Contacts = (await _contactsService.GetUserContactsAsync(currentUserId)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
         
@@ -201,7 +206,7 @@ public class IdentityController : Controller
     }
     
     [HttpPost, ValidateAntiForgeryToken, Authorize, Route(ApplicationRoutes.Identity.Edit)]
-    public async Task<IActionResult> Edit(EditUserFieldsRequest request)
+    public async Task<IActionResult> Edit(UpdateUserViewModel request)
     {
         try
         {
@@ -210,7 +215,7 @@ public class IdentityController : Controller
 
             Guid userId = _httpContextAccessor.GetUserId();
 
-            var result = await _identityService.UpdateUserFieldsAsync(userId, request.UserName, request.Information, request.PasswordToCompare);
+            var result = await _identityService.UpdateUserFieldsAsync(userId, request.Username, request.Information, request.PasswordToCompare);
             return result.ToResponse("Profile was updated successfully!", TempData, 
                 () => RedirectToAction(nameof(Edit), "Identity"), 
                 () => View(request));
@@ -221,7 +226,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(Edit))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(EditUserFieldsRequest).FullName, nameof(request), request.SerializeObject())
+                .WithParameter(typeof(UpdateUserViewModel).FullName, nameof(request), request.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -281,14 +286,14 @@ public class IdentityController : Controller
     }
 
     [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Identity.EmailConfirmationResult)]
-    public async Task<IActionResult> EmailConfirmationResult([FromQuery] ConfirmEmailQuery query)
+    public async Task<IActionResult> EmailConfirmationResult([FromQuery] ConfirmEmailViewModel viewModel)
     {
         try
         {
             if (ModelState.IsValid == false)
                 return BadRequest();
             
-            OperationResult result = await _identityService.ConfirmEmailAsync(query.UserId, query.Token);
+            OperationResult result = await _identityService.ConfirmEmailAsync(viewModel.UserId, viewModel.Token);
             if (result.Succeeded)
                 return View(true);
             
@@ -301,7 +306,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(EmailConfirmationResult))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(ConfirmEmailQuery).FullName, nameof(query), query.SerializeObject())
+                .WithParameter(typeof(ConfirmEmailViewModel).FullName, nameof(viewModel), viewModel.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
