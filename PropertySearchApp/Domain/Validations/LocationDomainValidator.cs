@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using PropertySearchApp.Common.Constants;
-using PropertySearchApp.Domain;
 
-namespace PropertySearchApp.Validations;
+namespace PropertySearchApp.Domain.Validations;
 
 public class LocationDomainValidator : AbstractValidator<LocationDomain>
 {

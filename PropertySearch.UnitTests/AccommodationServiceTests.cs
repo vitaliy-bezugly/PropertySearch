@@ -7,11 +7,11 @@ using NSubstitute.ReturnsExtensions;
 using PropertySearchApp.Common;
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.Domain;
+using PropertySearchApp.Domain.Validations;
 using PropertySearchApp.Entities;
 using PropertySearchApp.Repositories.Abstract;
 using PropertySearchApp.Services;
 using PropertySearchApp.Services.Abstract;
-using PropertySearchApp.Validations;
 
 namespace PropertySearch.UnitTests;
 
