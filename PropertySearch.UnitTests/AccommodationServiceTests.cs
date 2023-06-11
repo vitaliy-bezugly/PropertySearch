@@ -161,7 +161,7 @@ public class AccommodationServiceTests
     {
         // Arrange
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
-        const string title = "Unit test", description = "Updating test", updatedDescription = "UpdatedDescription";
+        const string title = "Unit test", description = "Updating test";
         const int price = 980;
 
         var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
@@ -192,7 +192,7 @@ public class AccommodationServiceTests
     {
         // Arrange
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
-        const string title = "Unit test", description = "Updating test", updatedDescription = "UpdatedDescription";
+        const string title = "Unit test", description = "Updating test";
         const int price = 980;
 
         var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };
@@ -223,7 +223,7 @@ public class AccommodationServiceTests
     {
         // Arrange
         Guid accommodationId = Guid.NewGuid(), userId = Guid.NewGuid();
-        const string title = "Unit test", description = "Updating test", updatedDescription = "UpdatedDescription";
+        const string title = "Unit test", description = "Updating test";
         const int price = 980;
 
         var location = new LocationDomain { Id = Guid.NewGuid(), Country = "UA", Region = "Kyiv City", City = "Kyiv", Address = "Yavornitskogo 28" };

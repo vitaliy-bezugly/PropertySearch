@@ -21,7 +21,7 @@ public class UserValidatorService : IUserValidatorService
     {
         try
         {
-            var user = validateAccess == true ? await _userReceiver.GetByIdWithAccommodationsAsync(userId) :
+            var user = validateAccess ? await _userReceiver.GetByIdWithAccommodationsAsync(userId) :
                 await _userReceiver.GetByIdAsync(userId);
         
             if (user == null)
@@ -35,7 +35,7 @@ public class UserValidatorService : IUserValidatorService
                 _logger.LogWarning("User is not a landlord");
                 return new OperationResult(ErrorMessages.User.NotLandlord);
             }
-            else if (validateAccess == true && user.Accommodations.Any(x => x.Id == accommodationId) == false)
+            else if (user.Accommodations != null && validateAccess && user.Accommodations.Any(x => x.Id == accommodationId) == false)
             {
                 _logger.LogWarning("Access error");
                 return new OperationResult(ErrorMessages.User.HasNoAccess);
@@ -51,9 +51,9 @@ public class UserValidatorService : IUserValidatorService
                 .WithMethod(nameof(ValidateAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
-                .WithParameter(typeof(bool).Name, nameof(validateAccess), validateAccess.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
+                .WithParameter(nameof(Boolean), nameof(validateAccess), validateAccess.ToString())
                 .ToString());
             
             throw;

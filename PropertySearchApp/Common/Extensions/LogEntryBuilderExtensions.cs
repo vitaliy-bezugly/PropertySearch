@@ -2,7 +2,7 @@ using PropertySearchApp.Common.Logging;
 
 namespace PropertySearchApp.Common.Extensions;
 
-public static class LogEntryBuilder
+public static class LogEntryBuilderExtensions
 {
     public static LogEntry WithClass(this LogEntry logEntry, string className)
     {

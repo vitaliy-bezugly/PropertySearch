@@ -11,10 +11,6 @@ public class ApplicationDbContext : IdentityDbContext<UserEntity, IdentityRole<G
         : base(options)
     {  }
 
-    public DbSet<AccommodationEntity> Accommodations { get; set; }
-    public DbSet<ContactEntity> Contacts { get; set; }
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-    }
+    public DbSet<AccommodationEntity> Accommodations { get; set; } = null!;
+    public DbSet<ContactEntity> Contacts { get; set; } = null!;
 }

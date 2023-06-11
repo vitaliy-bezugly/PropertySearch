@@ -4,7 +4,7 @@ using PropertySearchApp.Common.Constants;
 
 namespace PropertySearchApp.Common.Extensions;
 
-public static class OperationResultExtension
+public static class OperationResultExtensions
 {
     public static IActionResult ToResponse(this OperationResult result, string successMessage, ITempDataDictionary tempData, Func<IActionResult> ifSuccess, Func<IActionResult> ifFaulted)
     {

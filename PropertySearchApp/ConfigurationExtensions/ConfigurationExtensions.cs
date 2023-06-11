@@ -1,6 +1,6 @@
 ﻿using PropertySearchApp.Common.Constants;
 
-namespace PropertySearchApp.Extensions;
+namespace PropertySearchApp.ConfigurationExtensions;
 
 public static class ConfigurationExtensions
 {
@@ -14,7 +14,7 @@ public static class ConfigurationExtensions
                 && !context.Response.HasStarted)
             {
                 //Re-execute the request so the user gets the error page
-                string originalPath = context.Request.Path.Value;
+                string? originalPath = context.Request.Path.Value;
                 context.Items["originalPath"] = originalPath;
                 context.Request.Path = "/" + ApplicationRoutes.Error.NotFound;
                 await next();

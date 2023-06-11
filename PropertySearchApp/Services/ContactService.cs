@@ -59,7 +59,7 @@ public class ContactService : IContactService
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
             }
-            else if(user.Contacts.Any(x => x.Content == contact.Content))
+            else if(user.Contacts != null && user.Contacts.Any(x => x.Content == contact.Content))
             {
                 return new OperationResult(ErrorMessages.Contacts.AlreadyExist);
             }
@@ -117,7 +117,7 @@ public class ContactService : IContactService
                 return new OperationResult(ErrorMessages.User.NotFound);
             }
 
-            if (user.Contacts.Any(x => x.Id == contact.Id))
+            if (user.Contacts != null && user.Contacts.Any(x => x.Id == contact.Id))
             {
                 return await _contactsRepository.UpdateContactAsync(_mapper.Map<ContactEntity>(contact));
             }
@@ -133,8 +133,8 @@ public class ContactService : IContactService
                 .WithMethod(nameof(UpdateUserContactAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(ContactDomain).FullName, nameof(contact), contact.SerializeObject())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(typeof(ContactDomain).FullName ?? String.Empty, nameof(contact), contact.SerializeObject())
                 .ToString());
             
             throw;

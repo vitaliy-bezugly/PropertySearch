@@ -1,6 +1,6 @@
 namespace PropertySearchApp.Common.Extensions;
 
-public static class HttpResponseExtension
+public static class HttpResponseExtensions
 {
     public static bool IsSuccessStatusCode(this HttpResponse response)
     {

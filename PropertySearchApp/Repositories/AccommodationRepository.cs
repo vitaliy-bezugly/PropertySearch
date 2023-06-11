@@ -38,8 +38,8 @@ public class AccommodationRepository : IAccommodationRepository
                 .WithMethod(nameof(GetWithLimitsAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(int).Name, nameof(startAt), startAt.ToString())
-                .WithParameter(typeof(int).Name, nameof(countOfItems), countOfItems.ToString())
+                .WithParameter(nameof(Int32), nameof(startAt), startAt.ToString())
+                .WithParameter(nameof(Int32), nameof(countOfItems), countOfItems.ToString())
                 .ToString());
             
             throw;
@@ -79,7 +79,7 @@ public class AccommodationRepository : IAccommodationRepository
                 .WithMethod(nameof(GetAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
                 .ToString());
             
             throw;
@@ -109,7 +109,7 @@ public class AccommodationRepository : IAccommodationRepository
                 .WithMethod(nameof(CreateAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(AccommodationEntity).Name, nameof(accommodation), accommodation.SerializeObject())
+                .WithParameter(nameof(AccommodationEntity), nameof(accommodation), accommodation.SerializeObject())
                 .ToString());
             
             throw;
@@ -142,7 +142,7 @@ public class AccommodationRepository : IAccommodationRepository
                 .WithMethod(nameof(UpdateAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(AccommodationEntity).Name, nameof(destination), destination.SerializeObject())
+                .WithParameter(nameof(AccommodationEntity), nameof(destination), destination.SerializeObject())
                 .ToString());
             
             throw;
@@ -172,7 +172,7 @@ public class AccommodationRepository : IAccommodationRepository
                 .WithMethod(nameof(DeleteAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
                 .ToString());
             
             throw;
@@ -181,33 +181,17 @@ public class AccommodationRepository : IAccommodationRepository
 
     private void UpdateFields(AccommodationEntity source, AccommodationEntity destination)
     {
-        try
-        {
-            source.Title = destination.Title;
-            source.Description = destination.Description;
-            source.Price = destination.Price;
-            source.PhotoUri = destination.PhotoUri;
+        source.Title = destination.Title;
+        source.Description = destination.Description;
+        source.Price = destination.Price;
+        source.PhotoUri = destination.PhotoUri;
 
-            if (destination.Location is not null)
-            {
-                source.Location.Country = destination.Location.Country;
-                source.Location.City = destination.Location.City;
-                source.Location.Region = destination.Location.Region;
-                source.Location.Address = destination.Location.Address;
-            }
-        }
-        catch (Exception e)
+        if (destination.Location is not null && source.Location is not null)
         {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(UpdateFields))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(AccommodationEntity).Name, nameof(source), source.SerializeObject())
-                .WithParameter(typeof(AccommodationEntity).Name, nameof(destination), destination.SerializeObject())
-                .ToString());
-            
-            throw;
+            source.Location.Country = destination.Location.Country;
+            source.Location.City = destination.Location.City;
+            source.Location.Region = destination.Location.Region;
+            source.Location.Address = destination.Location.Address;
         }
     }
     private void ValidateAccommodationFieldsIfInvalidThrowException(AccommodationEntity accommodation)
@@ -218,29 +202,13 @@ public class AccommodationRepository : IAccommodationRepository
 
     private OperationResult ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(int entriesNumber, string errorMessage)
     {
-        try
+        if (entriesNumber > 0)
         {
-            if (entriesNumber > 0)
-            {
-                return new OperationResult();
-            }
+            return new OperationResult();
+        }
 
-            var error = new InternalDatabaseException(new[] { errorMessage });
-            _logger.LogWarning(error, "Internal database error. Can not complete operation");
-            return new OperationResult(errorMessage);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(CreateAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(int).Name, nameof(entriesNumber), entriesNumber.ToString())
-                .WithParameter(typeof(string).Name, nameof(errorMessage), errorMessage)
-                .ToString());
-            
-            throw;
-        }
+        var error = new InternalDatabaseException(new[] { errorMessage });
+        _logger.LogWarning(error, "Internal database error. Can not complete operation");
+        return new OperationResult(errorMessage);
     }
 }

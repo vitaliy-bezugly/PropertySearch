@@ -6,7 +6,7 @@
     ViewData["Title"] = "Edit profile";
 }
 @{
-    string currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    string? currentUserId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
 
 <div class="card login-logout-tab">

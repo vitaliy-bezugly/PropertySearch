@@ -16,7 +16,7 @@ public class ErrorController : Controller
     [HttpGet, Route(ApplicationRoutes.Error.NotFound)]
     public IActionResult PageNotFound()
     {
-        string originalPath = "unknown";
+        string? originalPath = "unknown";
         if (HttpContext.Items.ContainsKey("originalPath"))
         {
             originalPath = HttpContext.Items["originalPath"] as string;
@@ -29,7 +29,7 @@ public class ErrorController : Controller
     [HttpGet, Route(ApplicationRoutes.Error.InternalServerError)]
     public IActionResult ServerError()
     {
-        string originalPath = "unknown";
+        string? originalPath = "unknown";
         if (HttpContext.Items.ContainsKey("originalPath"))
         {
             originalPath = HttpContext.Items["originalPath"] as string;

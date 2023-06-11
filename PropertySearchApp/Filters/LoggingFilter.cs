@@ -17,7 +17,7 @@ public class LoggingFilter : IAsyncActionFilter
     {
         // This method is called before and after the action method is executed
         // Log the request URL and method
-        var log = new LogRequest();
+        var log = new RequestLog();
 
         if (context.HttpContext.Request.Path.Value is not null)
         {

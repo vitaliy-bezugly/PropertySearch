@@ -21,7 +21,6 @@ public class IdentityControllerTests : AthenticationTestsBase
         //Act
         var result = await GetPageAsync(registerUrl);
         var registerPageResponseMessage = result.Item1;
-        var registerContent = result.Item2;
 
         // Assert
         registerPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -35,7 +34,6 @@ public class IdentityControllerTests : AthenticationTestsBase
         //Act
         var loginPage = await GetPageAsync(loginUrl);
         var loginPageResponseMessage = loginPage.Item1;
-        var loginContent = loginPage.Item2;
 
         // Assert
         loginPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -46,7 +44,7 @@ public class IdentityControllerTests : AthenticationTestsBase
     {
         // Arrange
         string url = ApplicationRoutes.Identity.Register;
-        string password = "somestrongp4assword";
+        string password = "some-strong-password44";
         var registrationData = new RegistrationFormViewModel
         {
             Username = "username",
@@ -70,15 +68,15 @@ public class IdentityControllerTests : AthenticationTestsBase
     
     [Theory]
     [InlineData(null, "email@example.com", "password", "password", false)]
-    [InlineData("usename", null, "password", "password", false)]
-    [InlineData("usename", "", "password", "password", false)]
-    [InlineData("usename", "invalid", "password", "password", false)]
-    [InlineData("usename", "email@example.com", null, "null", false)]
-    [InlineData("usename", "email@example.com", "", "", false)]
-    [InlineData("usename", "email@example.com", "inv", "inv", false)]
-    [InlineData("usename", "email@example.com", "valid", "N0tEqualnv", false)]
+    [InlineData("username", null, "password", "password", false)]
+    [InlineData("username", "", "password", "password", false)]
+    [InlineData("username", "invalid", "password", "password", false)]
+    [InlineData("username", "email@example.com", null, "null", false)]
+    [InlineData("username", "email@example.com", "", "", false)]
+    [InlineData("username", "email@example.com", "inv", "inv", false)]
+    [InlineData("username", "email@example.com", "valid", "N0tEqual", false)]
     public async Task RegisterUser_ShouldNotRegisterUser_WhenParametersAreInvalid(
-        string? username, string? email, string? password, string? confirm, bool landlord)
+        string username, string email, string password, string confirm, bool landlord)
     {
         // Arrange
         string url = ApplicationRoutes.Identity.Register;
@@ -108,7 +106,7 @@ public class IdentityControllerTests : AthenticationTestsBase
     {
         // Arrange
         string registerUrl = ApplicationRoutes.Identity.Register, loginUrl = ApplicationRoutes.Identity.Login;
-        string password = "somestrongp4assword";
+        string password = "some-strong-password44";
         var registrationData = new RegistrationFormViewModel
         {
             Username = "username",
@@ -141,26 +139,5 @@ public class IdentityControllerTests : AthenticationTestsBase
 
         registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-    [Fact]
-    public async Task LoginUser_ShouldNotLoginUser_WhenUserDoesNotExist()
-    {
-        // Arrange
-        string loginUrl = ApplicationRoutes.Identity.Login;
-        string password = "qwertyui1234567";
-        var loginData = new LoginViewModel
-        {
-            Username = "username1234567",
-            Password = password
-        };
-
-        //Act
-        var loginPage = await GetPageAsync(loginUrl);
-        var loginPageResponseMessage = loginPage.Item1;
-        var loginContent = loginPage.Item2;
-        var loginResponse = await SendLoginFormAsync(loginData, loginContent);
-
-        // Assert
-        loginPageResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }

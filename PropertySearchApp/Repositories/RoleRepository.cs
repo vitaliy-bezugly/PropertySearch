@@ -28,7 +28,7 @@ public class RoleRepository : IRoleRepository
                 .WithMethod(nameof(FindByNameAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(name), name)
+                .WithParameter(nameof(String), nameof(name), name)
                 .ToString());
             
             throw;

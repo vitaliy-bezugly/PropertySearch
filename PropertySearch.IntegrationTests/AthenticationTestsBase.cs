@@ -62,8 +62,8 @@ public abstract class AthenticationTestsBase
             new KeyValuePair<string, string>("repeatPassword", registrationData.ConfirmPassword)
         };
 
-        var form = (IHtmlFormElement)content.QuerySelector("form[id='registration']");
-        var submitButton = (IHtmlButtonElement)content.QuerySelector("button[id='submitbtn']");
+        var form = (IHtmlFormElement)content.QuerySelector("form[id='registration']")!;
+        var submitButton = (IHtmlButtonElement)content.QuerySelector("button[id='submitbtn']")!;
         var response = await _client.SendAsync(form, submitButton, formData);
         
         return response;
@@ -77,8 +77,8 @@ public abstract class AthenticationTestsBase
             new KeyValuePair<string, string>("inputPassword", login.Password)
         };
 
-        var form = (IHtmlFormElement)content.QuerySelector("form[id='login']");
-        var submitButton = (IHtmlButtonElement)content.QuerySelector("button[id='submitbtn']");
+        var form = (IHtmlFormElement)content.QuerySelector("form[id='login']")!;
+        var submitButton = (IHtmlButtonElement)content.QuerySelector("button[id='submitbtn']")!;
         var response = await _client.SendAsync(form, submitButton, formData);
 
         return response;

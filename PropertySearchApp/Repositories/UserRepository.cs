@@ -19,25 +19,9 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
 
     public async Task<IdentityResult> AddToRoleAsync(UserEntity user, string roleName)
     {
-        try
-        {
-            ValidateUserIfInvalidThrowException(user);
-            ValidateStringIfInvalidThrowException(nameof(roleName), roleName);
-            return await _userManager.AddToRoleAsync(user, roleName);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(UserRepository))
-                .WithMethod(nameof(AddToRoleAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(roleName), roleName)
-                .ToString());
-            
-            throw;
-        }
+        ValidateUserIfInvalidThrowException(user);
+        ValidateStringIfInvalidThrowException(nameof(roleName), roleName);
+        return await _userManager.AddToRoleAsync(user, roleName);
     }
 
     public async Task<bool> CheckPasswordAsync(UserEntity user, string password)
@@ -55,8 +39,8 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(CheckPasswordAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(password), password)
+                .WithParameter(typeof(UserEntity).FullName  ?? String.Empty, nameof(user), user.SerializeObject())
+                .WithParameter(nameof(String), nameof(password), password)
                 .ToString());
             
             throw;
@@ -65,25 +49,9 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
 
     public async Task<IdentityResult> CreateAsync(UserEntity user, string password)
     {
-        try
-        {
-            ValidateUserIfInvalidThrowException(user);
-            ValidateStringIfInvalidThrowException(nameof(password), password);
-            return await _userManager.CreateAsync(user, password);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(UserRepository))
-                .WithMethod(nameof(CreateAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(password), password)
-                .ToString());
-
-            throw;
-        }
+        ValidateUserIfInvalidThrowException(user);
+        ValidateStringIfInvalidThrowException(nameof(password), password);
+        return await _userManager.CreateAsync(user, password);
     }
 
     public async Task<UserEntity?> FindByEmailAsync(string email)
@@ -100,7 +68,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(FindByEmailAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(email), email)
+                .WithParameter(nameof(String), nameof(email), email)
                 .ToString());
 
             throw;
@@ -120,7 +88,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(GetByIdAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(id), id.ToString())
+                .WithParameter(nameof(Guid), nameof(id), id.ToString())
                 .ToString());
 
             throw;
@@ -140,7 +108,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(GetByIdWithAccommodationsAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
@@ -160,7 +128,7 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(GetByIdWithContactsAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
@@ -187,9 +155,9 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(UpdateFieldsAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(newUsername), newUsername)
-                .WithParameter(typeof(string).Name, nameof(newInformation), newInformation)
+                .WithParameter(typeof(UserEntity).FullName ?? String.Empty, nameof(user), user.SerializeObject())
+                .WithParameter(nameof(String), nameof(newUsername), newUsername)
+                .WithParameter(nameof(String), nameof(newInformation), newInformation)
                 .ToString());
             
             throw;
@@ -231,8 +199,8 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(ConfirmEmailAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(token), token)
+                .WithParameter(typeof(UserEntity).FullName ?? String.Empty, nameof(user), user.SerializeObject())
+                .WithParameter(nameof(String), nameof(token), token)
                 .ToString());
             
             throw;
@@ -252,23 +220,23 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
                 .WithMethod(nameof(AddToRoleAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(currentPassword), currentPassword)
-                .WithParameter(typeof(string).Name, nameof(newPassword), newPassword)
+                .WithParameter(typeof(UserEntity).FullName ?? String.Empty, nameof(user), user.SerializeObject())
+                .WithParameter(nameof(String), nameof(currentPassword), currentPassword)
+                .WithParameter(nameof(String), nameof(newPassword), newPassword)
                 .ToString());
             
             throw;
         }
     }
 
-    private void ValidateUserIfInvalidThrowException(UserEntity user)
+    private void ValidateUserIfInvalidThrowException(UserEntity? user)
     {
         if (user is null)
         {
             ThrowArgumentException<ArgumentNullException>($"{nameof(user)} can not be null");
         }
 
-        ValidateStringIfInvalidThrowException(nameof(user.UserName), user.UserName);
+        ValidateStringIfInvalidThrowException(nameof(user.UserName), user!.UserName);
         ValidateStringIfInvalidThrowException(nameof(user.Email), user.Email);
     }
 
@@ -283,9 +251,8 @@ public class UserRepository : IUserRepository, IUserReceiverRepository, IUserTok
     private void ThrowArgumentException<TException>(string exceptionMessage)
         where TException : ArgumentException, new()
     {
-        var exception = (TException)Activator.CreateInstance(typeof(TException), exceptionMessage);
+        var exception = (TException)Activator.CreateInstance(typeof(TException), exceptionMessage)!;
         _logger.LogError(exceptionMessage);
-        throw exception == null ? throw new NullReferenceException("Can not cast exception to argument exception")
-            : exception;
+        throw exception ?? throw new NullReferenceException("Can not cast exception to argument exception");
     }
 }

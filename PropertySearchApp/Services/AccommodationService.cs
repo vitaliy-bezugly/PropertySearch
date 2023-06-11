@@ -120,12 +120,13 @@ public class AccommodationService : IAccommodationService
                 .WithMethod(nameof(CreateAccommodationAsync))
                 .WithOperation("Post")
                 .WithComment(e.Message)
-                .WithParameter(typeof(AccommodationDomain).FullName, nameof(accommodation), accommodation.SerializeObject())
+                .WithParameter(typeof(AccommodationDomain).FullName ?? String.Empty, nameof(accommodation), accommodation.SerializeObject())
                 .ToString());
             
             throw;
         }
     }
+    
     public async Task<OperationResult> UpdateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
         try
@@ -150,12 +151,13 @@ public class AccommodationService : IAccommodationService
                 .WithMethod(nameof(UpdateAccommodationAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(AccommodationDomain).FullName, nameof(accommodation), accommodation.SerializeObject())
+                .WithParameter(typeof(AccommodationDomain).FullName ?? String.Empty, nameof(accommodation), accommodation.SerializeObject())
                 .ToString());
             
             throw;
         }
     }
+    
     public async Task<OperationResult> DeleteAccommodationAsync(Guid userId, Guid accommodationId, CancellationToken cancellationToken)
     {
         try
@@ -186,53 +188,23 @@ public class AccommodationService : IAccommodationService
 
     private async Task<OperationResult> ValidateAccommodationAsync(AccommodationDomain accommodation, CancellationToken cancellationToken)
     {
-        try
+        var validationResult = await _accommodationValidator.ValidateAsync(accommodation, cancellationToken);
+        if (validationResult.IsValid == false)
         {
-            var validationResult = await _accommodationValidator.ValidateAsync(accommodation, cancellationToken);
-            if (validationResult.IsValid == false)
-            {
-                return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
-            }
+            return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
+        }
 
-            return new OperationResult();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationService))
-                .WithMethod(nameof(ValidateAccommodationAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(AccommodationDomain).FullName, nameof(accommodation), accommodation.SerializeObject())
-                .ToString());
-            
-            throw;
-        }
+        return new OperationResult();
     }
     
-    private async Task<OperationResult> ValidateLocationAsync(LocationDomain location, CancellationToken cancellationToken)
+    private async Task<OperationResult> ValidateLocationAsync(LocationDomain? location, CancellationToken cancellationToken)
     {
-        try
+        var validationResult = await _locationValidator.ValidateAsync(location!, cancellationToken);
+        if (validationResult.IsValid == false)
         {
-            var validationResult = await _locationValidator.ValidateAsync(location, cancellationToken);
-            if (validationResult.IsValid == false)
-            {
-                return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
-            }
+            return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
+        }
 
-            return new OperationResult();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationService))
-                .WithMethod(nameof(ValidateLocationAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(LocationDomain).FullName, nameof(location), location.SerializeObject())
-                .ToString());
-            
-            throw;
-        }
+        return new OperationResult();
     }
 }
