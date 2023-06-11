@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace PropertySearchApp.Common.Logging;
 
-public class LogRequest
+public class RequestLog
 {
     public string Path { get; set; } = String.Empty;
     public string Method { get; set; } = String.Empty;

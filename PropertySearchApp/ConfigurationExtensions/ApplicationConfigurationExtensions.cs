@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging.Console;
 
-namespace PropertySearchApp.Extensions;
+namespace PropertySearchApp.ConfigurationExtensions;
 
 public static class ApplicationConfigurationExtension
 {

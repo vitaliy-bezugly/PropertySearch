@@ -1,9 +1,9 @@
 using System.Reflection;
 using AutoMapper;
 
-namespace PropertySearchApp.Mappings;
+namespace PropertySearchApp.Common.Mappings;
 
-public class MappingProfile
+public class MappingProfile : Profile
 {
     public MappingProfile()
     {

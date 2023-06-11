@@ -1,6 +1,6 @@
 using AutoMapper;
 
-namespace PropertySearchApp.Mappings;
+namespace PropertySearchApp.Common.Mappings;
 
 public interface IMapFrom<T>
 {

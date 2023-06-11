@@ -1,18 +1,24 @@
-﻿namespace PropertySearchApp.Models.Contacts;
+﻿using PropertySearchApp.Common.Mappings;
+using PropertySearchApp.Domain;
 
-public class ContactViewModel
+namespace PropertySearchApp.Models.Contacts;
+
+public class ContactViewModel : IMapFrom<ContactDomain>
 {
     public Guid Id { get; set; }
-    public string? ContactType { get; set; }
-    public string? Content { get; set; }
+    public string ContactType { get; set; }
+    public string Content { get; set; }
 
     public ContactViewModel()
     {
-        ContactType = string.Empty;
-        Content = string.Empty;
+        Id = Guid.Empty;
+        ContactType = String.Empty;
+        Content = String.Empty;
     }
+    
     public ContactViewModel(ContactViewModel other)
     {
+        Id = other.Id;
         ContactType = other.ContactType;
         Content = other.Content;
     }

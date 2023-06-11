@@ -1,25 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PropertySearchApp.Common.Mappings;
+using PropertySearchApp.Domain;
 using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Models.Accommodations;
 
-public class UpdateAccommodationViewModel
+public class UpdateAccommodationViewModel : IMapFrom<AccommodationDomain>
 {
     public Guid Id { get; set; }
     [Required]
-    public string Title { get; set; }
+    public string Title { get; set; } = String.Empty;
     public string? Description { get; set; }
     [Range(0, int.MaxValue)]
     public int Price { get; set; }
     [DataType(DataType.Url)]
     public string? PhotoUri { get; set; }
-    public LocationViewModel Location { get; set; }
-
-    public UpdateAccommodationViewModel()
-    {
-        Price = 0;
-        Title = string.Empty;
-        Description = null;
-        Location = new LocationViewModel();
-    }
+    public LocationViewModel Location { get; set; } = new();
 }

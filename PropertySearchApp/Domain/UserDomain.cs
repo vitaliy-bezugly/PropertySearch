@@ -1,20 +1,15 @@
-﻿using PropertySearchApp.Domain.Abstract;
+﻿using PropertySearchApp.Common.Mappings;
+using PropertySearchApp.Domain.Abstract;
+using PropertySearchApp.Entities;
+using PropertySearchApp.Models.Identities;
 
 namespace PropertySearchApp.Domain;
 
-public class UserDomain : DomainBase
+public class UserDomain : DomainBase, IMapFrom<UserEntity>, IMapFrom<RegistrationFormViewModel>
 {
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
     public bool IsLandlord { get; set; }
-    public string Information { get; set; }
-    public UserDomain() : base()
-    {
-        Username = String.Empty;
-        Email = String.Empty;  
-        Password = String.Empty;
-        IsLandlord = false;
-        Information = String.Empty;
-    }
+    public string Information { get; set; } = string.Empty;
 }

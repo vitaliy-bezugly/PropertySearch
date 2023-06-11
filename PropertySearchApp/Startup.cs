@@ -1,5 +1,5 @@
 using PropertySearchApp.Common.Constants;
-using PropertySearchApp.Extensions;
+using PropertySearchApp.ConfigurationExtensions;
 using PropertySearchApp.Installers.Extensions;
 
 namespace PropertySearchApp;

@@ -154,7 +154,7 @@ public class IdentityController : Controller
             if (user == null)
                 return NotFound();
 
-            var viewModel = _mapper.Map<UserDetailsViewModel>(user);
+            var viewModel = _mapper.Map<UserViewModel>(user);
             viewModel.Contacts = (await _contactsService.GetUserContactsAsync(id)).Select(x => _mapper.Map<ContactViewModel>(x)).ToList();
             return View(viewModel);
         }

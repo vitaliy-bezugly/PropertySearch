@@ -1,8 +1,10 @@
-﻿using PropertySearchApp.Models.Contacts;
+﻿using PropertySearchApp.Common.Mappings;
+using PropertySearchApp.Domain;
+using PropertySearchApp.Models.Contacts;
 
 namespace PropertySearchApp.Models.Identities;
 
-public class EditUserFieldsRequest
+public class EditUserFieldsRequest : IMapFrom<UserDomain>
 {
     public string UserName { get; set; }
     public string Information { get; set; }

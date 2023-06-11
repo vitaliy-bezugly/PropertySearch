@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Framework;
+using PropertySearchApp.Common.Mappings;
+using PropertySearchApp.Domain;
 using PropertySearchApp.Entities.Abstract;
 
 namespace PropertySearchApp.Entities;
 
 [Table("Users")]
-public class UserEntity : IdentityUser<Guid>
+public class UserEntity : IdentityUser<Guid>, IMapFrom<UserDomain>
 {
     [Column(TypeName = "nvarchar(max)")]
     public string? Information { get; set; }

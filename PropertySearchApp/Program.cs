@@ -1,5 +1,5 @@
 using PropertySearchApp;
-using PropertySearchApp.Extensions;
+using PropertySearchApp.ConfigurationExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 ILogger<Startup> logger = builder.CreateLogger<Startup>();
