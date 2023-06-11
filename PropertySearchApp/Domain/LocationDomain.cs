@@ -1,19 +1,18 @@
-﻿using PropertySearchApp.Common.Mappings;
 using PropertySearchApp.Domain.Abstract;
-using PropertySearchApp.Entities;
+using PropertySearchApp.Mappings;
 using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Domain;
 
-public class LocationDomain : DomainBase, IMapFrom<LocationEntity>, IMapFrom<LocationViewModel>
+public class LocationDomain : DomainBase, IMapFrom<LocationViewModel>
 {
-    public LocationDomain() : base()
-    {
-        Country = Region = City = Address = String.Empty;
-    }
-    
     public string Country { get; set; }
     public string Region { get; set; }
     public string City { get; set; }
     public string Address { get; set; }
+
+    public LocationDomain()
+    {
+        Country = Region = City = Address = string.Empty;
+    }
 }
