@@ -1,8 +1,10 @@
 ﻿using PropertySearchApp.Domain.Abstract;
+using PropertySearchApp.Mappings;
+using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Domain;
 
-public class LocationDomain : DomainBase
+public class LocationDomain : DomainBase, IMapFrom<LocationViewModel>
 {
     public string Country { get; set; }
     public string Region { get; set; }

@@ -8,7 +8,7 @@ namespace PropertySearchApp.Entities;
 public class AccommodationEntity : EntityBase
 {
     [Required, Column(TypeName = "nvarchar(256)")]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     [DataType(DataType.Text)]
     public string? Description { get; set; }
     [Range(0, int.MaxValue)]

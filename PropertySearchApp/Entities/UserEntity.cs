@@ -6,7 +6,7 @@ using PropertySearchApp.Entities.Abstract;
 namespace PropertySearchApp.Entities;
 
 [Table("Users")]
-public class UserEntity : IdentityUser<Guid>, IEntity
+public class UserEntity : IdentityUser<Guid>
 {
     [Column(TypeName = "nvarchar(max)")]
     public string? Information { get; set; }

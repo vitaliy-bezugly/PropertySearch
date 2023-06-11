@@ -152,10 +152,9 @@ public class AccommodationController : Controller
                 return View(viewModel);
 
             Guid userId = _httpContextAccessor.GetUserId();
-
-            var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };    
-            var accommodation = new AccommodationDomain(Guid.NewGuid(), viewModel.Title, viewModel.Description,
-                viewModel.Price, viewModel.PhotoUri, userId, location);
+            
+            var accommodation = _mapper.Map<AccommodationDomain>(viewModel);
+            accommodation.UserId = userId;
 
             var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
             return result.ToResponse(SuccessMessages.Accommodation.Created, TempData, 
@@ -236,10 +235,9 @@ public class AccommodationController : Controller
                 return View(viewModel);
         
             var userId = _httpContextAccessor.GetUserId();
-        
-            var location = new LocationDomain { Id = Guid.NewGuid(), Country = viewModel.Location.Country, Region = viewModel.Location.Region, City = viewModel.Location.City, Address = viewModel.Location.Address };
-            var accommodation = new AccommodationDomain(viewModel.Id, viewModel.Title, viewModel.Description,
-                viewModel.Price, viewModel.PhotoUri, userId, location);
+            
+            var accommodation = _mapper.Map<AccommodationDomain>(viewModel);
+            accommodation.UserId = userId;
 
             var result = await _accommodationService.UpdateAccommodationAsync(accommodation, cancellationToken);
 
