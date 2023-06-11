@@ -11,7 +11,7 @@
 
     if (ViewContext.RouteData.Values["id"] != null)
     {
-        currentPageId = int.Parse(ViewContext.RouteData.Values["id"].ToString());
+        currentPageId = int.Parse(ViewContext.RouteData.Values["id"]?.ToString() ?? "1");
     }
 
     int previousPageId = currentPageId - 1, nextPageId = currentPageId + 1;
@@ -19,10 +19,10 @@
 @{
     bool IsOwner(string userId)
     {
-        if (User.FindFirst(ClaimTypes.NameIdentifier) == null)
+        if (User?.FindFirst(ClaimTypes.NameIdentifier) == null)
             return false;
 
-        return User.FindFirst(ClaimTypes.NameIdentifier).Value == userId;
+        return User.FindFirst(ClaimTypes.NameIdentifier)?.Value == userId;
     }
     bool IsLandlord()
     {

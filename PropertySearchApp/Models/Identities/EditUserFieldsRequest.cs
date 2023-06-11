@@ -6,12 +6,11 @@ namespace PropertySearchApp.Models.Identities;
 
 public class EditUserFieldsRequest : IMapFrom<UserDomain>
 {
-    public string UserName { get; set; }
-    public string Information { get; set; }
-    public List<ContactViewModel> Contacts { get; set; }
-    public string PasswordToCompare { get; set; }
     public EditUserFieldsRequest()
     {
+        UserName = string.Empty;
+        Information = string.Empty;
+        PasswordToCompare = string.Empty;
         Contacts = new List<ContactViewModel>();
     }
     public EditUserFieldsRequest(EditUserFieldsRequest other)
@@ -21,4 +20,9 @@ public class EditUserFieldsRequest : IMapFrom<UserDomain>
         Contacts = other.Contacts.Select(x => new ContactViewModel(x)).ToList();
         PasswordToCompare = other.PasswordToCompare;
     }
+    
+    public string UserName { get; set; }
+    public string Information { get; set; }
+    public List<ContactViewModel> Contacts { get; set; }
+    public string PasswordToCompare { get; set; }
 }

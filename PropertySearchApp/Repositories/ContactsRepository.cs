@@ -42,8 +42,8 @@ public class ContactsRepository : IContactsRepository
                 .WithMethod(nameof(AddContactToUserAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(ContactEntity).FullName, nameof(contact), contact.SerializeObject())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(typeof(ContactEntity).FullName ?? String.Empty, nameof(contact), contact.SerializeObject())
                 .ToString());
             
             throw;
@@ -72,7 +72,7 @@ public class ContactsRepository : IContactsRepository
                 .WithMethod(nameof(DeleteContactAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(contactId), contactId.ToString())
+                .WithParameter(nameof(Guid), nameof(contactId), contactId.ToString())
                 .ToString());
             
             throw;
@@ -92,7 +92,7 @@ public class ContactsRepository : IContactsRepository
                 .WithMethod(nameof(GetUserContactsAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
@@ -125,7 +125,7 @@ public class ContactsRepository : IContactsRepository
                 .WithMethod(nameof(UpdateContactAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(ContactEntity).FullName, nameof(contact), contact.SerializeObject())
+                .WithParameter(typeof(ContactEntity).FullName ?? String.Empty, nameof(contact), contact.SerializeObject())
                 .ToString());
 
             throw;
@@ -134,24 +134,8 @@ public class ContactsRepository : IContactsRepository
 
     private OperationResult GenerateInternalDatabaseException(string errorMessage)
     {
-        try
-        {
-            var exception = new InternalDatabaseException(new string[] { errorMessage });
-            _logger.LogWarning(exception, errorMessage);
-            return new OperationResult(errorMessage);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(ContactsRepository))
-                .WithMethod(nameof(GenerateInternalDatabaseException))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(errorMessage), errorMessage)
-                .ToString());
-
-            
-            throw;
-        }
+        var exception = new InternalDatabaseException(new[] { errorMessage });
+        _logger.LogWarning(exception, errorMessage);
+        return new OperationResult(errorMessage);
     }
 }

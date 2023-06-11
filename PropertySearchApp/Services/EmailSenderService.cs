@@ -11,23 +11,22 @@ namespace PropertySearchApp.Services;
 public class EmailSenderService : IEmailSender
 {
     private readonly ILogger<EmailSenderService> _logger;
+    private readonly AuthMessageSenderOptions _options; // Set with Secret Manager.
 
     public EmailSenderService(IOptions<AuthMessageSenderOptions> optionsAccessor, ILogger<EmailSenderService> logger)
     {
-        Options = optionsAccessor.Value;
+        _options = optionsAccessor.Value;
         _logger = logger;
     }
-
-    public AuthMessageSenderOptions Options { get; } // Set with Secret Manager.
-
+    
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        if (string.IsNullOrEmpty(Options.SendGridKey))
+        if (string.IsNullOrEmpty(_options.SendGridKey))
         {
             throw new Exception("Null SendGridKey");
         }
         
-        await Execute(Options.SendGridKey, subject, message, toEmail);
+        await Execute(_options.SendGridKey, subject, message, toEmail);
     }
 
     private async Task Execute(string apiKey, string subject, string message, string toEmail)
@@ -65,9 +64,9 @@ public class EmailSenderService : IEmailSender
                 .WithMethod(nameof(Execute))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(toEmail), toEmail)
-                .WithParameter(typeof(string).Name, nameof(subject), subject)
-                .WithParameter(typeof(string).Name, nameof(message), message)
+                .WithParameter(nameof(String), nameof(toEmail), toEmail)
+                .WithParameter(nameof(String), nameof(subject), subject)
+                .WithParameter(nameof(String), nameof(message), message)
                 .ToString());
 
             throw;

@@ -29,10 +29,10 @@ public class SignInService : ISignInService
                 .WithMethod(nameof(PasswordSignInAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(username), username)
-                .WithParameter(typeof(string).Name, nameof(password), password)
-                .WithParameter(typeof(bool).Name, nameof(isPersistent), isPersistent.ToString())
-                .WithParameter(typeof(bool).Name, nameof(lockOutOnFailure), lockOutOnFailure.ToString())
+                .WithParameter(nameof(String), nameof(username), username)
+                .WithParameter(nameof(String), nameof(password), password)
+                .WithParameter(nameof(Boolean), nameof(isPersistent), isPersistent.ToString())
+                .WithParameter(nameof(Boolean), nameof(lockOutOnFailure), lockOutOnFailure.ToString())
                 .ToString());
             
             throw;
@@ -52,8 +52,8 @@ public class SignInService : ISignInService
                 .WithMethod(nameof(SignInAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(bool).Name, nameof(isPersistent), isPersistent.ToString())
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
+                .WithParameter(nameof(Boolean), nameof(isPersistent), isPersistent.ToString())
+                .WithParameter(typeof(UserEntity).FullName ?? String.Empty, nameof(user), user.SerializeObject())
                 .ToString());
             
             throw;

@@ -45,6 +45,8 @@ public static class HttpClientExtensions
         if (submitButton.HasAttribute("formaction"))
         {
             var formaction = submitButton.GetAttribute("formaction");
+            if(formaction is null)
+                throw new InvalidOperationException("formaction is null");
             target = new Uri(formaction, UriKind.Relative);
         }
         var submission = new HttpRequestMessage(new HttpMethod(submit.Method.ToString()), target)

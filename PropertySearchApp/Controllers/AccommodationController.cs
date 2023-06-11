@@ -51,7 +51,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Index))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(int?).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(int?).FullName ?? String.Empty, nameof(id), id.ToString() ?? String.Empty)
                 .WithComment(e.Message)
                 .ToString());
             
@@ -78,7 +78,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(MyOffers))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(int?).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(int?).FullName ?? String.Empty, nameof(id), id.ToString() ?? String.Empty)
                 .WithComment(e.Message)
                 .ToString());
             
@@ -108,7 +108,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Details))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(Guid).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(Guid).FullName ?? String.Empty, nameof(id), id.ToString())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -122,6 +122,9 @@ public class AccommodationController : Controller
         try
         {
             IPAddress? remoteIp = Request.HttpContext.Connection.RemoteIpAddress;
+
+            if (remoteIp is null)
+                return View(new CreateAccommodationViewModel());
 
             var location = await _locationService.GetLocationByUrlAsync(remoteIp, cancellationToken);
             var createAccommodationModel = new CreateAccommodationViewModel
@@ -167,7 +170,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Create))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(CreateAccommodationViewModel).FullName, nameof(viewModel), viewModel.SerializeObject())
+                .WithParameter(typeof(CreateAccommodationViewModel).FullName ?? String.Empty, nameof(viewModel), viewModel.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -193,7 +196,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Delete))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(Guid).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(Guid).FullName ?? String.Empty, nameof(id), id.ToString())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -219,7 +222,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Update))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(Guid).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(Guid).FullName ?? String.Empty, nameof(id), id.ToString())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -251,7 +254,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Update))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(UpdateAccommodationViewModel).FullName, nameof(viewModel), viewModel.SerializeObject())
+                .WithParameter(typeof(UpdateAccommodationViewModel).FullName ?? String.Empty, nameof(viewModel), viewModel.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             

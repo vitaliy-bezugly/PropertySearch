@@ -47,8 +47,8 @@ public class ContactController : Controller
                 .WithClass(nameof(ContactController))
                 .WithMethod(nameof(Create))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(String).FullName, nameof(type), type)
-                .WithParameter(typeof(String).FullName, nameof(content), content)
+                .WithParameter(typeof(String).FullName ?? String.Empty , nameof(type), type)
+                .WithParameter(typeof(String).FullName ?? String.Empty, nameof(content), content)
                 .WithComment(e.Message)
                 .ToString());
             
@@ -79,7 +79,7 @@ public class ContactController : Controller
                 .WithClass(nameof(ContactController))
                 .WithMethod(nameof(Delete))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(Guid).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(Guid).FullName ?? String.Empty, nameof(id), id.ToString())
                 .WithComment(e.Message)
                 .ToString());
             

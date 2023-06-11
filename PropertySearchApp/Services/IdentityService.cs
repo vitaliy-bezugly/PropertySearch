@@ -55,7 +55,7 @@ public class IdentityService : IIdentityService
             {
                 await SetRolesAsync(userEntity);
 
-                SendConfirmationEmailAsync(userEntity);
+                await SendConfirmationEmailAsync(userEntity);
 
                 // Set cookies
                 await _signInService.SignInAsync(userEntity, false);
@@ -71,7 +71,7 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(RegisterAsync))
                 .WithOperation("Post")
                 .WithComment(e.Message)
-                .WithParameter(typeof(UserDomain).FullName, nameof(user), user.SerializeObject())
+                .WithParameter(typeof(UserDomain).FullName ?? String.Empty, nameof(user), user.SerializeObject())
                 .ToString());
 
             throw;
@@ -83,7 +83,7 @@ public class IdentityService : IIdentityService
         try
         {
             var result = await _signInService.PasswordSignInAsync(username, password, false, false);
-            return result.Succeeded == true ? new OperationResult()
+            return result.Succeeded ? new OperationResult()
                 : new OperationResult(ErrorMessages.User.WrongCredentials);
         }
         catch (Exception e)
@@ -93,8 +93,8 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(LoginAsync))
                 .WithOperation("Post")
                 .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(username), username)
-                .WithParameter(typeof(string).Name, nameof(password), password)
+                .WithParameter(nameof(String), nameof(username), username)
+                .WithParameter(nameof(String), nameof(password), password)
                 .ToString());
             
             throw;
@@ -148,8 +148,8 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(SetRoleToUserAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(roleName), roleName)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
+                .WithParameter(nameof(String), nameof(roleName), roleName)
+                .WithParameter(typeof(UserEntity).FullName ?? String.Empty, nameof(user), user.SerializeObject())
                 .ToString());
 
             throw;
@@ -170,7 +170,7 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(GetUserByIdAsync))
                 .WithOperation("Get")
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
@@ -206,10 +206,10 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(UpdateUserFieldsAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(string).Name, nameof(newUsername), newUsername)
-                .WithParameter(typeof(string).Name, nameof(newInformation), newInformation)
-                .WithParameter(typeof(string).Name, nameof(password), password)
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(nameof(String), nameof(newUsername), newUsername)
+                .WithParameter(nameof(String), nameof(newInformation), newInformation)
+                .WithParameter(nameof(String), nameof(password), password)
                 .ToString());
             
             throw;
@@ -239,9 +239,9 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(ChangePasswordAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(string).Name, nameof(currentPassword), currentPassword)
-                .WithParameter(typeof(string).Name, nameof(newPassword), newPassword)
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(nameof(String), nameof(currentPassword), currentPassword)
+                .WithParameter(nameof(String), nameof(newPassword), newPassword)
                 .ToString());
             
             throw;
@@ -272,8 +272,8 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(ConfirmEmailAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(string).Name, nameof(token), token)
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(nameof(String), nameof(token), token)
                 .ToString());
             
             throw;
@@ -297,7 +297,7 @@ public class IdentityService : IIdentityService
                 .WithMethod(nameof(IsEmailConfirmedAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
@@ -315,106 +315,46 @@ public class IdentityService : IIdentityService
     
     private async Task SendConfirmationEmailAsync(UserEntity user)
     {
-        try
+        var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
+        if (string.IsNullOrEmpty(token) == false)
         {
-            var token = await _tokenProvider.GenerateEmailConfirmationTokenAsync(user);
-            if (string.IsNullOrEmpty(token) == false)
-            {
-                string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
-                await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
-            }
-            else
-            {
-                throw new InvalidOperationException("For some reason we can not create confirmation token");
-            }
+            string emailContent = _htmlMessageBuilder.BuildEmailConfirmationMessage(user.Id, user.UserName, token);
+            await _emailSender.SendEmailAsync(user.Email, "Email confirmation", emailContent);
         }
-        catch (Exception e)
+        else
         {
-            _logger.LogCritical("Can not send email to user");
-            _logger.LogCritical(new LogEntry()
-                .WithClass(nameof(IdentityService))
-                .WithMethod(nameof(SendConfirmationEmailAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(user), user.SerializeObject())
-                .ToString());
+            throw new InvalidOperationException("For some reason we can not create confirmation token");
         }
     }
 
     private OperationResult HandleErrors(IEnumerable<IdentityError> errors, string errorMessageForLogger)
     {
-        try
+        _logger.LogWarning(errorMessageForLogger);
+        var identityErrors = errors.ToList();
+        foreach (var error in identityErrors)
         {
-            _logger.LogWarning(errorMessageForLogger);
-            foreach (var error in errors)
-            {
-                _logger.LogWarning($"Code: {error.Code}; Description: {error.Description}");
-            }
-            return new OperationResult(errors.First().Description);
+            _logger.LogWarning($"Code: {error.Code}; Description: {error.Description}");
         }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(IdentityService))
-                .WithMethod(nameof(HandleErrors))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(IEnumerable<IdentityError>).FullName, nameof(errors), errors.SerializeObject())
-                .WithParameter(typeof(string).Name, nameof(errorMessageForLogger), errorMessageForLogger)
-                .ToString());
-            
-            throw;
-        }
+        return new OperationResult(identityErrors.First().Description);
     }
     
     private async Task SetRolesAsync(UserEntity userEntity)
     {
-        try
+        await SetRoleToUserAsync("user", userEntity);
+        if (userEntity.IsLandlord)
         {
-            await SetRoleToUserAsync("user", userEntity);
-            if (userEntity.IsLandlord == true)
-            {
-                await SetRoleToUserAsync("landlord", userEntity);
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(IdentityService))
-                .WithMethod(nameof(SetRolesAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(UserEntity).FullName, nameof(userEntity), userEntity.SerializeObject())
-                .ToString());
-            
-            throw;
+            await SetRoleToUserAsync("landlord", userEntity);
         }
     }
     
     private async Task<OperationResult> CheckPasswordAsync(string password, UserEntity entity)
     {
-        try
+        var givenPasswordSameToActual = await _userRepository.CheckPasswordAsync(entity, password);
+        if (givenPasswordSameToActual == false)
         {
-            var givenPasswordSameToActual = await _userRepository.CheckPasswordAsync(entity, password);
-            if (givenPasswordSameToActual == false)
-            {
-                return new OperationResult(ErrorMessages.User.WrongPassword);
-            }
+            return new OperationResult(ErrorMessages.User.WrongPassword);
+        }
 
-            return new OperationResult();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(IdentityService))
-                .WithMethod(nameof(CheckPasswordAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(typeof(string).Name, nameof(password), password)
-                .WithParameter(typeof(UserEntity).FullName, nameof(entity), entity.SerializeObject())
-                .ToString());
-            
-            throw;
-        }
+        return new OperationResult();
     }
 }

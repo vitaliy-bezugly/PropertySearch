@@ -65,7 +65,6 @@ public class IdentityServiceTests
     public async Task Register_ShouldNotRegisterUser_WhenUserWithSameEmailAlreadyExists()
     {
         // Arrange
-        string userRoleName = "user";
         var user = new UserDomain { Id = Guid.NewGuid(), Username = "System Under Test", Email = "unit@test.com", IsLandlord = false, Password = "qwerty123", Information = string.Empty };
         var entity = new UserEntity { Id = user.Id, UserName = user.Username, Email = user.Email, IsLandlord = user.IsLandlord, PasswordHash = string.Empty, Information = user.Information, Contacts = new List<ContactEntity>() };
         _mapper.Map<UserEntity>(user).Returns(entity);

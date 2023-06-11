@@ -70,7 +70,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(Login))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(LoginViewModel).FullName, nameof(loginModel), loginModel.SerializeObject())
+                .WithParameter(typeof(LoginViewModel).FullName ?? String.Empty, nameof(loginModel), loginModel.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -115,7 +115,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(Register))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(RegistrationFormViewModel).FullName, nameof(registrationModel), registrationModel.SerializeObject())
+                .WithParameter(typeof(RegistrationFormViewModel).FullName ?? String.Empty, nameof(registrationModel), registrationModel.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -164,7 +164,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(Details))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(Guid).FullName, nameof(id), id.ToString())
+                .WithParameter(typeof(Guid).FullName ?? String.Empty, nameof(id), id.ToString())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -221,7 +221,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(Edit))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(EditUserFieldsRequest).FullName, nameof(request), request.SerializeObject())
+                .WithParameter(typeof(EditUserFieldsRequest).FullName ?? String.Empty, nameof(request), request.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -272,7 +272,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(ChangePassword))
                 .WithOperation(nameof(HttpPostAttribute))
-                .WithParameter(typeof(ChangePasswordViewModel).FullName, nameof(viewModel), viewModel.SerializeObject())
+                .WithParameter(typeof(ChangePasswordViewModel).FullName ?? String.Empty, nameof(viewModel), viewModel.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -301,7 +301,7 @@ public class IdentityController : Controller
                 .WithClass(nameof(IdentityController))
                 .WithMethod(nameof(EmailConfirmationResult))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(ConfirmEmailQuery).FullName, nameof(query), query.SerializeObject())
+                .WithParameter(typeof(ConfirmEmailQuery).FullName ?? String.Empty, nameof(query), query.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -358,6 +358,7 @@ public class IdentityController : Controller
     
     private void AddErrorsToModelState(ModelStateDictionary modelState, OperationResult result)
     {
-        modelState.AddModelError(string.Empty, result.ErrorMessage);
+        if (result.ErrorMessage != null) 
+            modelState.AddModelError(string.Empty, result.ErrorMessage);
     }
 }

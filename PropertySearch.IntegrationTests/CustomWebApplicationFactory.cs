@@ -19,11 +19,17 @@ public class CustomWebApplicationFactory<TProgram>
                 d => d.ServiceType ==
                     typeof(DbContextOptions<ApplicationDbContext>));
 
+            if (dbContextDescriptor is null)
+                throw new InvalidOperationException("DbContextOptions<ApplicationDbContext> not found");
+
             services.Remove(dbContextDescriptor);
 
             var dbConnectionDescriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
                     typeof(DbConnection));
+            
+            if(dbConnectionDescriptor is null)
+                throw new InvalidOperationException("DbConnection not found");
 
             services.Remove(dbConnectionDescriptor);
 

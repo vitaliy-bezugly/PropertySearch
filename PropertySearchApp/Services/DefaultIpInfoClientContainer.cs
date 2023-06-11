@@ -5,14 +5,10 @@ namespace PropertySearchApp.Services;
 
 public class DefaultIpInfoClientContainer : IPInfoClientContainer
 {
-    private readonly IPinfoClient _client;
     public DefaultIpInfoClientContainer(IpInfoClientBuilder builder)
     {
-        _client = builder.Build();
+        Client = builder.Build();
     }
 
-    public IPinfoClient Client
-    {
-        get => _client;
-    }
+    public IPinfoClient Client { get; init; }
 }
