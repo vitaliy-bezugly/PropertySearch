@@ -1,10 +1,32 @@
 version: '3.9'
 
+networks:
+  property-search:
+    name: property-search
+    
 services:
+  property-search-service:
+    build: /src
+    container_name: property-search-service
+    restart: always
+    ports:
+      - "8060:80"
+    depends_on:
+      - mssql
+    networks:
+      - property-search
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - SendGridKey=
+      - IpInfoToken=
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
-    ports:
-      - 1433:1433
+    container_name: mssql
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=T3stdatabase
+      - MSSQL_TCP_PORT=1433
+    ports:
+      - "1433:1433"
+    networks:
+      - property-search

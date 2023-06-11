@@ -55,6 +55,9 @@
     <None Remove="Views\Shared\_Layout.cshtml.css" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Dockerfile">
+      <Link>Dockerfile</Link>
+    </Content>
     <Content Include="Views\Identity\_IdentityLayout.cshtml.css" />
     <Content Include="Views\Shared\_Layout.cshtml.css" />
   </ItemGroup>

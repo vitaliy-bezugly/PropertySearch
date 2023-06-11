@@ -9,7 +9,7 @@ using PropertySearchApp.Persistence;
 
 #nullable disable
 
-namespace PropertySearchApp.Migrations
+namespace PropertySearchApp.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230422122555_bettermodels")]

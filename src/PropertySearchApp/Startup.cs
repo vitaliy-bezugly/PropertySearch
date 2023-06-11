@@ -1,6 +1,7 @@
 using PropertySearchApp.Common.Constants;
 using PropertySearchApp.ConfigurationExtensions;
 using PropertySearchApp.Installers.Extensions;
+using PropertySearchApp.Persistence;
 
 namespace PropertySearchApp;
 
@@ -20,13 +21,22 @@ public class Startup
         // install services via reflection 
         services.InstallServicesInAssembly(_configuration, _logger);
     }
-    public void Configure(WebApplication app, IWebHostEnvironment env)
+    public async Task ConfigureAsync(WebApplication app, IWebHostEnvironment env)
     {
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
+        }
+
+        if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
+        {
+            // Initialise and seed database
+            using var scope = app.Services.CreateScope();
+            var initializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
+            await initializer.InitialiseAsync();
+            await initializer.SeedAsync();
         }
         
         app.Configure404Error();

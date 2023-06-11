@@ -15,4 +15,4 @@ if(string.IsNullOrEmpty(port) == false)
 
 // build application
 var app = builder.Build();
-startup.Configure(app, app.Environment);
+await startup.ConfigureAsync(app, app.Environment);
