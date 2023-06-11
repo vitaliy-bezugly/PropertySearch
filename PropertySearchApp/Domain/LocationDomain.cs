@@ -1,5 +1,5 @@
+using PropertySearchApp.Common.Mappings;
 using PropertySearchApp.Domain.Abstract;
-using PropertySearchApp.Mappings;
 using PropertySearchApp.Models.Location;
 
 namespace PropertySearchApp.Domain;
