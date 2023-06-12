@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution-items", "solution-
 		.gitignore = .gitignore
 		README.md = README.md
 		documentation\property-search-initial-script.sql = documentation\property-search-initial-script.sql
+		.env = .env
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PropertySearchApp", "src\PropertySearchApp\PropertySearchApp.csproj", "{FF34EFF9-B627-430E-954F-EE4168833061}"

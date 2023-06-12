@@ -10,23 +10,23 @@ services:
     container_name: property-search-service
     restart: always
     ports:
-      - "8060:80"
+      - ${PS_HOST_PORT}:${PS_DOCKER_PORT}
     depends_on:
       - mssql
     networks:
       - property-search
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-      - SendGridKey=
-      - IpInfoToken=
+      - SendGridKey=${PS_SEND_GRID_KEY}
+      - IpInfoToken=${PS_IP_INFO_TOKEN}
   mssql:
     image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: mssql
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=T3stdatabase
-      - MSSQL_TCP_PORT=1433
+      - SA_PASSWORD=${MSSQL_PASSWORD}
+      - MSSQL_TCP_PORT=${MSSQL_PORT}
     ports:
-      - "1433:1433"
+      - ${MSSQL_PORT}:${MSSQL_PORT}
     networks:
       - property-search
