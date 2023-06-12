@@ -4,14 +4,14 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
-using PropertySearchApp.Common;
-using PropertySearchApp.Common.Constants;
-using PropertySearchApp.Domain;
-using PropertySearchApp.Entities;
-using PropertySearchApp.Repositories.Abstract;
-using PropertySearchApp.Services;
-using PropertySearchApp.Services.Abstract;
-using PropertySearchApp.Validations;
+using PropertySearch.Api.Common;
+using PropertySearch.Api.Common.Constants;
+using PropertySearch.Api.Domain;
+using PropertySearch.Api.Entities;
+using PropertySearch.Api.Repositories.Abstract;
+using PropertySearch.Api.Services;
+using PropertySearch.Api.Services.Abstract;
+using PropertySearch.Api.Validations;
 
 namespace PropertySearch.UnitTests;
 

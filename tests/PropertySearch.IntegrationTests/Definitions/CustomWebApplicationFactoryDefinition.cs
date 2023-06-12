@@ -1,4 +1,4 @@
-﻿using PropertySearchApp;
+﻿using PropertySearch.Api;
 
 namespace PropertySearch.IntegrationTests.Definitions;
 

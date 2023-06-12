@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PropertySearchApp.Persistence;
+using PropertySearch.Api.Persistence;
 using System.Data.Common;
 
 namespace PropertySearch.IntegrationTests;

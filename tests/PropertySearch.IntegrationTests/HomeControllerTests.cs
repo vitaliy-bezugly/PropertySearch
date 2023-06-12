@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using PropertySearch.IntegrationTests.Helpers;
-using PropertySearchApp;
+using PropertySearch.Api;
 using System.Net;
 
 namespace PropertySearch.IntegrationTests;

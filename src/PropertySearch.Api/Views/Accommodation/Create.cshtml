@@ -1,0 +1,135 @@
+﻿@using PropertySearch.Api.Models.Accommodations;
+@model CreateAccommodationViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="card login-logout-tab">
+    <div class="card-header">
+        <h5 class="card-header-text">Create accommodation</h5>
+    </div>
+    <div class="card-content">
+        @if (TempData["alert-danger"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["alert-danger"]
+            </div>
+        }
+        else if (TempData["alert-success"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["alert-success"]
+            </div>
+        }
+
+        <form method="post" asp-controller="Accommodation" asp-action="Create">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label asp-for="Title">Title</label>
+                        <div class="d-flex">
+                            <i class='bx bx-home-heart'></i>
+                            <input type="text" required class="form-control" id="inputTitle" placeholder="Enter title" asp-for="Title">
+                        </div>
+                        <small class="form-text text-muted">Brief description of what will distinguish the offer from others</small>
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description">Description</label>
+                        <div class="d-flex">
+                            <i class='bx bx-text'></i>
+                            <textarea type="text" class="form-control" id="inputDescription" placeholder="Enter description"
+                                      asp-for="Description"></textarea>
+                        </div>
+                        <small class="form-text text-muted">An extensive description of the property you wish to rent. It can be peculiarities of place or region, number of rooms and floors ...</small>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price">Price per month</label>
+                        <div class="d-flex">
+                            <i class='bx bx-purchase-tag'></i>
+                            <input type="number" min="0" class="form-control" id="inputPrice" placeholder="Enter Price" required asp-for="Price">
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PhotoUri">Photo</label>
+                        <div class="d-flex">
+                            <i class='bx bx-photo-album'></i>
+                            <input type="url" class="form-control" id="inputPhoto" placeholder="Enter Photo Uri" asp-for="PhotoUri">
+                        </div>
+                        <span asp-validation-for="PhotoUri" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Location -->
+                    <h5 class="location">
+                        <i class='bx bx-map geo'></i>
+                        <span>Location</span>
+                    </h5>
+                    <div class="form-group">
+                        <label asp-for="Location.Country">Country</label>
+                        <div class="d-flex">
+                            <i class='bx bx-map-pin'></i>
+                            <input class="form-control" placeholder="Enter Country" required asp-for="Location.Country">
+                        </div>
+                        <span asp-validation-for="Location.Country" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Location.Region">Region</label>
+                        <div class="d-flex">
+                            <i class='bx bx-camera-home'></i>
+                            <input class="form-control" placeholder="Enter Region" required asp-for="Location.Region">
+                        </div>
+                        <span asp-validation-for="Location.Region" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Location.City">City</label>
+                        <div class="d-flex">
+                            <i class='bx bx-buildings'></i>
+                            <input class="form-control" placeholder="Enter City" required asp-for="Location.City">
+                        </div>
+                        <span asp-validation-for="Location.City" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Location.Address">Address</label>
+                        <div class="d-flex">
+                            <i class='bx bx-map-alt'></i>
+                            <textarea class="form-control" placeholder="Enter Address" required asp-for="Location.Address"></textarea>
+                        </div>
+                        <span asp-validation-for="Location.Address" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger asp-errors"></div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#createModal">
+                Create
+            </button>
+            <a class="btn btn-secondary float-end go-back" asp-controller="Accommodation" asp-action="Index">Go back</a>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createModalLabel">Create accommodation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            You are trying to create an accommodation offer
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

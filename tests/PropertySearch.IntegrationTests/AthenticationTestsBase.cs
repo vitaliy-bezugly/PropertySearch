@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using PropertySearch.IntegrationTests.Extensions;
 using PropertySearch.IntegrationTests.Helpers;
-using PropertySearchApp;
-using PropertySearchApp.Models.Identities;
-using PropertySearchApp.Persistence;
+using PropertySearch.Api;
+using PropertySearch.Api.Models.Identities;
+using PropertySearch.Api.Persistence;
 
 namespace PropertySearch.IntegrationTests;
 

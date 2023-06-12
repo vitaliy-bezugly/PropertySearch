@@ -24,8 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\PropertySearchApp\PropertySearchApp.csproj" />
-      <ProjectReference Include="..\PropertySearchApp\PropertySearchApp.csproj" />
+      <ProjectReference Include="..\..\src\PropertySearch.Api\PropertySearch.Api.csproj" />
     </ItemGroup>
 
 </Project>

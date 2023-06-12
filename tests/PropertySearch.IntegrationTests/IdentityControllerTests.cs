@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using PropertySearchApp;
-using PropertySearchApp.Common.Constants;
-using PropertySearchApp.Models.Identities;
+using PropertySearch.Api;
+using PropertySearch.Api.Common.Constants;
+using PropertySearch.Api.Models.Identities;
 using System.Net;
 
 namespace PropertySearch.IntegrationTests;
