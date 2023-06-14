@@ -24,19 +24,13 @@
 
         return User.FindFirst(ClaimTypes.NameIdentifier)?.Value == userId;
     }
+
     bool IsLandlord()
     {
         return User.IsInRole("landlord");
     }
 }
 
-@if (IsLandlord())
-{
-    <a class="btn btn-primary add-accommodation" asp-controller="Accommodation" asp-action="Create">
-        <i class='bx bx-add-to-queue'></i>
-        <span>Add accommodation</span>
-    </a>
-}
 
 @if (TempData["alert-danger"] != null)
 {
@@ -51,120 +45,149 @@ else if (TempData["alert-success"] != null)
     </div>
 }
 
-<div class="card-header" style="background-color: transparent">
-    <ul class="nav nav-tabs card-header-tabs">
-        <li class="nav-item">
-            <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">All Offers</a>
-        </li>
-        @if (IsLandlord())
-        {
+@if (IsLandlord())
+{
+    <a class="btn btn-primary add-accommodation m-1" asp-controller="Accommodation" asp-action="Create">
+        <i class='bx bx-add-to-queue'></i>
+        <span>Add accommodation</span>
+    </a>
+}
+
+@if (Model.Any() == false)
+{
+    @if (IsLandlord())
+    {
+        <div class="alert alert-info m-1" role="alert">
+            There are no offers yet. You can be the first to add one.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info m-1" role="alert">
+            There are no offers yet. Wait for the first landlord to add one.
+        </div>
+    }
+}
+else
+{
+    <div class="card-header" style="background-color: transparent">
+        <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link" asp-controller="Accommodation" asp-action="MyOffers">My Offers</a>
+                <a id="offers" class="nav-link" asp-controller="Accommodation" asp-action="Index">All</a>
             </li>
-        }
-    </ul>
-</div>
-<div class="container py-2 cards-container">
-    <div class="row" data-masonry='{"percentPosition": true }'>
-        @foreach (var item in @Model)
-        {
-            <div class="col-sm-4 py-3 col-cards">
-                <div class="card accommodation border-primary">
-                    <div class="card-img">
-                        @if (string.IsNullOrEmpty(item.PhotoUri))
-                        {
-                            <img class="card-img-top" src="~/images/default-image-for-rent.jpg" alt="Card image cap">
-                        }
-                        else
-                        {
-                            <img class="card-img-top" src="@item.PhotoUri" alt="Card image cap">
-                        }
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">@item.Title</h3>
-                        <p class="card-text">@item.Description</p>
-
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="accomodation-data">
-                                    <i class='bx bx-map-pin geo'></i>
-                                    <span>@item.Location.City</span>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div>
-                                    <i class='bx bx-purchase-tag'></i>
-                                    <span class="price">@item.Price$</span>
-                                </div>
-                            </div>
+            @if (IsLandlord())
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Accommodation" asp-action="MyOffers">Mine</a>
+                </li>
+            }
+        </ul>
+    </div>
+    
+    <div class="container py-2 cards-container">
+        <div class="row cards" data-masonry='{"percentPosition": true }'>
+            @foreach (var item in @Model)
+            {
+                <div class="col-sm-4 py-3 col-cards">
+                    <div class="card accommodation border-primary">
+                        <div class="card-img">
+                            @if (string.IsNullOrEmpty(item.PhotoUri))
+                            {
+                                <img class="card-img-top" src="~/images/default-image-for-rent.jpg" alt="Card image cap">
+                            }
+                            else
+                            {
+                                <img class="card-img-top" src="@item.PhotoUri" alt="Card image cap">
+                            }
                         </div>
+                        <div class="card-body">
+                            <h3 class="card-title">@item.Title</h3>
+                            <p class="card-text">@item.Description</p>
 
-                        @if (User?.Identity?.IsAuthenticated == true)
-                        {
                             <div class="row">
-                                <div class="details">
-                                    <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary" style="width: 100%" target="_blank">
-                                        Details
-                                    </a>
+                                <div class="col-sm-6">
+                                    <div class="accomodation-data">
+                                        <i class='bx bx-map-pin geo'></i>
+                                        <span>@item.Location.City</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div>
+                                        <i class='bx bx-purchase-tag'></i>
+                                        <span class="price">@item.Price$</span>
+                                    </div>
                                 </div>
                             </div>
-                        }
 
-                        @if (IsOwner(item.OwnerId))
-                        {
-                            <div class="row p-0">
-                                <div class="col-md-6">
-                                    <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
-                                        <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete</button>
-                                    </form>
+                            @if (User?.Identity?.IsAuthenticated == true)
+                            {
+                                <div class="row">
+                                    <div class="details">
+                                        <a asp-controller="Accommodation" asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary" style="width: 100%" target="_blank">
+                                            Details
+                                        </a>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <form method="get" asp-controller="Accommodation" asp-action="Update" asp-route-id="@item.Id" style="min-width: 100%">
-                                        <button type="submit" class="btn btn-success" style="min-width: 100%">Update</button>
-                                    </form>
+                            }
+
+                            @if (IsOwner(item.OwnerId))
+                            {
+                                <div class="row p-0">
+                                    <div class="col-md-6">
+                                        <form asp-controller="Accommodation" asp-action="Delete" asp-route-id="@item.Id" style="min-width: 100%">
+                                            <button type="submit" class="btn btn-danger" style="min-width: 100%">Delete</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <form method="get" asp-controller="Accommodation" asp-action="Update" asp-route-id="@item.Id" style="min-width: 100%">
+                                            <button type="submit" class="btn btn-success" style="min-width: 100%">Update</button>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-
-        <div class="prev-next-menu">
-            @if (currentPageId == 0)
-            {
-                /* Disable */
-                <a class="btn btn-secondary disabled">
-                    <i class='bx bx-skip-previous-circle'></i>
-                    <span>Previous</span>
-                </a>
-            }
-            else
-            {
-                <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@previousPageId" class="btn btn-secondary">
-                    <i class='bx bx-skip-previous-circle'></i>
-                    <span>Previous</span>
-                </a>
-            }
-
-            @if (Model.Count() < 64)
-            {
-                /* Disable */
-                <a class="btn btn-primary disabled float-end">
-                    <span>Next</span>
-                    <i class='bx bx-skip-next-circle'></i>
-                </a>
-            }
-            else
-            {
-                <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@nextPageId" class="btn btn-primary float-end">
-                    <span>Next</span>
-                    <i class='bx bx-skip-next-circle'></i>
-                </a>
             }
         </div>
+
+        <div class="row">
+            <div class="prev-next-menu">
+                @if (currentPageId == 0)
+                {
+                    /* Disable */
+                    <a class="btn btn-secondary disabled">
+                        <i class='bx bx-skip-previous-circle'></i>
+                        <span>Previous</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@previousPageId" class="btn btn-secondary">
+                        <i class='bx bx-skip-previous-circle'></i>
+                        <span>Previous</span>
+                    </a>
+                }
+
+                @if (Model.Count() < 64)
+                {
+                    /* Disable */
+                    <a class="btn btn-primary disabled float-end">
+                        <span>Next</span>
+                        <i class='bx bx-skip-next-circle'></i>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@nextPageId" class="btn btn-primary float-end">
+                        <span>Next</span>
+                        <i class='bx bx-skip-next-circle'></i>
+                    </a>
+                }
+            </div>
+        </div>
     </div>
-</div>
+}
 
 @section Scripts{
     <script>

@@ -85,7 +85,8 @@ public class ApplicationDbContextInitializer
                 new IdentityUserRole<Guid> { RoleId = Guid.Parse("A84FBF0E-1B2A-4EA2-B703-A7E8D9F4A647"), UserId = Guid.Parse("1F9EBB06-0947-4D6F-F99C-08DB34EFB52C")}
             });
 
-            _context.Accommodations.Add(new AccommodationEntity
+            /*
+             * _context.Accommodations.Add(new AccommodationEntity
             {
                 Id = Guid.NewGuid(),
                 Title = "Accommodation 1",
@@ -105,6 +106,7 @@ public class ApplicationDbContextInitializer
                 },
                 CreationTime = DateTime.Now
             });
+             */
 
             await _context.SaveChangesAsync();
             _logger.LogInformation("Seeding database completed.");

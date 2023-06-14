@@ -184,16 +184,6 @@ body .wrapper footer {
     bottom: 2px;
 }
 
-/* cards-container */
-.cards-container {
-    border: 1px solid rgba(0,0,0,.125);
-    border-top: none;
-    border-radius: 1px;
-}
-.card-header {
-    border-radius: 1px;
-}
-
 /* i html tag */
 a i {
     position: relative;
