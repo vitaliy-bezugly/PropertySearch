@@ -21,69 +21,45 @@ public class AccommodationRepository : IAccommodationRepository
     }
     public async Task<IEnumerable<AccommodationEntity>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
     {
-        try
-        {
-            return await _context.Accommodations
-                .Include(x => x.Location)
-                .AsNoTracking()
-                .OrderBy(x => x.Id)
-                .Skip(startAt)
-                .Take(countOfItems)
-                .ToListAsync(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(GetWithLimitsAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(nameof(Int32), nameof(startAt), startAt.ToString())
-                .WithParameter(nameof(Int32), nameof(countOfItems), countOfItems.ToString())
-                .ToString());
-            
-            throw;
-        }
+        return await _context.Accommodations
+            .Include(x => x.Location)
+            .AsNoTracking()
+            .OrderBy(x => x.Id)
+            .Skip(startAt)
+            .Take(countOfItems)
+            .ToListAsync(cancellationToken);
+    }
+    
+    public async Task<IEnumerable<AccommodationEntity>> GetUserAccommodationsWithLimitsAsync(Guid userId, int startAt, int countOfItems, CancellationToken cancellationToken)
+    {
+        return await _context.Accommodations
+            .Include(x => x.Location)
+            .AsNoTracking()
+            .Where(x => x.UserId == userId)
+            .OrderBy(x => x.Id)
+            .Skip(startAt)
+            .Take(countOfItems)
+            .ToListAsync(cancellationToken);
     }
     
     public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            return await _context.Accommodations.Include(x => x.Location).AsNoTracking().ToListAsync(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(GetAllAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithNoParameters()
-                .ToString());
-            
-            throw;
-        }
+        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+    {
+        return await _context.Accommodations.CountAsync(cancellationToken);
     }
     
+    public async Task<int> GetUserAccommodationsCountAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _context.Accommodations.Where(x => x.UserId == userId).CountAsync(cancellationToken);
+    }
+
     public async Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
-        try
-        {
-            return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(GetAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
-                .ToString());
-            
-            throw;
-        }
+        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
     }
    
     public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)

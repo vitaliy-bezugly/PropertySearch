@@ -27,7 +27,7 @@ public static class ApplicationRoutes
     {
         private const string Base = nameof(Accommodation);
         
-        public const string MyOffers = Base + "/" + nameof(MyOffers) + "/{id:int?}";
+        public const string Mine = Base + "/" + nameof(Mine);
         public const string Details = Base + "/" + nameof(Details) + "/{id}";
         public const string Create = Base + "/" + nameof(Create);
         public const string Delete = Base + "/" + nameof(Delete) + "/{id}";
