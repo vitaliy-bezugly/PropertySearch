@@ -29,38 +29,66 @@ public class AccommodationService : IAccommodationService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<AccommodationDomain>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
+    public async Task<PaginatedList<AccommodationDomain>> GetPaginatedCollection(PaginationQueryDomain query, CancellationToken cancellationToken)
     {
         try
         {
-            return (await _accommodationRepository.GetWithLimitsAsync(startAt, countOfItems, cancellationToken)).Select(x => _mapper.Map<AccommodationDomain>(x));
+            int startAt = (query.PageNumber - 1) * query.PageSize;
+            IEnumerable<AccommodationEntity> accommodations = await _accommodationRepository
+                .GetWithLimitsAsync(startAt, query.PageSize, cancellationToken);
+            
+            int totalCount = await _accommodationRepository.GetCountAsync(cancellationToken);
+            
+            var paginatedList = new PaginatedList<AccommodationDomain>(
+                accommodations.Select(x => _mapper.Map<AccommodationDomain>(x)).ToList(),
+                query.PageNumber,
+                (int)Math.Ceiling(totalCount / (double)query.PageSize),
+                totalCount
+            );
+            
+            return paginatedList;
         }
         catch (Exception e)
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(AccommodationService))
-                .WithMethod(nameof(GetWithLimitsAsync))
+                .WithMethod(nameof(GetPaginatedCollection))
                 .WithOperation("Get")
                 .WithComment(e.Message)
-                .WithParameter(typeof(int).Name, nameof(startAt), startAt.ToString())
-                .WithParameter(typeof(int).Name, nameof(countOfItems), countOfItems.ToString())
+                .WithParameter(nameof(PaginationQueryDomain), nameof(query), query.SerializeObject())
                 .ToString());
 
             throw;
         }
     }
-    
-    public async Task<IEnumerable<AccommodationDomain>> GetAccommodationsAsync(CancellationToken cancellationToken)
+
+    public async Task<PaginatedList<AccommodationDomain>> GetUserAccommodationsAsync(Guid userId, PaginationQueryDomain query, CancellationToken cancellationToken)
     {
         try
         {
-            return (await _accommodationRepository.GetAllAsync(cancellationToken)).Select(x => _mapper.Map<AccommodationDomain>(x));
+            int startAt = (query.PageNumber - 1) * query.PageSize;
+            IEnumerable<AccommodationEntity> accommodations = await _accommodationRepository
+                .GetUserAccommodationsWithLimitsAsync(userId, startAt, query.PageSize, cancellationToken);
+            
+            var accommodationsDomain = accommodations
+                .Select(x => _mapper.Map<AccommodationDomain>(x))
+                .ToList();
+
+            int totalCount = await _accommodationRepository.GetUserAccommodationsCountAsync(userId, cancellationToken);
+
+            var paginatedList = new PaginatedList<AccommodationDomain>(
+                accommodationsDomain,
+                query.PageNumber,
+                (int)Math.Ceiling(totalCount / (double)query.PageSize),
+                totalCount);
+            
+            return paginatedList;
         }
         catch (Exception e)
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(AccommodationService))
-                .WithMethod(nameof(GetAccommodationsAsync))
+                .WithMethod(nameof(GetUserAccommodationsAsync))
                 .WithOperation("Get")
                 .WithComment(e.Message)
                 .WithNoParameters()
@@ -69,7 +97,7 @@ public class AccommodationService : IAccommodationService
             throw;
         }
     }
-    
+
     public async Task<AccommodationDomain?> GetAccommodationByIdAsync(Guid accommodationId, CancellationToken cancellationToken)
     {
         try
@@ -84,7 +112,7 @@ public class AccommodationService : IAccommodationService
                 .WithMethod(nameof(GetAccommodationByIdAsync))
                 .WithOperation("Get")
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
                 .ToString());
             
             throw;
@@ -110,7 +138,7 @@ public class AccommodationService : IAccommodationService
             }
         
             var creationResult = await _accommodationRepository.CreateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
-            return creationResult == true ? new OperationResult()
+            return creationResult ? new OperationResult()
                 : new OperationResult(ErrorMessages.UnhandledInternalError);
         }
         catch (Exception e)

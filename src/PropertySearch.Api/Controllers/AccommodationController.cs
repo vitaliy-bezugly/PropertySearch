@@ -11,6 +11,7 @@ using PropertySearch.Api.Models.Accommodations;
 using PropertySearch.Api.Models.Location;
 using PropertySearch.Api.Services.Abstract;
 using PropertySearch.Api.Common.Extensions;
+using PropertySearch.Api.Models.Queries;
 
 namespace PropertySearch.Api.Controllers;
 
@@ -35,15 +36,16 @@ public class AccommodationController : Controller
     }
 
     [HttpGet, AllowAnonymous]
-    public async Task<IActionResult> Index([FromRoute] int? id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index([FromQuery] PaginationQuery query, CancellationToken cancellationToken)
     {
         try
         {
-            var pageId = id ?? 0;
-            var accommodations = (await GetAccommodationsWithLimits(pageId, 64, cancellationToken))
-                .Select(x => _mapper.Map<AccommodationViewModel>(x));
+            PaginatedList<AccommodationDomain> paginatedCollection = await _accommodationService
+                .GetPaginatedCollection(new PaginationQueryDomain(query.PageNumber, query.PageSize), cancellationToken);
+            
+            var paginatedViewModel = _mapper.ToPaginatedListViewModel(paginatedCollection);
 
-            return View(accommodations);
+            return View(paginatedViewModel);
         }
         catch (Exception e)
         {
@@ -51,26 +53,26 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Index))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(int?).FullName ?? String.Empty, nameof(id), id.ToString() ?? String.Empty)
+                .WithParameter(typeof(PaginationQuery).FullName ?? String.Empty, nameof(query), query.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
             throw;
         }
     }
-    [HttpGet, Route(ApplicationRoutes.Accommodation.MyOffers)]
-    public async Task<IActionResult> Mine([FromRoute] int? id, CancellationToken cancellationToken)
+    [HttpGet, Route(ApplicationRoutes.Accommodation.Mine)]
+    public async Task<IActionResult> Mine([FromQuery] PaginationQuery query, CancellationToken cancellationToken)
     {
         try
         {
-            var pageId = id == null ? 0 : id.Value;
             Guid userId = _httpContextAccessor.GetUserId();
+            
+            PaginatedList<AccommodationDomain> paginatedCollection = await _accommodationService
+                .GetUserAccommodationsAsync(userId, new PaginationQueryDomain(query.PageNumber, query.PageSize), cancellationToken);
 
-            var accommodations = (await _accommodationService.GetWithLimitsAsync(pageId, 64, cancellationToken))
-                .Where(x => x.UserId == userId)
-                .Select(x => _mapper.Map<AccommodationViewModel>(x));
+            var paginatedViewModel = _mapper.ToPaginatedListViewModel(paginatedCollection);
 
-            return View("Index", accommodations);
+            return View("Index", paginatedViewModel);
         }
         catch (Exception e)
         {
@@ -78,7 +80,7 @@ public class AccommodationController : Controller
                 .WithClass(nameof(AccommodationController))
                 .WithMethod(nameof(Mine))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(int?).FullName ?? String.Empty, nameof(id), id.ToString() ?? String.Empty)
+                .WithParameter(typeof(PaginationQuery).FullName ?? String.Empty, nameof(query), query.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -260,10 +262,5 @@ public class AccommodationController : Controller
             
             throw;
         }
-    }
-
-    private async Task<IEnumerable<AccommodationDomain>> GetAccommodationsWithLimits(int pageId, int countOfElements, CancellationToken cancellationToken)
-    {
-        return await _accommodationService.GetWithLimitsAsync(pageId * countOfElements, countOfElements, cancellationToken);
     }
 }

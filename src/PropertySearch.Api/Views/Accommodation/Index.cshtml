@@ -1,21 +1,11 @@
 ﻿@using System.Security.Claims
 @using PropertySearch.Api.Models.Accommodations;
-@model IEnumerable<AccommodationViewModel>
+@model PropertySearch.Api.Domain.PaginatedList<AccommodationViewModel>
 
 @{
     ViewData["Title"] = "Accommodation";
 }
 
-@{
-    int currentPageId = 0;
-
-    if (ViewContext.RouteData.Values["id"] != null)
-    {
-        currentPageId = int.Parse(ViewContext.RouteData.Values["id"]?.ToString() ?? "1");
-    }
-
-    int previousPageId = currentPageId - 1, nextPageId = currentPageId + 1;
-}
 @{
     bool IsOwner(string userId)
     {
@@ -28,6 +18,23 @@
     bool IsLandlord()
     {
         return User.IsInRole("landlord");
+    }
+    
+    int GetPreviousPage(int currentPage) => currentPage - 1;
+    int GetNextPage(int currentPage) => currentPage + 1;
+
+    int GetPageSize()
+    {
+        string? pageSizeAsQuery = Context.Request.Query["pageSize"];
+        if (pageSizeAsQuery is null)
+            return 64;
+
+        if (int.TryParse(pageSizeAsQuery, out int result))
+        {
+            return result;
+        }
+
+        return 64;
     }
 }
 
@@ -53,7 +60,7 @@ else if (TempData["alert-success"] != null)
     </a>
 }
 
-@if (Model.Any() == false)
+@if (Model.Items.Any() == false)
 {
     @if (IsLandlord())
     {
@@ -86,7 +93,7 @@ else
     
     <div class="container py-2 cards-container">
         <div class="row cards" data-masonry='{"percentPosition": true }'>
-            @foreach (var item in @Model)
+            @foreach (var item in @Model.Items)
             {
                 <div class="col-sm-4 py-3 col-cards">
                     <div class="card accommodation border-primary">
@@ -153,7 +160,18 @@ else
 
         <div class="row">
             <div class="prev-next-menu">
-                @if (currentPageId == 0)
+                @if (Model.HasPreviousPage)
+                {
+                    /* Enable */
+                    <a asp-controller="Accommodation" asp-action="Index" 
+                       asp-route-pageNumber="@GetPreviousPage(Model.PageNumber)" 
+                       asp-route-pageSize="@GetPageSize()"
+                       class="btn btn-secondary">
+                        <i class='bx bx-skip-previous-circle'></i>
+                        <span>Previous</span>
+                    </a>
+                }
+                else
                 {
                     /* Disable */
                     <a class="btn btn-secondary disabled">
@@ -161,25 +179,22 @@ else
                         <span>Previous</span>
                     </a>
                 }
-                else
-                {
-                    <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@previousPageId" class="btn btn-secondary">
-                        <i class='bx bx-skip-previous-circle'></i>
-                        <span>Previous</span>
-                    </a>
-                }
 
-                @if (Model.Count() < 64)
+                @if (Model.HasNextPage)
                 {
-                    /* Disable */
-                    <a class="btn btn-primary disabled float-end">
+                    /* Enable */
+                    <a asp-controller="Accommodation" asp-action="Index" 
+                       asp-route-pageNumber="@GetNextPage(Model.PageNumber)" 
+                       asp-route-pageSize="@GetPageSize()"
+                       class="btn btn-primary float-end">
                         <span>Next</span>
                         <i class='bx bx-skip-next-circle'></i>
                     </a>
                 }
                 else
                 {
-                    <a asp-controller="Accommodation" asp-action="Index" asp-route-id="@nextPageId" class="btn btn-primary float-end">
+                    /* Disable */
+                    <a class="btn btn-primary disabled float-end">
                         <span>Next</span>
                         <i class='bx bx-skip-next-circle'></i>
                     </a>
