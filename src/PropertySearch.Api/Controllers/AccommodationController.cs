@@ -39,7 +39,7 @@ public class AccommodationController : Controller
     {
         try
         {
-            var pageId = id == null ? 0 : id.Value;
+            var pageId = id ?? 0;
             var accommodations = (await GetAccommodationsWithLimits(pageId, 64, cancellationToken))
                 .Select(x => _mapper.Map<AccommodationViewModel>(x));
 
@@ -59,7 +59,7 @@ public class AccommodationController : Controller
         }
     }
     [HttpGet, Route(ApplicationRoutes.Accommodation.MyOffers)]
-    public async Task<IActionResult> MyOffers([FromRoute] int? id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Mine([FromRoute] int? id, CancellationToken cancellationToken)
     {
         try
         {
@@ -76,7 +76,7 @@ public class AccommodationController : Controller
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(AccommodationController))
-                .WithMethod(nameof(MyOffers))
+                .WithMethod(nameof(Mine))
                 .WithOperation(nameof(HttpGetAttribute))
                 .WithParameter(typeof(int?).FullName ?? String.Empty, nameof(id), id.ToString() ?? String.Empty)
                 .WithComment(e.Message)
