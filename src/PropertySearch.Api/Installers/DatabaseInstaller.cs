@@ -30,6 +30,8 @@ public class DatabaseInstaller : IInstaller
             .AddEntityFrameworkStores<ApplicationDbContext>();
         
         services.AddScoped<ApplicationDbContextInitializer>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
     private string GetConnectionString(IConfiguration configuration, ILogger<Startup> logger)
     {
