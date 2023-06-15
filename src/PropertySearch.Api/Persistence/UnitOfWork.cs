@@ -7,13 +7,14 @@ namespace PropertySearch.Api.Persistence;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _dbContext;
-    private IAccommodationRepository? _accommodationRepository;
+    private readonly IAccommodationRepository _accommodationRepository;
     
     private bool _disposed;
     
-    public UnitOfWork(ApplicationDbContext dbContext)
+    public UnitOfWork(ApplicationDbContext dbContext, IAccommodationRepository accommodationRepository)
     {
         _dbContext = dbContext;
+        _accommodationRepository = accommodationRepository;
     }
     
     public async Task CommitAsync(CancellationToken cancellationToken)
@@ -34,18 +35,7 @@ public class UnitOfWork : IUnitOfWork
         }
     }
 
-    public IAccommodationRepository AccommodationRepository
-    {
-        get
-        {
-            if(_accommodationRepository is null)
-            {
-                _accommodationRepository = new AccommodationRepository(_dbContext);
-            }
-
-            return _accommodationRepository;
-        }
-    }
+    public IAccommodationRepository AccommodationRepository => _accommodationRepository;
 
     private void Dispose(bool disposing)
     {
