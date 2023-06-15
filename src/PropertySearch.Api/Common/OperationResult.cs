@@ -24,6 +24,11 @@ public class OperationResult
             ErrorMessage += item + ";";
         }
     }
+    
+    public static OperationResult Success()
+    {
+        return new OperationResult();
+    }
 }
 
 public class OperationResult<T> : OperationResult

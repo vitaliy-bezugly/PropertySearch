@@ -1,7 +1,6 @@
 using AutoMapper;
 using FluentValidation;
 using PropertySearch.Api.Common;
-using PropertySearch.Api.Common.Constants;
 using PropertySearch.Api.Common.Logging;
 using PropertySearch.Api.Domain;
 using PropertySearch.Api.Entities;
@@ -102,7 +101,7 @@ public class AccommodationService : IAccommodationService
     {
         try
         {
-            var entity = await _accommodationRepository.GetAsync(accommodationId, cancellationToken);
+            var entity = await _accommodationRepository.GetByIdAsync(accommodationId, cancellationToken);
             return entity == null ? null : _mapper.Map<AccommodationDomain>(entity);
         }
         catch (Exception e)
@@ -137,9 +136,8 @@ public class AccommodationService : IAccommodationService
                 return userValidationResult;
             }
         
-            var creationResult = await _accommodationRepository.CreateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
-            return creationResult ? new OperationResult()
-                : new OperationResult(ErrorMessages.UnhandledInternalError);
+            _accommodationRepository.Insert(_mapper.Map<AccommodationEntity>(accommodation));
+            return OperationResult.Success();
         }
         catch (Exception e)
         {
@@ -169,8 +167,8 @@ public class AccommodationService : IAccommodationService
                 return validationResult;
             }
         
-            var updateResult = await _accommodationRepository.UpdateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
-            return updateResult;
+            await _accommodationRepository.UpdateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
+            return OperationResult.Success();
         }
         catch (Exception e)
         {
@@ -196,8 +194,8 @@ public class AccommodationService : IAccommodationService
                 return validationResult;
             }
         
-            var deletionResult = await _accommodationRepository.DeleteAsync(accommodationId, cancellationToken);
-            return deletionResult;
+            await _accommodationRepository.DeleteAsync(accommodationId, cancellationToken);
+            return OperationResult.Success();
         }
         catch (Exception e)
         {
@@ -206,8 +204,8 @@ public class AccommodationService : IAccommodationService
                 .WithMethod(nameof(DeleteAccommodationAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(Guid).Name, nameof(accommodationId), accommodationId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
                 .ToString());
             
             throw;
@@ -222,7 +220,7 @@ public class AccommodationService : IAccommodationService
             return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
         }
 
-        return new OperationResult();
+        return OperationResult.Success();
     }
     
     private async Task<OperationResult> ValidateLocationAsync(LocationDomain? location, CancellationToken cancellationToken)
@@ -233,6 +231,6 @@ public class AccommodationService : IAccommodationService
             return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
         }
 
-        return new OperationResult();
+        return OperationResult.Success();
     }
 }

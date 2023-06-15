@@ -1,27 +1,40 @@
 using Microsoft.EntityFrameworkCore;
-using PropertySearch.Api.Common;
-using PropertySearch.Api.Common.Constants;
-using PropertySearch.Api.Common.Exceptions;
-using PropertySearch.Api.Common.Logging;
 using PropertySearch.Api.Entities;
 using PropertySearch.Api.Persistence;
 using PropertySearch.Api.Repositories.Abstract;
-using PropertySearch.Api.Common.Extensions;
 
 namespace PropertySearch.Api.Repositories;
 
-public class AccommodationRepository : IAccommodationRepository
+public class AccommodationRepository : RepositoryBase<AccommodationEntity>, IAccommodationRepository
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<AccommodationRepository> _logger;
-    public AccommodationRepository(ApplicationDbContext context, ILogger<AccommodationRepository> logger)
+    public AccommodationRepository(ApplicationDbContext context) : base(context)
+    { }
+
+    public override async Task<AccommodationEntity?> GetByIdAsync(object id, CancellationToken cancellationToken)
     {
-        _context = context;
-        _logger = logger;
+        if(id.GetType() != typeof(Guid))
+            throw new ArgumentException("Id must be of type Guid.", nameof(id));
+        
+        return await Table.Include(x => x.Location)
+            .FirstOrDefaultAsync(x => x.Id == (Guid)id, cancellationToken);
     }
+
+    public override async Task UpdateAsync(AccommodationEntity entityToUpdate, CancellationToken cancellationToken)
+    {
+        var source = await base.GetByIdAsync(entityToUpdate.Id, cancellationToken);
+        if(source is not null)
+        {
+            UpdateFields(source, entityToUpdate);
+        }
+        else
+        {
+            throw new InvalidOperationException("Can not update accommodation. Accommodation not found.");
+        }
+    }
+    
     public async Task<IEnumerable<AccommodationEntity>> GetWithLimitsAsync(int startAt, int countOfItems, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations
+        return await Table
             .Include(x => x.Location)
             .AsNoTracking()
             .OrderBy(x => x.Id)
@@ -32,7 +45,7 @@ public class AccommodationRepository : IAccommodationRepository
     
     public async Task<IEnumerable<AccommodationEntity>> GetUserAccommodationsWithLimitsAsync(Guid userId, int startAt, int countOfItems, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations
+        return await Table
             .Include(x => x.Location)
             .AsNoTracking()
             .Where(x => x.UserId == userId)
@@ -41,118 +54,15 @@ public class AccommodationRepository : IAccommodationRepository
             .Take(countOfItems)
             .ToListAsync(cancellationToken);
     }
-    
-    public async Task<IEnumerable<AccommodationEntity>> GetAllAsync(CancellationToken cancellationToken)
-    {
-        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().ToListAsync(cancellationToken);
-    }
 
     public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.CountAsync(cancellationToken);
+        return await Table.CountAsync(cancellationToken);
     }
     
     public async Task<int> GetUserAccommodationsCountAsync(Guid userId, CancellationToken cancellationToken)
     {
-        return await _context.Accommodations.Where(x => x.UserId == userId).CountAsync(cancellationToken);
-    }
-
-    public async Task<AccommodationEntity?> GetAsync(Guid accommodationId, CancellationToken cancellationToken)
-    {
-        return await _context.Accommodations.Include(x => x.Location).AsNoTracking().FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
-    }
-   
-    public async Task<bool> CreateAsync(AccommodationEntity accommodation, CancellationToken cancellationToken)
-    {
-        try
-        {
-            ValidateAccommodationFieldsIfInvalidThrowException(accommodation);
-        
-            await _context.Accommodations.AddAsync(accommodation, cancellationToken);
-            var result = await _context.SaveChangesAsync(cancellationToken);
-            if (result > 0) /* Can not add accommodation */
-            {
-                return true;
-            }
-        
-            _logger.LogWarning($"Can not add accommodation with title: {accommodation.Title}", accommodation);
-            return false;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(CreateAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(nameof(AccommodationEntity), nameof(accommodation), accommodation.SerializeObject())
-                .ToString());
-            
-            throw;
-        }
-    }
-    
-    public async Task<OperationResult> UpdateAsync(AccommodationEntity destination, CancellationToken cancellationToken)
-    {
-        try
-        {
-            ValidateAccommodationFieldsIfInvalidThrowException(destination);
-
-            var source = await _context.Accommodations.Include(x => x.Location).FirstOrDefaultAsync(x => x.Id == destination.Id, cancellationToken);
-            if (source == null)
-            {
-                _logger.LogWarning("Can not update accommodation");
-                return new OperationResult(ErrorMessages.Accommodation.NotFound);
-            }
-
-            UpdateFields(source, destination);
-
-            var result = await _context.SaveChangesAsync(cancellationToken);
-            return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result,
-                ErrorMessages.Accommodation.CanNotUpdate);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(UpdateAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(nameof(AccommodationEntity), nameof(destination), destination.SerializeObject())
-                .ToString());
-            
-            throw;
-        }
-    }
-    
-    public async Task<OperationResult> DeleteAsync(Guid accommodationId, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var exists = await _context.Accommodations.FirstOrDefaultAsync(x => x.Id == accommodationId, cancellationToken);
-            if (exists == null)
-            {
-                _logger.LogWarning( "Can not delete accommodation");
-                return new OperationResult(ErrorMessages.Accommodation.NotFound);
-            }
-
-            _context.Accommodations.Remove(exists);
-            var result = await _context.SaveChangesAsync(cancellationToken);
-            return ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(result, ErrorMessages.Accommodation.CanNotDelete);
-
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(new LogEntry()
-                .WithClass(nameof(AccommodationRepository))
-                .WithMethod(nameof(DeleteAsync))
-                .WithUnknownOperation()
-                .WithComment(e.Message)
-                .WithParameter(nameof(Guid), nameof(accommodationId), accommodationId.ToString())
-                .ToString());
-            
-            throw;
-        }
+        return await Table.Where(x => x.UserId == userId).CountAsync(cancellationToken);
     }
 
     private void UpdateFields(AccommodationEntity source, AccommodationEntity destination)
@@ -169,22 +79,5 @@ public class AccommodationRepository : IAccommodationRepository
             source.Location.Region = destination.Location.Region;
             source.Location.Address = destination.Location.Address;
         }
-    }
-    private void ValidateAccommodationFieldsIfInvalidThrowException(AccommodationEntity accommodation)
-    {
-        if (accommodation == null || accommodation.UserId == Guid.Empty)
-            throw new ArgumentNullException($"{nameof(accommodation)} and {nameof(accommodation.UserId)} can not be null or empty");
-    }
-
-    private OperationResult ValidateNumberOfWrittenDatabaseEntriesAndReturnResultState(int entriesNumber, string errorMessage)
-    {
-        if (entriesNumber > 0)
-        {
-            return new OperationResult();
-        }
-
-        var error = new InternalDatabaseException(new[] { errorMessage });
-        _logger.LogWarning(error, "Internal database error. Can not complete operation");
-        return new OperationResult(errorMessage);
     }
 }
