@@ -7,6 +7,7 @@ using PropertySearch.Api.Filters;
 using PropertySearch.Api.Services.Abstract;
 using PropertySearch.Api.Controllers.Extensions;
 using PropertySearch.Api.Common.Extensions;
+using PropertySearch.Api.Models.Queries;
 
 namespace PropertySearch.Api.Controllers;
 
@@ -25,15 +26,15 @@ public class ContactController : Controller
     }
 
     [HttpGet, Route(ApplicationRoutes.Contact.Create)]
-    public async Task<IActionResult> Create([FromQuery] string type, [FromQuery] string content, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromQuery] CreateContactQuery query, CancellationToken cancellationToken)
     {
         try
         {
-            bool isFaulted = ValidateContactIfInvalidAddErrorsToModelState(type, content);
+            bool isFaulted = ValidateContactIfInvalidAddErrorsToModelState(query.Type, query.Content);
             if (isFaulted)
                 return ValidationProblem(ModelState);
 
-            var contact = new ContactDomain { Id = Guid.NewGuid(), ContactType = type, Content = content };
+            var contact = new ContactDomain { Id = Guid.NewGuid(), ContactType = query.Type, Content = query.Content };
             Guid userId = _contextAccessor.GetUserId();
             var result = await _contactsService.AddContactToUserAsync(userId, contact, cancellationToken);
 
@@ -47,8 +48,7 @@ public class ContactController : Controller
                 .WithClass(nameof(ContactController))
                 .WithMethod(nameof(Create))
                 .WithOperation(nameof(HttpGetAttribute))
-                .WithParameter(typeof(String).FullName ?? String.Empty , nameof(type), type)
-                .WithParameter(typeof(String).FullName ?? String.Empty, nameof(content), content)
+                .WithParameter(typeof(CreateContactQuery).FullName ?? string.Empty , nameof(query), query.SerializeObject())
                 .WithComment(e.Message)
                 .ToString());
             
@@ -87,15 +87,15 @@ public class ContactController : Controller
         }
     }
 
-    private bool ValidateContactIfInvalidAddErrorsToModelState(string contactType, string contactContent)
+    private bool ValidateContactIfInvalidAddErrorsToModelState(string type, string content)
     {
         bool isFaulted = false;
-        if (string.IsNullOrEmpty(contactType))
+        if (string.IsNullOrEmpty(type))
         {
             ModelState.AddModelError("type", ErrorMessages.Contacts.Validation.TypeIsEmpty);
             isFaulted = true;
         }
-        if (string.IsNullOrEmpty(contactContent))
+        if (string.IsNullOrEmpty(content))
         {
             ModelState.AddModelError("content", ErrorMessages.Contacts.Validation.ContentIsEmpty);
             isFaulted = true;

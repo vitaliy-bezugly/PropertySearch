@@ -23,10 +23,9 @@ public class ServicesInstaller : IInstaller
         services.AddScoped<IContactService, ContactService>();
 
         services.Configure<IpInfoOptions>(configuration);
-        services.AddSingleton<IpInfoClientBuilder>();
-        services.AddSingleton<IPInfoClientContainer, DefaultIpInfoClientContainer>();
+        services.AddSingleton<IPInfoClientContainer, IpInfoClientContainer>();
         
-        services.AddScoped<ILocationLoadingService, IpInfoLocationLoadingService>();
+        services.AddScoped<ILocationLoadingService, LocationLoadingService>();
         services.Decorate<ILocationLoadingService, IpInfoLocationLoadingCachedService>();
         
         services.AddTransient<IEmailSender, EmailSenderService>();

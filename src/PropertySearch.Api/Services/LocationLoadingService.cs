@@ -1,21 +1,19 @@
 using System.Net;
 using IPinfo;
 using IPinfo.Models;
-using Newtonsoft.Json;
 using PropertySearch.Api.Common.Logging;
 using PropertySearch.Api.Domain;
 using PropertySearch.Api.Services.Abstract;
 using PropertySearch.Api.Common.Extensions;
-using PropertySearch.Api.Models.ExternalAPIs;
 
 namespace PropertySearch.Api.Services;
 
-public class IpInfoLocationLoadingService : ILocationLoadingService
+public class LocationLoadingService : ILocationLoadingService
 {
     private readonly IPinfoClient _client;
-    private readonly ILogger<IpInfoLocationLoadingService> _logger;
+    private readonly ILogger<LocationLoadingService> _logger;
 
-    public IpInfoLocationLoadingService(IPInfoClientContainer container, ILogger<IpInfoLocationLoadingService> logger)
+    public LocationLoadingService(IPInfoClientContainer container, ILogger<LocationLoadingService> logger)
     {
         _client = container.Client;
         _logger = logger;
@@ -46,7 +44,7 @@ public class IpInfoLocationLoadingService : ILocationLoadingService
         catch (Exception e)
         {
             _logger.LogError(new LogEntry()
-                .WithClass(nameof(IpInfoLocationLoadingService))
+                .WithClass(nameof(LocationLoadingService))
                 .WithMethod(nameof(GetLocationByUrlAsync))
                 .WithOperation("Get")
                 .WithComment(e.Message)
