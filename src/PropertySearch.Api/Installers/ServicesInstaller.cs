@@ -15,7 +15,7 @@ public class ServicesInstaller : IInstaller
     {
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IUserValidatorService, UserValidatorService>();
-        services.AddScoped<IUserTokenProvider, UserRepository>();
+        services.AddScoped<ITokenProvider, UserTokenProvider>();
         services.AddScoped<ISignInService, SignInService>();
 
         services.AddScoped<IAccommodationService, AccommodationService>();

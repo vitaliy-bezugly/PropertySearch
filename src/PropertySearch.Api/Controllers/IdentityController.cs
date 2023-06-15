@@ -99,14 +99,14 @@ public class IdentityController : Controller
     }
     
     [ValidateAntiForgeryToken, HttpPost, Route(ApplicationRoutes.Identity.Register)]
-    public async Task<IActionResult> Register(RegistrationFormViewModel registrationModel)
+    public async Task<IActionResult> Register(RegistrationFormViewModel registrationModel, CancellationToken cancellationToken)
     {
         try
         {
             if (ModelState.IsValid == false)
                 return View(registrationModel);
 
-            var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel));
+            var result = await _identityService.RegisterAsync(_mapper.Map<UserDomain>(registrationModel), cancellationToken);
             return HandleResult(result, registrationModel, "You have successfully created an account! Check your email to confirm.");
         }
         catch (Exception e)
@@ -146,11 +146,11 @@ public class IdentityController : Controller
     }
     
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Details)]
-    public async Task<IActionResult> Details([FromRoute] Guid id)
+    public async Task<IActionResult> Details([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _identityService.GetUserByIdAsync(id);
+            var user = await _identityService.GetUserByIdAsync(id, cancellationToken);
             if (user == null)
                 return NotFound();
 
@@ -173,12 +173,12 @@ public class IdentityController : Controller
     }
     
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.Edit)]
-    public async Task<IActionResult> Edit()
+    public async Task<IActionResult> Edit(CancellationToken cancellationToken)
     {
         try
         {
             Guid currentUserId = _httpContextAccessor.GetUserId();
-            var user = await _identityService.GetUserByIdAsync(currentUserId);
+            var user = await _identityService.GetUserByIdAsync(currentUserId, cancellationToken);
         
             var request = _mapper.Map<EditUserFieldsRequest>(user);
         
@@ -201,7 +201,7 @@ public class IdentityController : Controller
     }
     
     [HttpPost, ValidateAntiForgeryToken, Authorize, Route(ApplicationRoutes.Identity.Edit)]
-    public async Task<IActionResult> Edit(EditUserFieldsRequest request)
+    public async Task<IActionResult> Edit(EditUserFieldsRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -210,7 +210,9 @@ public class IdentityController : Controller
 
             Guid userId = _httpContextAccessor.GetUserId();
 
-            var result = await _identityService.UpdateUserFieldsAsync(userId, request.UserName, request.Information, request.PasswordToCompare);
+            var result = await _identityService.UpdateUserFieldsAsync(userId, request.UserName,
+                request.Information, request.PasswordToCompare, cancellationToken);
+            
             return result.ToResponse("Profile was updated successfully!", TempData, 
                 () => RedirectToAction(nameof(Edit), "Identity"), 
                 () => View(request));
@@ -252,7 +254,7 @@ public class IdentityController : Controller
     }
     
     [HttpPost, Authorize, ValidateAntiForgeryToken, Route(ApplicationRoutes.Identity.ChangePassword)]
-    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel)
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel viewModel, CancellationToken cancellationToken)
     {
         try
         {
@@ -261,7 +263,9 @@ public class IdentityController : Controller
 
             Guid userId = _httpContextAccessor.GetUserId();
 
-            var result = await _identityService.ChangePasswordAsync(userId, viewModel.CurrentPassword, viewModel.NewPassword);
+            var result = await _identityService.ChangePasswordAsync(userId, viewModel.CurrentPassword, 
+                viewModel.NewPassword, cancellationToken);
+            
             return result.ToResponse("Password has been changed successfully!", TempData, 
                 () => RedirectToAction(nameof(ChangePassword), "Identity"), 
                 () => View(viewModel));
@@ -281,14 +285,14 @@ public class IdentityController : Controller
     }
 
     [HttpGet, AllowAnonymous, Route(ApplicationRoutes.Identity.EmailConfirmationResult)]
-    public async Task<IActionResult> EmailConfirmationResult([FromQuery] ConfirmEmailQuery query)
+    public async Task<IActionResult> EmailConfirmationResult([FromQuery] ConfirmEmailQuery query, CancellationToken cancellationToken)
     {
         try
         {
             if (ModelState.IsValid == false)
                 return BadRequest();
             
-            OperationResult result = await _identityService.ConfirmEmailAsync(query.UserId, query.Token);
+            OperationResult result = await _identityService.ConfirmEmailAsync(query.UserId, query.Token, cancellationToken);
             if (result.Succeeded)
                 return View(true);
             
@@ -310,12 +314,12 @@ public class IdentityController : Controller
     }
 
     [HttpGet, Authorize, Route(ApplicationRoutes.Identity.ConfirmEmail)]
-    public async Task<IActionResult> ConfirmEmail()
+    public async Task<IActionResult> ConfirmEmail(CancellationToken cancellationToken)
     {
         try
         {
             Guid userId = _httpContextAccessor.GetUserId();
-            var emailConfirmed = await _identityService.IsEmailConfirmedAsync(userId);
+            var emailConfirmed = await _identityService.IsEmailConfirmedAsync(userId, cancellationToken);
             return View(emailConfirmed);
         }
         catch (Exception e)
@@ -333,11 +337,11 @@ public class IdentityController : Controller
     }
 
     [HttpPost, Authorize, Route(ApplicationRoutes.Identity.SendConfirmationEmail)]
-    public async Task<IActionResult> SendConfirmationEmail()
+    public async Task<IActionResult> SendConfirmationEmail(CancellationToken cancellationToken)
     {
         Guid userId = _httpContextAccessor.GetUserId();
         
-        await _identityService.SendConfirmationEmailAsync(userId);
+        await _identityService.SendConfirmationEmailAsync(userId, cancellationToken);
         
         TempData[Alerts.Success] = "Confirmation email has been sent";
         return RedirectToAction("Index", "Home");

@@ -9,4 +9,6 @@ public interface IUnitOfWork: IDisposable
 
     public IAccommodationRepository AccommodationRepository { get; }
     public IContactsRepository ContactsRepository { get; }
+    public IRoleRepository RoleRepository { get; }
+    public IUserRepository UserRepository { get; }
 }

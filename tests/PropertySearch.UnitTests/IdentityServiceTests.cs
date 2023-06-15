@@ -24,7 +24,7 @@ public class IdentityServiceTests
     private readonly IMapper _mapper = Substitute.For<IMapper>();
     private readonly IUserReceiverRepository _userReceiver = Substitute.For<IUserReceiverRepository>();
     private readonly ILogger<IdentityService> _logger = Substitute.For<ILogger<IdentityService>>();
-    private readonly IUserTokenProvider _tokenProvider = Substitute.For<IUserTokenProvider>();
+    private readonly ITokenProvider _tokenProvider = Substitute.For<ITokenProvider>();
     private readonly IEmailSender _emailSender = Substitute.For<IEmailSender>();
     private readonly IHtmlMessageBuilder _htmlMessageBuilder = Substitute.For<IHtmlMessageBuilder>();
     public IdentityServiceTests()

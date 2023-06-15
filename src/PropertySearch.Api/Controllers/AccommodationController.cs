@@ -97,7 +97,7 @@ public class AccommodationController : Controller
                 return RedirectToAction("PageNotFound", ApplicationRoutes.Error.Base);
 
             var viewModel = _mapper.Map<AccommodationViewModel>(accommodation);
-            var account = await _identityService.GetUserByIdAsync(Guid.Parse(viewModel.OwnerId));
+            var account = await _identityService.GetUserByIdAsync(Guid.Parse(viewModel.OwnerId), cancellationToken);
             if (account == null)
                 return BadRequest("User account that created this offer does not exist");
 
@@ -162,7 +162,7 @@ public class AccommodationController : Controller
             accommodation.UserId = userId;
 
             var result = await _accommodationService.CreateAccommodationAsync(accommodation, cancellationToken);
-            return result.ToResponse(SuccessMessages.Accommodation.Created, TempData, 
+            return result.ToResponse(SuccessMessages.Accommodation.Created, TempData,
                 () => View(), 
                 () => View(viewModel));
         }

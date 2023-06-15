@@ -4,7 +4,6 @@ using PropertySearch.Api.Common.Constants;
 using PropertySearch.Api.Common.Logging;
 using PropertySearch.Api.Domain;
 using PropertySearch.Api.Entities;
-using PropertySearch.Api.Repositories.Abstract;
 using PropertySearch.Api.Services.Abstract;
 using PropertySearch.Api.Common.Extensions;
 using PropertySearch.Api.Persistence;
@@ -15,13 +14,11 @@ public class ContactService : IContactService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ContactService> _logger;
-    private readonly IUserReceiverRepository _userReceiverRepository;
     private readonly IMapper _mapper;
     
-    public ContactService(IUnitOfWork unitOfWork, IUserReceiverRepository userReceiverRepository, IMapper mapper, ILogger<ContactService> logger)
+    public ContactService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ContactService> logger)
     {
         _unitOfWork = unitOfWork;
-        _userReceiverRepository = userReceiverRepository;
         _mapper = mapper;
         _logger = logger;
     }
@@ -51,7 +48,7 @@ public class ContactService : IContactService
     {
         try
         {
-            var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdWithContactsAsync(userId);
             if(user == null)
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
@@ -86,7 +83,7 @@ public class ContactService : IContactService
     {
         try
         {
-            var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdWithContactsAsync(userId);
             if (user is null)
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
@@ -118,7 +115,7 @@ public class ContactService : IContactService
     {
         try
         {
-            var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdWithContactsAsync(userId);
             if (user == null)
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
