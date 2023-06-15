@@ -8,4 +8,5 @@ public interface IUnitOfWork: IDisposable
     void Rollback();
 
     public IAccommodationRepository AccommodationRepository { get; }
+    public IContactsRepository ContactsRepository { get; }
 }

@@ -200,7 +200,7 @@ public class ContactServiceTests
             .Returns(new OperationResult());
 
         // Act
-        var actual = await _sut.DeleteContactFromUserAsync(userId, contactId);
+        var actual = await _sut.DeleteAsync(userId, contactId);
 
         // Assert
         actual.Succeeded.Should().Be(true);
@@ -231,7 +231,7 @@ public class ContactServiceTests
             .ReturnsNull();
 
         // Act
-        var actual = await _sut.DeleteContactFromUserAsync(userId, contactId);
+        var actual = await _sut.DeleteAsync(userId, contactId);
 
         // Assert
         actual.Succeeded.Should().Be(false);

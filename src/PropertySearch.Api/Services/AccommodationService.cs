@@ -139,7 +139,7 @@ public class AccommodationService : IAccommodationService
             _unitOfWork.AccommodationRepository.Insert(_mapper.Map<AccommodationEntity>(accommodation));
             await _unitOfWork.CommitAsync(cancellationToken);
 
-            return OperationResult.Success();
+            return OperationResult.Success;
         }
         catch (Exception e)
         {
@@ -172,7 +172,7 @@ public class AccommodationService : IAccommodationService
             await _unitOfWork.AccommodationRepository.UpdateAsync(_mapper.Map<AccommodationEntity>(accommodation), cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
             
-            return OperationResult.Success();
+            return OperationResult.Success;
         }
         catch (Exception e)
         {
@@ -200,7 +200,7 @@ public class AccommodationService : IAccommodationService
         
             await _unitOfWork.AccommodationRepository.DeleteAsync(accommodationId, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
-            return OperationResult.Success();
+            return OperationResult.Success;
         }
         catch (Exception e)
         {
@@ -225,7 +225,7 @@ public class AccommodationService : IAccommodationService
             return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
         }
 
-        return OperationResult.Success();
+        return OperationResult.Success;
     }
     
     private async Task<OperationResult> ValidateLocationAsync(LocationDomain? location, CancellationToken cancellationToken)
@@ -236,6 +236,6 @@ public class AccommodationService : IAccommodationService
             return new OperationResult(validationResult.Errors.Select(x => x.ErrorMessage));
         }
 
-        return OperationResult.Success();
+        return OperationResult.Success;
     }
 }

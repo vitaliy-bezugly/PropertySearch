@@ -25,7 +25,7 @@ public class ContactController : Controller
     }
 
     [HttpGet, Route(ApplicationRoutes.Contact.Create)]
-    public async Task<IActionResult> Create([FromQuery] string type, [FromQuery] string content)
+    public async Task<IActionResult> Create([FromQuery] string type, [FromQuery] string content, CancellationToken cancellationToken)
     {
         try
         {
@@ -35,7 +35,7 @@ public class ContactController : Controller
 
             var contact = new ContactDomain { Id = Guid.NewGuid(), ContactType = type, Content = content };
             Guid userId = _contextAccessor.GetUserId();
-            var result = await _contactsService.AddContactToUserAsync(userId, contact);
+            var result = await _contactsService.AddContactToUserAsync(userId, contact, cancellationToken);
 
             return result.ToResponse(SuccessMessages.Contacts.Created, TempData, 
                 () => RedirectToAction("Edit", "Identity"), 
@@ -56,7 +56,7 @@ public class ContactController : Controller
         }
     }
     [HttpGet, Route(ApplicationRoutes.Contact.Delete)]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         try
         {
@@ -67,7 +67,7 @@ public class ContactController : Controller
             }
 
             Guid userId = _contextAccessor.GetUserId();
-            var result = await _contactsService.DeleteContactFromUserAsync(userId, id);
+            var result = await _contactsService.DeleteAsync(userId, id, cancellationToken);
 
             return result.ToResponse(SuccessMessages.Contacts.Deleted, TempData, 
                 () => RedirectToAction("Edit", "Identity"), 

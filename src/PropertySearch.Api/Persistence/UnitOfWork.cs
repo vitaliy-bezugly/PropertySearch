@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PropertySearch.Api.Repositories;
 using PropertySearch.Api.Repositories.Abstract;
 
 namespace PropertySearch.Api.Persistence;
@@ -8,13 +7,15 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IAccommodationRepository _accommodationRepository;
+    private readonly IContactsRepository _contactsRepository;
     
     private bool _disposed;
     
-    public UnitOfWork(ApplicationDbContext dbContext, IAccommodationRepository accommodationRepository)
+    public UnitOfWork(ApplicationDbContext dbContext, IAccommodationRepository accommodationRepository, IContactsRepository contactsRepository)
     {
         _dbContext = dbContext;
         _accommodationRepository = accommodationRepository;
+        _contactsRepository = contactsRepository;
     }
     
     public async Task CommitAsync(CancellationToken cancellationToken)
@@ -36,6 +37,7 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IAccommodationRepository AccommodationRepository => _accommodationRepository;
+    public IContactsRepository ContactsRepository => _contactsRepository;
 
     private void Dispose(bool disposing)
     {

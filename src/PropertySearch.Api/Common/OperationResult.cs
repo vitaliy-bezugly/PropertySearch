@@ -25,10 +25,7 @@ public class OperationResult
         }
     }
     
-    public static OperationResult Success()
-    {
-        return new OperationResult();
-    }
+    public static OperationResult Success { get => new OperationResult(); }
 }
 
 public class OperationResult<T> : OperationResult
