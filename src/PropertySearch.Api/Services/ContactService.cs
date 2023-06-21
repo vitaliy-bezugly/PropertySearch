@@ -4,22 +4,21 @@ using PropertySearch.Api.Common.Constants;
 using PropertySearch.Api.Common.Logging;
 using PropertySearch.Api.Domain;
 using PropertySearch.Api.Entities;
-using PropertySearch.Api.Repositories.Abstract;
 using PropertySearch.Api.Services.Abstract;
 using PropertySearch.Api.Common.Extensions;
+using PropertySearch.Api.Persistence;
 
 namespace PropertySearch.Api.Services;
 
 public class ContactService : IContactService
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ContactService> _logger;
-    private readonly IContactsRepository _contactsRepository;
-    private readonly IUserReceiverRepository _userReceiverRepository;
     private readonly IMapper _mapper;
-    public ContactService(IUserReceiverRepository userReceiverRepository, IContactsRepository contactsRepository, IMapper mapper, ILogger<ContactService> logger)
+    
+    public ContactService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ContactService> logger)
     {
-        _userReceiverRepository = userReceiverRepository;
-        _contactsRepository = contactsRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _logger = logger;
     }
@@ -28,12 +27,7 @@ public class ContactService : IContactService
     {
         try
         {
-            var contacts = await _contactsRepository.GetUserContactsAsync(userId);
-            if(contacts is null)
-            {
-                return new List<ContactDomain>();
-            }
-
+            var contacts = await _unitOfWork.ContactsRepository.GetUserContactsAsync(userId);
             return contacts.Select(x => _mapper.Map<ContactDomain>(x)).ToList();
         }
         catch (Exception e)
@@ -43,18 +37,18 @@ public class ContactService : IContactService
                 .WithMethod(nameof(GetUserContactsAsync))
                 .WithOperation("Get")
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
         }
     }
     
-    public async Task<OperationResult> AddContactToUserAsync(Guid userId, ContactDomain contact)
+    public async Task<OperationResult> AddContactToUserAsync(Guid userId, ContactDomain contact, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdWithContactsAsync(userId);
             if(user == null)
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
@@ -64,7 +58,12 @@ public class ContactService : IContactService
                 return new OperationResult(ErrorMessages.Contacts.AlreadyExist);
             }
 
-            return await _contactsRepository.AddContactToUserAsync(userId, _mapper.Map<ContactEntity>(contact));
+            ContactEntity entity = _mapper.Map<ContactEntity>(contact);
+            entity.UserId = userId;
+            
+            _unitOfWork.ContactsRepository.Insert(entity);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return OperationResult.Success;
         }
         catch (Exception e)
         {
@@ -73,64 +72,67 @@ public class ContactService : IContactService
                 .WithMethod(nameof(AddContactToUserAsync))
                 .WithOperation("Post")
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
                 .ToString());
             
             throw;
         }
     }
     
-    public async Task<OperationResult> DeleteContactFromUserAsync(Guid userId, Guid contactId)
+    public async Task<OperationResult> DeleteAsync(Guid userId, Guid contactId, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
-            if (user == null)
+            var user = await _unitOfWork.UserRepository.GetByIdWithContactsAsync(userId);
+            if (user is null)
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
             }
-
-            return await _contactsRepository.DeleteContactAsync(contactId);
+            
+            if (ValidateUserAccessToContact(contactId, user) == false)
+                return new OperationResult(ErrorMessages.Contacts.Forbidden);
+            
+            await _unitOfWork.ContactsRepository.DeleteAsync(contactId, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return OperationResult.Success;
         }
         catch (Exception e)
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(ContactService))
-                .WithMethod(nameof(DeleteContactFromUserAsync))
+                .WithMethod(nameof(DeleteAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
-                .WithParameter(typeof(Guid).Name, nameof(userId), userId.ToString())
-                .WithParameter(typeof(Guid).Name, nameof(contactId), contactId.ToString())
+                .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
+                .WithParameter(nameof(Guid), nameof(contactId), contactId.ToString())
                 .ToString());
             
             throw;
         }
     }
 
-    public async Task<OperationResult> UpdateUserContactAsync(Guid userId, ContactDomain contact)
+    public async Task<OperationResult> UpdateAsync(Guid userId, ContactDomain contact, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userReceiverRepository.GetByIdWithContactsAsync(userId);
+            var user = await _unitOfWork.UserRepository.GetByIdWithContactsAsync(userId);
             if (user == null)
             {
                 return new OperationResult(ErrorMessages.User.NotFound);
             }
-
-            if (user.Contacts != null && user.Contacts.Any(x => x.Id == contact.Id))
-            {
-                return await _contactsRepository.UpdateContactAsync(_mapper.Map<ContactEntity>(contact));
-            }
-            else
-            {
+            
+            if (ValidateUserAccessToContact(contact.Id, user) == false)
                 return new OperationResult(ErrorMessages.Contacts.Forbidden);
-            }
+            
+            await _unitOfWork.ContactsRepository.UpdateAsync(_mapper.Map<ContactEntity>(contact), cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return OperationResult.Success;
         }
         catch (Exception e)
         {
             _logger.LogError(new LogEntry()
                 .WithClass(nameof(ContactService))
-                .WithMethod(nameof(UpdateUserContactAsync))
+                .WithMethod(nameof(UpdateAsync))
                 .WithUnknownOperation()
                 .WithComment(e.Message)
                 .WithParameter(nameof(Guid), nameof(userId), userId.ToString())
@@ -139,5 +141,15 @@ public class ContactService : IContactService
             
             throw;
         }
+    }
+
+    private static bool ValidateUserAccessToContact(Guid contactId, UserEntity user)
+    {
+        if (user.Contacts is null)
+        {
+            throw new InvalidOperationException("User contacts is null. This should not happen.");
+        }
+        
+        return user.Contacts.Any(x => x.Id == contactId);
     }
 }

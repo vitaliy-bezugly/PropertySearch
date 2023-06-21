@@ -24,6 +24,8 @@ public class OperationResult
             ErrorMessage += item + ";";
         }
     }
+    
+    public static OperationResult Success { get => new OperationResult(); }
 }
 
 public class OperationResult<T> : OperationResult
