@@ -30,7 +30,7 @@ public class Startup
             app.UseHsts();
         }
 
-        if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
+        if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker" || Environment.GetEnvironmentVariable(ConnectionNames.InMemory) == "true")
         {
             // Initialise and seed database
             using var scope = app.Services.CreateScope();

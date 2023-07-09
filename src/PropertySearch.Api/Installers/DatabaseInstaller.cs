@@ -34,7 +34,7 @@ public class DatabaseInstaller : IInstaller
     private Action<DbContextOptionsBuilder> GetDatabaseOptions(IConfiguration configuration, ILogger<Startup> logger)
     {
         string? connectionString = GetConnectionString(configuration, logger);
-        if (connectionString == ConnectionNames.InMemoryDb)
+        if (Environment.GetEnvironmentVariable(ConnectionNames.InMemory) == "true")
         {
             logger.LogInformation("Using in-memory database");
             return options => options.UseInMemoryDatabase("PropertySearch");
