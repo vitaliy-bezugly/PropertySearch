@@ -11,10 +11,7 @@ public class DatabaseInstaller : IInstaller
 {
     public void InstallService(IServiceCollection services, IConfiguration configuration, ILogger<Startup> logger)
     {
-        var connectionString = GetConnectionString(configuration, logger);
-
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString, builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+        services.AddDbContext<ApplicationDbContext>(GetDatabaseOptions(configuration, logger));
 
         services.AddDefaultIdentity<UserEntity>(options =>
         {
@@ -33,6 +30,21 @@ public class DatabaseInstaller : IInstaller
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
+    
+    private Action<DbContextOptionsBuilder> GetDatabaseOptions(IConfiguration configuration, ILogger<Startup> logger)
+    {
+        string? connectionString = GetConnectionString(configuration, logger);
+        if (connectionString == ConnectionNames.InMemoryDb)
+        {
+            logger.LogInformation("Using in-memory database");
+            return options => options.UseInMemoryDatabase("PropertySearch");
+        }
+
+        logger.LogInformation("Using SQL Server database");
+        return options => options.UseSqlServer(connectionString, builder => 
+            builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
+    }
+    
     private string GetConnectionString(IConfiguration configuration, ILogger<Startup> logger)
     {
         var connectionString = Environment.GetEnvironmentVariable(ConnectionNames.Environment);
